@@ -21,8 +21,8 @@
 /* TOKENS */
 DIGITO      [0-9]
 LETRA		[a-zA-Z]
-INT		    -?{DIGITO}+
-FLOAT       -?{DIGITO}+\.{DIGITO}*|{DIGITO}*\.{DIGITO}+
+INT		    {DIGITO}+
+FLOAT       {DIGITO}+\.{DIGITO}*|{DIGITO}*\.{DIGITO}+
 STRING      \".*\"
 COMENTARIO  \*-.*-\*
 
@@ -32,31 +32,31 @@ DEC_INT     "Int"
 DEC_FLOAT   "Float"
 DEC_STRING  "String"
 NOT         "not"
-WRITE   "write"
-READ    "read"
-IF      "if"
-ELSE    "else"
-CICLO   "ciclo"
+WRITE       "write"
+READ        "read"
+IF          "if"
+ELSE        "else"
+CICLO       "ciclo"
 /* TODO: Agregar guiones? */
-ID      {LETRA}({LETRA}|{DIGITO})*
+ID          {LETRA}({LETRA}|{DIGITO})*
 
-PA      "("
-PC		")"
-LLA     "{"
-LLC     "}"
-COMA    ","
-DOS_P   ":"
+PA          "("
+PC		    ")"
+LLA         "{"
+LLC         "}"
+COMA        ","
+DOS_P       ":"
 /* Operadores aritmeticos */
-OP_AS   		"="
-OP_SUM		    "+"
-OP_MUL          "*"
-OP_RES		    "-"
-OP_DIV          "/"
+OP_AS   	"="
+OP_SUM		"+"
+OP_MUL      "*"
+OP_RES		"-"
+OP_DIV      "/"
 /* Operadores logicos */
-AND     "&"
-OR      "||"
-MAYOR   ">"
-MENOR   "<"
+AND         "&"
+OR          "||"
+MAYOR       ">"
+MENOR       "<"
 
 /**/
 %% 
@@ -102,13 +102,13 @@ MENOR   "<"
 "\n\t"
 " "             		
 "\r\n"
-.   {printf("Error"); exit(1);}
+.               {printf("Error"); exit(1);}
 %%
 
 int fa_verificarRangoInt(char* ptr) {
     long long valor = atoi(ptr);
 
-    if ( valor < -32768 || valor > 32767) {
+    if ( valor < 0 || valor > 65536) {
         printf ("Error, variable Int fuera de rango");
         return 1;
     }
@@ -116,9 +116,9 @@ int fa_verificarRangoInt(char* ptr) {
 }
 
 int fa_verificarRangoFloat(char* ptr) {
-    float valor = atof(ptr);
+    double valor = atof(ptr);
 
-    if ( valor < -4294967296 || valor > 4294967295) {
+    if ( valor < 0 || valor > 3.40e38) {
         printf ("Error, variable Float fuera de rango");
         return 1;
     }
@@ -126,7 +126,7 @@ int fa_verificarRangoFloat(char* ptr) {
     return 0;
 }
 int fa_verificarRangoStr(char* ptr) {
-    long long valor = strlen(ptr);
+    long valor = strlen(ptr);
 
     if ( valor < 2 || valor > 42) {
         printf ("Error, variable String fuera de rango");
