@@ -17,7 +17,7 @@ typedef struct _Nodo
 
 typedef Nodo *Lista;
 
-Lista *crearLista()
+Lista crearLista()
 {
     return NULL;
 }
@@ -26,13 +26,14 @@ void insertarEnLista(Lista *lista, char *nombre)
 {
     Simbolo nuevo_simbolo;
     strcpy(nuevo_simbolo.nombre, nombre);
+    nuevo_simbolo.tipo_dato[0] = '\0';
+    nuevo_simbolo.valor[0] = '\0';
     nuevo_simbolo.longitud = 0;
-    while ((lista != NULL) && strcmp((*lista)->simb.nombre, nombre))
+    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, nombre))
     {
-        puts("vez");
         lista = &(*lista)->sig;
     }
-    if (lista == NULL)
+    if (*lista == NULL)
     {
         Nodo *nuevo = (Nodo *)malloc(sizeof(Nodo));
         memcpy(&(nuevo->simb), &nuevo_simbolo, sizeof(Simbolo));
@@ -43,9 +44,9 @@ void insertarEnLista(Lista *lista, char *nombre)
 
 void imprimirLista(Lista *lista)
 {
-    while (lista != NULL)
+    while (*lista != NULL)
     {
-        printf("%s,%s,%s,%d", (*lista)->simb.nombre, (*lista)->simb.tipo_dato, (*lista)->simb.valor, (*lista)->simb.longitud);
+        printf("%s,%s,%s,%d\n", (*lista)->simb.nombre, (*lista)->simb.tipo_dato, (*lista)->simb.valor, (*lista)->simb.longitud);
         lista = &(*lista)->sig;
     }
 }

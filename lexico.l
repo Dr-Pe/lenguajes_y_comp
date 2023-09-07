@@ -12,7 +12,7 @@
     int fa_verificarRangoInt(char*);
     int fa_verificarRangoFloat(char*);
     int fa_verificarRangoStr(char*);
-    Lista *ptr_lista;
+    Lista lista;
 %}
 
 /* OPCIONES */
@@ -80,7 +80,7 @@ MENOR       "<"
 {ELSE}          {printf("\nElse: %s", yytext);}
 {CICLO}			{printf("\nCiclo: %s\n", yytext);}
 
-{ID}			{insertarEnLista(ptr_lista, yytext);}
+{ID}			{insertarEnLista(&lista, yytext);}
 
 {OP_SUM}		{printf("\nSuma: %s\n", yytext);}
 {OP_AS}			{printf("\nAsignacion: %s\n", yytext);}
@@ -146,10 +146,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     else {
-        ptr_lista = crearLista();
+        lista = crearLista();
         printf("OK\n");
         yylex();
-        imprimirLista(ptr_lista);
+        imprimirLista(&lista);
     }
 
 
