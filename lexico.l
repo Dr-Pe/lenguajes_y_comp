@@ -2,6 +2,8 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+
+    #include "tab_simb.c"
     
     FILE* yyin;
     int yylval;
@@ -10,6 +12,7 @@
     int fa_verificarRangoInt(char*);
     int fa_verificarRangoFloat(char*);
     int fa_verificarRangoStr(char*);
+    Lista lista;
 %}
 
 /* OPCIONES */
@@ -68,7 +71,7 @@ MENOR       "<"
 {INT}			{fa_verificarRangoInt(yytext);printf("\nInteger: %s\n", yytext);}
 {FLOAT}         {fa_verificarRangoFloat(yytext);printf("\nFloat: %s\n", yytext);}
 {STRING}		{fa_verificarRangoStr(yytext);printf("\nString: %s\n", yytext);}
-{COMENTARIO}	{}
+{COMENTARIO}    {}
 
 {NOT}			{printf("\nNot: %s\n", yytext);}
 {WRITE}			{printf("\nWrite: %s\n", yytext);}
@@ -77,7 +80,7 @@ MENOR       "<"
 {ELSE}          {printf("\nElse: %s", yytext);}
 {CICLO}			{printf("\nCiclo: %s\n", yytext);}
 
-{ID}			{printf("\nIdentificador: %s\n", yytext);}
+{ID}			{insertarEnLista(&lista, yytext);}
 
 {OP_SUM}		{printf("\nSuma: %s\n", yytext);}
 {OP_AS}			{printf("\nAsignacion: %s\n", yytext);}
@@ -125,6 +128,7 @@ int fa_verificarRangoFloat(char* ptr) {
 
     return 0;
 }
+
 int fa_verificarRangoStr(char* ptr) {
     long valor = strlen(ptr);
 
@@ -142,9 +146,13 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     else {
+        lista = crearLista();
         printf("OK\n");
         yylex();
+        imprimirLista(&lista);
     }
+
+
     fclose(yyin);
     return 0;
 }
