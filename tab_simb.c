@@ -17,26 +17,27 @@ typedef struct _Nodo
 
 typedef Nodo *Lista;
 
-Lista crearLista()
+Lista *crearLista()
 {
     return NULL;
 }
 
 void insertarEnLista(Lista *lista, char *nombre)
 {
-    printf("insertar");
-
     Simbolo nuevo_simbolo;
     strcpy(nuevo_simbolo.nombre, nombre);
     nuevo_simbolo.longitud = 0;
-
     while ((lista != NULL) && strcmp((*lista)->simb.nombre, nombre))
+    {
+        puts("vez");
         lista = &(*lista)->sig;
+    }
     if (lista == NULL)
     {
         Nodo *nuevo = (Nodo *)malloc(sizeof(Nodo));
         memcpy(&(nuevo->simb), &nuevo_simbolo, sizeof(Simbolo));
         nuevo->sig = NULL;
+        *lista = nuevo;
     }
 }
 
