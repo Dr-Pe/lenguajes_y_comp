@@ -17,7 +17,7 @@
 %token INT      
 %token FLOAT      
 %token STRING    
-/* Palabras reservadas */
+// Palabras reservadas
 %token INIT      
 %token DEC_INT    
 %token DEC_FLOAT  
@@ -28,21 +28,22 @@
 %token IF      
 %token ELSE    
 %token CICLO    
- 
-%token ID      
+// ID
+%token ID
+// Caracteres especiales   
 %token PA        
 %token PC        
 %token LLA      
 %token LLC      
 %token COMA      
 %token DOS_P    
-/* Operadores aritmeticos */
+// Operadores aritmeticos
 %token OP_AS
 %token OP_SUM
 %token OP_MUL
 %token OP_RES
 %token OP_DIV
-/* Operadores logicos */
+// Operadores logicos
 %token AND
 %token OR
 %token MAYOR
@@ -53,41 +54,36 @@ sentencia:
     asignacion {printf(" FIN\n");} ;
  
 asignacion:
-          ID OP_AS expresion {printf("    ID = Expresion es ASIGNACION\n");}
-      ;
+    ID OP_AS expresion {printf("    ID = Expresion es ASIGNACION\n");}
+    ;
  
 expresion:
-         termino {printf("    Termino es Expresion\n");}
-        |expresion OP_SUM termino {printf("    Expresion+Termino es Expresion\n");}
-        |expresion OP_RES termino {printf("    Expresion-Termino es Expresion\n");}
-        ;
+    termino {printf("    Termino es Expresion\n");}
+    |expresion OP_SUM termino {printf("    Expresion+Termino es Expresion\n");}
+    |expresion OP_RES termino {printf("    Expresion-Termino es Expresion\n");}
+    ;
  
 termino:
-       factor {printf("    Factor es Termino\n");}
-       |termino OP_MUL factor {printf("     Termino*Factor es Termino\n");}
-       |termino OP_DIV factor {printf("     Termino/Factor es Termino\n");}
-        ;
+    factor {printf("    Factor es Termino\n");}
+    |termino OP_MUL factor {printf("     Termino*Factor es Termino\n");}
+    |termino OP_DIV factor {printf("     Termino/Factor es Termino\n");}
+    ;
  
 factor:
-        ID {printf("    ID es Factor \n");}
-        | INT {printf("INT es Factor\n");}
-        | FLOAT {printf("FLOAT es Factor\n");}
-        | PA expresion PC {printf("    Expresion entre parentesis es Factor\n");}
-        ;
+    ID {printf("    ID es Factor \n");}
+    | INT {printf("INT es Factor\n");}
+    | FLOAT {printf("FLOAT es Factor\n");}
+    | PA expresion PC {printf("    Expresion entre parentesis es Factor\n");}
+    ;
  
  
 %%
  
-int main(int argc, char *argv[])
-{
-    if((yyin = fopen(argv[1], "rt"))==NULL)
-    {
+int main(int argc, char *argv[]) {
+    if((yyin = fopen(argv[1], "rt"))==NULL) {
         printf("\nNo se puede abrir el archivo de prueba: %s\n", argv[1]);
-       
     }
-    else
-    {
-       
+    else {
         yyparse();
     }
     fclose(yyin);

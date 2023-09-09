@@ -29,7 +29,6 @@ INT		    {DIGITO}+
 FLOAT       {DIGITO}+\.{DIGITO}*|{DIGITO}*\.{DIGITO}+
 STRING      \".*\"
 COMENTARIO  \*-.*-\*
-
 /* Palabras reservadas */
 INIT        "init"
 DEC_INT     "Int"
@@ -41,9 +40,9 @@ READ        "read"
 IF          "if"
 ELSE        "else"
 CICLO       "ciclo"
-/* TODO: Agregar guiones? */
+/* ID, TODO: Agregar guiones? */
 ID          {LETRA}({LETRA}|{DIGITO})*
-
+/* Caracteres especiales */
 PA          "("
 PC		    ")"
 LLA         "{"
@@ -62,9 +61,8 @@ OR          "||"
 MAYOR       ">"
 MENOR       "<"
 
-/**/
+/* Reglas */
 %% 
-
 {INIT}          {printf("\nInit: %s\n", yytext); return INIT;}
 {DEC_INT}       {printf("\nDec int: %s\n", yytext); return DEC_INT;}
 {DEC_FLOAT}     {printf("\nDec Float: %s\n", yytext); return DEC_FLOAT;}
