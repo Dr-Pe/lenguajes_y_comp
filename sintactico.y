@@ -23,11 +23,15 @@
 %token DEC_FLOAT  
 %token DEC_STRING
 %token NOT      
-%token WRITE    
-%token READ
 %token IF      
 %token ELSE    
-%token CICLO    
+%token CICLO
+// Funciones builtin
+%token WRITE    
+%token READ
+%token CONCAT
+%token TIMER
+%token ESTA_CONT
 // ID
 %token ID
 // Caracteres especiales   
@@ -50,13 +54,70 @@
 %token MENOR
  
 %%
+programa_prima: programa;
+
+programa: INIT LLA declaraciones LLC bloque_ejec;
+
+declaraciones: dec | declaraciones dec;
+
+dec: listado_ids DOS_P tipo;
+
+listado_ids:
+    ID
+    |listado_ids COMA ID
+    ;
+
+tipo: DEC_INT | DEC_FLOAT | DEC_STRING;
+
+bloque_ejec: sentencia | bloque_ejec sentencia;
+
 sentencia:        
-    asignacion {printf(" FIN\n");} ;
+    asignacion
+    |ciclo
+    |eval
+    |TIMER PA INT COMA bloque_ejec PC
+    |WRITE PA ID PC
+    |WRITE PA STRING PC
+    |READ PA ID PC
+    ;
  
 asignacion:
     ID OP_AS expresion {printf("    ID = Expresion es ASIGNACION\n");}
+    |ID OP_AS string 
     ;
- 
+
+string:
+    STRING
+    |CONCAT PA STRING COMA STRING COMA INT PC
+
+ciclo: CICLO PA condicion PC LLA bloque_ejec LLC;
+
+eval: 
+    IF PA condicion PC LLA bloque_ejec LLC
+    |IF PA condicion PC LLA bloque_ejec LLC ELSE LLA bloque_ejec LLC
+    ;
+
+condicion:
+    comparacion
+    |condicion op_logico comparacion
+    |NOT condicion
+    ;
+
+comparacion:
+    expresion comparador expresion
+    |ESTA_CONT PA STRING COMA STRING PC
+    ;
+
+op_logico:
+    AND
+    |OR
+    ;
+
+comparador:
+    MAYOR
+    |MENOR
+    ;
+
 expresion:
     termino {printf("    Termino es Expresion\n");}
     |expresion OP_SUM termino {printf("    Expresion+Termino es Expresion\n");}

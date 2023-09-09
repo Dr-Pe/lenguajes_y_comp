@@ -35,11 +35,15 @@ DEC_INT     "Int"
 DEC_FLOAT   "Float"
 DEC_STRING  "String"
 NOT         "not"
-WRITE       "write"
-READ        "read"
 IF          "if"
 ELSE        "else"
 CICLO       "ciclo"
+/* Funciones builtin */
+WRITE       "write"
+READ        "read"
+CONCAT      "ConcatenarConRecorte"
+TIMER       "Timer"
+ESTA_CONT   "EstaContenido"
 /* ID, TODO: Agregar guiones? */
 ID          {LETRA}({LETRA}|{DIGITO})*
 /* Caracteres especiales */
@@ -73,12 +77,16 @@ MENOR       "<"
 {COMENTARIO}    {}
  
 {NOT}           {printf("\nNot: %s\n", yytext); return NOT;}
+{IF}            {printf("\nIf: %s\n", yytext); return IF;}
+{CICLO}         {printf("\nCiclo: %s\n", yytext); return CICLO;}
+{ELSE}          {printf("\nElse: %s", yytext); return ELSE;}
+
 {WRITE}         {printf("\nWrite: %s\n", yytext); return WRITE;}
 {READ}          {printf("\nRead: %s\n", yytext); return READ;}
-{IF}            {printf("\nIf: %s\n", yytext); return IF;}
-{ELSE}          {printf("\nElse: %s", yytext); return ELSE;}
-{CICLO}         {printf("\nCiclo: %s\n", yytext); return CICLO;}
- 
+{CONCAT}        {printf("\nConcatenar: %s\n", yytext); return CONCAT;}
+{TIMER}         {printf("\nTimer: %s\n", yytext); return TIMER;}
+{ESTA_CONT}     {printf("\nEstaContenido: %s\n", yytext); return ESTA_CONT;}
+
 {ID}            {insertarEnLista(&lista, yytext); return ID;}
  
 {OP_SUM}        {printf("\nSuma: %s\n", yytext); return OP_SUM;}

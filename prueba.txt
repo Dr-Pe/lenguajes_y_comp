@@ -1,3 +1,12 @@
-float1 = 12.5 *- comentario -*
-int2 = 12
-string2 = "String linda"
+init {
+    a, b: Int
+    saludo: String
+}
+
+a = 0
+b = 1
+saludo = "hola"
+
+if(a < b) {
+    write(saludo)
+}
