@@ -1,10 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "constantes.h"
+
 typedef struct
 {
-    char nombre[40];
-    char tipo_dato[20];
+    char nombre[ID_LARGO_MAX];
+    char tipo_dato[7];
     char valor[40];
     int longitud;
 } Simbolo;

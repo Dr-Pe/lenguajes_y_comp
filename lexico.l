@@ -2,18 +2,21 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include <math.h>
 
-    #include "tab_simb.c"
+    #include "constantes.h"
     #include "y.tab.h"
+    #include "tab_simb.c"
     
     FILE* yyin;
-    int yylval;
+    // int yylval;
     char* yyltext;
-    int yyerror(void);
+    Lista lista;
+
+    // int yyerror(void);
     int fa_verificarRangoInt(char*);
     int fa_verificarRangoFloat(char*);
     int fa_verificarRangoStr(char*);
-    Lista lista;
 %}
 
 /* OPCIONES */
@@ -45,7 +48,7 @@ CONCAT      "ConcatenarConRecorte"
 TIMER       "Timer"
 ESTA_CONT   "EstaContenido"
 /* ID, TODO: Agregar guiones? */
-ID          {LETRA}({LETRA}|{DIGITO})*
+ID          {LETRA}({LETRA}|{DIGITO}|_)*
 /* Caracteres especiales */
 PA          "("
 PC		    ")"
@@ -62,104 +65,101 @@ OP_DIV      "/"
 /* Operadores logicos */
 AND         "&"
 OR          "||"
+/* Comparadores */
 MAYOR       ">"
 MENOR       "<"
+IGUAL       "=="
+DISTINTO    "!="
+MAYOR_IGUAL ">="
+MENOR_IGUAL "<="
 
 /* Reglas */
 %% 
-{INIT}          {printf("\nInit: %s\n", yytext); return INIT;}
-{DEC_INT}       {printf("\nDec int: %s\n", yytext); return DEC_INT;}
-{DEC_FLOAT}     {printf("\nDec Float: %s\n", yytext); return DEC_FLOAT;}
-{DEC_STRING}    {printf("\nDec String: %s\n", yytext); return DEC_STRING;}
-{INT}           {fa_verificarRangoInt(yytext);printf("\nInteger: %s\n", yytext); return INT;}
-{FLOAT}         {fa_verificarRangoFloat(yytext);printf("\nFloat: %s\n", yytext); return FLOAT;}
-{STRING}        {fa_verificarRangoStr(yytext);printf("\nString: %s\n", yytext); return STRING;}
+{INIT}          {return INIT;}
+{DEC_INT}       {return DEC_INT;}
+{DEC_FLOAT}     {return DEC_FLOAT;}
+{DEC_STRING}    {return DEC_STRING;}
+{INT}           {fa_verificarRangoInt(yytext);printf("\nInteger: %s\n", yytext); yylval.int_val = atoi(yytext); return INT;}
+{FLOAT}         {fa_verificarRangoFloat(yytext);printf("\nFloat: %s\n", yytext); yylval.float_val = atof(yytext); return FLOAT;}
+{STRING}        {fa_verificarRangoStr(yytext);printf("\nString: %s\n", yytext); yylval.string_val = strdup(yytext); return STRING;}
 {COMENTARIO}    {}
  
-{NOT}           {printf("\nNot: %s\n", yytext); return NOT;}
-{IF}            {printf("\nIf: %s\n", yytext); return IF;}
-{CICLO}         {printf("\nCiclo: %s\n", yytext); return CICLO;}
-{ELSE}          {printf("\nElse: %s", yytext); return ELSE;}
+{NOT}           {return NOT;}
+{IF}            {return IF;}
+{CICLO}         {return CICLO;}
+{ELSE}          {return ELSE;}
 
-{WRITE}         {printf("\nWrite: %s\n", yytext); return WRITE;}
-{READ}          {printf("\nRead: %s\n", yytext); return READ;}
-{CONCAT}        {printf("\nConcatenar: %s\n", yytext); return CONCAT;}
-{TIMER}         {printf("\nTimer: %s\n", yytext); return TIMER;}
-{ESTA_CONT}     {printf("\nEstaContenido: %s\n", yytext); return ESTA_CONT;}
+{WRITE}         {return WRITE;}
+{READ}          {return READ;}
+{CONCAT}        {return CONCAT;}
+{TIMER}         {return TIMER;}
+{ESTA_CONT}     {return ESTA_CONT;}
 
-{ID}            {insertarEnLista(&lista, yytext); return ID;}
+{ID}            {insertarEnLista(&lista, yytext); yylval.string_val = strdup(yytext); return ID;}
  
-{OP_SUM}        {printf("\nSuma: %s\n", yytext); return OP_SUM;}
-{OP_AS}         {printf("\nAsignacion: %s\n", yytext); return OP_AS;}
-{OP_MUL}        {printf("\nMultiplicacion: %s\n", yytext); return OP_MUL;}
-{OP_RES}        {printf("\nResta: %s\n", yytext); return OP_RES;}
-{OP_DIV}        {printf("\nDivision: %s\n", yytext); return OP_DIV;}
+{OP_SUM}        {return OP_SUM;}
+{OP_AS}         {return OP_AS;}
+{OP_MUL}        {return OP_MUL;}
+{OP_RES}        {return OP_RES;}
+{OP_DIV}        {return OP_DIV;}
  
-{PA}            {printf("\nParAbre: %s\n", yytext); return PA;}
-{PC}            {printf("\nParCierra: %s\n", yytext); return PC;}
-{LLA}           {printf("\nLlaveAbre: %s\n", yytext); return LLA;}
-{LLC}           {printf("\nLlaveCierra: %s\n", yytext); return LLC;}
-{COMA}          {printf("\nComa: %s\n", yytext); return COMA;}
-{DOS_P}         {printf("\nDos puntos: %s\n", yytext); return DOS_P;}
+{PA}            {return PA;}
+{PC}            {return PC;}
+{LLA}           {return LLA;}
+{LLC}           {return LLC;}
+{COMA}          {return COMA;}
+{DOS_P}         {return DOS_P;}
  
-{AND}           {printf("\nAnd: %s\n", yytext); return AND;}
-{OR}            {printf("\nOr: %s\n", yytext); return OR;}
-{MAYOR}         {printf("\nMayor: %s\n", yytext); return MAYOR;}
-{MENOR}         {printf("\nMenor: %s\n", yytext); return MENOR;}
+{AND}           {return AND;}
+{OR}            {return OR;}
+
+{MAYOR}         {return MAYOR;}
+{MENOR}         {return MENOR;}
+{IGUAL}         {return IGUAL;}
+{DISTINTO}      {return DISTINTO;}
+{MAYOR_IGUAL}   {return MAYOR_IGUAL;}
+{MENOR_IGUAL}   {return MENOR_IGUAL;}
 
 "\n"      		
 "\t"
 "\n\t"
 " "             		
 "\r\n"
-.               {printf("Error"); exit(1);}
+.               {printf("[%d] Error, \"%s\" carácter inválido\n", yylineno, yytext); exit(1);}
 %%
+
+int fa_validarLongitudID(char* ptr) {
+    long valor = strlen(ptr);
+
+    if ( valor < 1 || valor > ID_LARGO_MAX) {
+        printf ("[%d] Error, largo de ID fuera de rango\n", yylineno);
+        exit(1);
+    }
+}
 
 int fa_verificarRangoInt(char* ptr) {
     long long valor = atoi(ptr);
 
-    if ( valor < 0 || valor > 65536) {
-        printf ("Error, variable Int fuera de rango");
-        return 1;
+    if ( valor < 0 || valor > MAX_INT) {
+        printf ("[%d] Error, variable Int fuera de rango\n", yylineno);
+        exit(1);
     }
-    return 0;
 }
 
 int fa_verificarRangoFloat(char* ptr) {
     double valor = atof(ptr);
 
-    if ( valor < 0 || valor > 3.40e38) {
-        printf ("Error, variable Float fuera de rango");
-        return 1;
+    if ( valor < 0 || valor > 2147483648) {
+        printf ("[%d] Error, variable Float fuera de rango\n", yylineno);
+        exit(1);
     }
-
-    return 0;
 }
 
 int fa_verificarRangoStr(char* ptr) {
     long valor = strlen(ptr);
 
-    if ( valor < 2 || valor > 42) {
-        printf ("Error, variable String fuera de rango");
+    if ( valor < 2 || valor > STRING_LARGO_MAX + 2) {
+        printf ("[%d] Error, variable String fuera de rango\n", yylineno);
         return 1;
     }
-    return 0;
 }
-
-// int main(int argc, char* argv[]) {
-//     yyin = fopen(argv[1], "rt");
-//     if(yyin == NULL) {
-//         printf("Error\n");
-//         return 1;
-//     }
-//     else {
-//         lista = crearLista();
-//         printf("OK\n");
-//         yylex();
-//         imprimirLista(&lista);
-//     }
-
-
-//     fclose(yyin);
-//     return 0;
-// }

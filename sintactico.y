@@ -6,17 +6,21 @@
  
     int yystopparser=0;
     FILE* yyin;
-    int yylval;
+    // int yylval;
    
- 
     int yyerror();
     int yylex();
 %}
+
+%union {
+    int int_val;
+    float float_val;
+    char* string_val;
+} 
  
- 
-%token INT      
-%token FLOAT      
-%token STRING    
+%token <int_val> INT    
+%token <float_val> FLOAT      
+%token <string_val> STRING    
 // Palabras reservadas
 %token INIT      
 %token DEC_INT    
@@ -33,7 +37,7 @@
 %token TIMER
 %token ESTA_CONT
 // ID
-%token ID
+%token <string_val> ID
 // Caracteres especiales   
 %token PA        
 %token PC        
@@ -50,8 +54,13 @@
 // Operadores logicos
 %token AND
 %token OR
+// Comparadores
 %token MAYOR
 %token MENOR
+%token IGUAL
+%token DISTINTO
+%token MAYOR_IGUAL
+%token MENOR_IGUAL
  
 %%
 programa_prima: programa;
@@ -100,12 +109,12 @@ eval:
 condicion:
     comparacion
     |condicion op_logico comparacion
-    |NOT condicion
     ;
 
 comparacion:
     expresion comparador expresion
     |ESTA_CONT PA STRING COMA STRING PC
+    |NOT comparacion
     ;
 
 op_logico:
@@ -116,6 +125,10 @@ op_logico:
 comparador:
     MAYOR
     |MENOR
+    |IGUAL
+    |DISTINTO
+    |MAYOR_IGUAL
+    |MENOR_IGUAL
     ;
 
 expresion:
@@ -126,6 +139,7 @@ expresion:
  
 termino:
     factor {printf("    Factor es Termino\n");}
+    |OP_RES factor
     |termino OP_MUL factor {printf("     Termino*Factor es Termino\n");}
     |termino OP_DIV factor {printf("     Termino/Factor es Termino\n");}
     ;
@@ -136,8 +150,6 @@ factor:
     | FLOAT {printf("FLOAT es Factor\n");}
     | PA expresion PC {printf("    Expresion entre parentesis es Factor\n");}
     ;
- 
- 
 %%
  
 int main(int argc, char *argv[]) {
@@ -152,6 +164,6 @@ int main(int argc, char *argv[]) {
 }
  
 int yyerror() {
-    printf("Error\n");
+    printf("Error sintáctico\n");
     exit (1);
 }
