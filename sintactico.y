@@ -1,7 +1,5 @@
 %{
-    #include <stdio.h>
-    #include <stdlib.h>
- 
+    #include "tab_simb.h"
     #include "y.tab.h"
  
     int yystopparser=0;
@@ -156,6 +154,7 @@ int main(int argc, char *argv[]) {
         yyparse();
     }
     fclose(yyin);
+    imprimirLista(&lista);
     return 0;
 }
  

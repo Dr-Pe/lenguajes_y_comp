@@ -1,7 +1,7 @@
 flex lexico.l
 bison -dyv sintactico.y
 
-gcc.exe lex.yy.c y.tab.c -o compilador.exe
+gcc.exe lex.yy.c y.tab.c tab_simb.c -o compilador.exe
 
 compilador.exe casos_de_prueba/tipos_validos.txt
 

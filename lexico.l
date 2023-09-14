@@ -3,15 +3,15 @@
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
-
-    #include "constantes.h"
+    #include "tab_simb.h"
+   // #include "constantes.h"
     #include "y.tab.h"
-    #include "tab_simb.c"
+    
     
     FILE* yyin;
     
     char* yyltext;
-    Lista lista;
+    
 
     // int yyerror(void);
     int fa_validarLongitudID(char*);
