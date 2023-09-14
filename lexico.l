@@ -80,9 +80,9 @@ MENOR_IGUAL "<="
 {DEC_INT}       {return DEC_INT;}
 {DEC_FLOAT}     {return DEC_FLOAT;}
 {DEC_STRING}    {return DEC_STRING;}
-{INT}           {fa_verificarRangoInt(yytext);printf("\nInteger: %s\n", yytext); insertarEnLista(&lista, yytext, tINT); return INT;}
-{FLOAT}         {fa_verificarRangoFloat(yytext);printf("\nFloat: %s\n", yytext); insertarEnLista(&lista, yytext, tFLOAT); return FLOAT;}
-{STRING}        {fa_verificarRangoStr(yytext);printf("\nString: %s\n", yytext); insertarEnLista(&lista, yytext, tSTRING); return STRING;}
+{INT}           {fa_verificarRangoInt(yytext); insertarEnLista(&lista, yytext, tINT); return INT;}
+{FLOAT}         {fa_verificarRangoFloat(yytext); insertarEnLista(&lista, yytext, tFLOAT); return FLOAT;}
+{STRING}        {fa_verificarRangoStr(yytext); insertarEnLista(&lista, yytext, tSTRING); return STRING;}
 {COMENTARIO}    {}
  
 {NOT}           {return NOT;}

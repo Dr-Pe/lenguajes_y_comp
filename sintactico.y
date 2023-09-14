@@ -57,92 +57,101 @@
 %token MENOR_IGUAL
  
 %%
-programa_prima: programa;
-
-programa: INIT LLA declaraciones LLC bloque_ejec;
-
-declaraciones: dec | declaraciones dec;
-
-dec: listado_ids DOS_P tipo;
-
-listado_ids:
-    ID
-    |listado_ids COMA ID
+programa_prima: programa    {printf("COMPILADO\n");}
+    ;
+programa: INIT LLA declaraciones LLC bloque_ejec    {printf("init {declaraciones} bloque_ejec es Programa\n");} 
+    | INIT LLA LLC bloque_ejec                      {printf("init {} bloque_ejec es Programa\n");}
     ;
 
-tipo: DEC_INT | DEC_FLOAT | DEC_STRING;
+declaraciones: dec          {printf("dec es Declaraciones\n");}
+    | declaraciones dec     {printf("declaraciones dec es Declaraciones\n");}
+    ;
 
-bloque_ejec: sentencia | bloque_ejec sentencia;
+dec: listado_ids DOS_P tipo {printf("listado_ids : tipo es Dec\n");}
+    ;
 
+listado_ids:
+    ID                      {printf("id es Listado_ids\n");}
+    |listado_ids COMA ID    {printf("listado_ids , id es Listado_ids\n");}
+    ;
+
+tipo: DEC_INT       {printf("dec_int es Tipo\n");}
+    | DEC_FLOAT     {printf("dec_float es Tipo\n");}
+    | DEC_STRING    {printf("dec_string es Tipo\n");}
+    ;
+
+bloque_ejec: sentencia                  {printf("sentencia es Bloque_ejec\n");}
+    | bloque_ejec sentencia            {printf("bloque_ejec sentencia es Bloque_ejec\n");}
+    ;
 sentencia:        
-    asignacion
-    |ciclo
-    |eval
-    |TIMER PA INT COMA bloque_ejec PC
-    |WRITE PA ID PC
-    |WRITE PA STRING PC
-    |READ PA ID PC
+    asignacion                          {printf("asignacion es Sentencia\n");}
+    |ciclo                              {printf("ciclo es Sentencia\n");}
+    |eval                               {printf("eval es Sentencia\n");}
+    |TIMER PA INT COMA bloque_ejec PC   {printf("timer(int,bloque_ejec) es Sentencia\n");}
+    |WRITE PA ID PC                     {printf("write(id) es Sentencia\n");}
+    |WRITE PA STRING PC                 {printf("write(string) es Sentencia\n");}
+    |READ PA ID PC                      {printf("read(id) es Sentencia\n");}
     ;
  
 asignacion:
-    ID OP_AS expresion {printf("    ID = Expresion es ASIGNACION\n");}
-    |ID OP_AS string 
+    ID OP_AS expresion {printf("ID = Expresion es ASIGNACION\n");}
+    |ID OP_AS string    {printf("ID = String es ASIGNACION\n");}
     ;
 
 string:
     STRING
-    |CONCAT PA STRING COMA STRING COMA INT PC
-
-ciclo: CICLO PA condicion PC LLA bloque_ejec LLC;
-
+    |CONCAT PA STRING COMA STRING COMA INT PC   {printf("ConcatenarConRecorte(String, String, Int) es String\n");}
+    ;
+ciclo: CICLO PA condicion PC LLA bloque_ejec LLC    {printf("ciclo(Condicion) {bloque_ejec} es Ciclo\n");}
+    ;
 eval: 
-    IF PA condicion PC LLA bloque_ejec LLC
-    |IF PA condicion PC LLA bloque_ejec LLC ELSE LLA bloque_ejec LLC
+    IF PA condicion PC LLA bloque_ejec LLC                              {printf("if (condicion) {bloque_ejec} es Eval\n");}
+    |IF PA condicion PC LLA bloque_ejec LLC ELSE LLA bloque_ejec LLC    {printf("if (condicion) {bloque_ejec} else {bloque_ejec} es Eval\n");}
     ;
 
 condicion:
-    comparacion
-    |condicion op_logico comparacion
+    comparacion                             {printf("comparacion es Condicion\n");}
+    |condicion op_logico comparacion        {printf("condicion op_logico comparacion es Condicion\n");}
     ;
 
 comparacion:
-    expresion comparador expresion
-    |ESTA_CONT PA STRING COMA STRING PC
-    |NOT comparacion
+    expresion comparador expresion          {printf("expresion comparador expresion es Comparacion\n");}
+    |ESTA_CONT PA STRING COMA STRING PC     {printf("EstaContenido(String, String) es Comparacion\n");}
+    |NOT comparacion                        {printf("not comparacion es Comparacion\n");}
     ;
 
 op_logico:
-    AND
-    |OR
+    AND             {printf("& es Op_logico\n");}
+    |OR             {printf("|| es Op_logico\n");}
     ;
 
 comparador:
-    MAYOR
-    |MENOR
-    |IGUAL
-    |DISTINTO
-    |MAYOR_IGUAL
-    |MENOR_IGUAL
+    MAYOR           {printf("> es Comparador\n");}
+    |MENOR          {printf("< es Comparador\n");}
+    |IGUAL          {printf("== es Comparador\n");}
+    |DISTINTO       {printf("!= es Comparador\n");}
+    |MAYOR_IGUAL    {printf(">= es Comparador\n");}
+    |MENOR_IGUAL    {printf("<= es Comparador\n");}
     ;
 
 expresion:
-    termino {printf("    Termino es Expresion\n");}
-    |expresion OP_SUM termino {printf("    Expresion+Termino es Expresion\n");}
-    |expresion OP_RES termino {printf("    Expresion-Termino es Expresion\n");}
+    termino {printf("Termino es Expresion\n");}
+    |expresion OP_SUM termino {printf("Expresion+Termino es Expresion\n");}
+    |expresion OP_RES termino {printf("Expresion-Termino es Expresion\n");}
     ;
  
 termino:
-    factor {printf("    Factor es Termino\n");}
-    |OP_RES factor
-    |termino OP_MUL factor {printf("     Termino*Factor es Termino\n");}
-    |termino OP_DIV factor {printf("     Termino/Factor es Termino\n");}
+    factor {printf("Factor es Termino\n");}
+    |OP_RES factor  {printf("-Factor es Termino\n");}
+    |termino OP_MUL factor {printf("Termino*Factor es Termino\n");}
+    |termino OP_DIV factor {printf("Termino/Factor es Termino\n");}
     ;
  
 factor:
-    ID {printf("    ID es Factor \n");}
+    ID {printf("ID es Factor \n");}
     | INT {printf("INT es Factor\n");}
     | FLOAT {printf("FLOAT es Factor\n");}
-    | PA expresion PC {printf("    Expresion entre parentesis es Factor\n");}
+    | PA expresion PC {printf("Expresion entre parentesis es Factor\n");}
     ;
 %%
  
