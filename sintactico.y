@@ -111,7 +111,8 @@ eval:
 
 condicion:
     comparacion                             {printf("comparacion es Condicion\n");}
-    |condicion op_logico comparacion        {printf("condicion op_logico comparacion es Condicion\n");}
+    //|condicion op_logico comparacion        {printf("condicion op_logico comparacion es Condicion\n");}
+    |condicion op_logico condicion        {printf("condicion op_logico comparacion es Condicion\n");}
     ;
 
 comparacion:
