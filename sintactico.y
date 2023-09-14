@@ -7,20 +7,16 @@
     int yystopparser=0;
     FILE* yyin;
     // int yylval;
-   
+
     int yyerror();
     int yylex();
 %}
 
-%union {
-    int int_val;
-    float float_val;
-    char* string_val;
-} 
+
  
-%token <int_val> INT    
-%token <float_val> FLOAT      
-%token <string_val> STRING    
+%token INT    
+%token FLOAT      
+%token STRING    
 // Palabras reservadas
 %token INIT      
 %token DEC_INT    
@@ -37,7 +33,7 @@
 %token TIMER
 %token ESTA_CONT
 // ID
-%token <string_val> ID
+%token ID
 // Caracteres especiales   
 %token PA        
 %token PC        

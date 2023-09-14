@@ -9,11 +9,12 @@
     #include "tab_simb.c"
     
     FILE* yyin;
-    // int yylval;
+    
     char* yyltext;
     Lista lista;
 
     // int yyerror(void);
+    int fa_validarLongitudID(char*);
     int fa_verificarRangoInt(char*);
     int fa_verificarRangoFloat(char*);
     int fa_verificarRangoStr(char*);
@@ -79,9 +80,9 @@ MENOR_IGUAL "<="
 {DEC_INT}       {return DEC_INT;}
 {DEC_FLOAT}     {return DEC_FLOAT;}
 {DEC_STRING}    {return DEC_STRING;}
-{INT}           {fa_verificarRangoInt(yytext);printf("\nInteger: %s\n", yytext); yylval.int_val = atoi(yytext); return INT;}
-{FLOAT}         {fa_verificarRangoFloat(yytext);printf("\nFloat: %s\n", yytext); yylval.float_val = atof(yytext); return FLOAT;}
-{STRING}        {fa_verificarRangoStr(yytext);printf("\nString: %s\n", yytext); yylval.string_val = strdup(yytext); return STRING;}
+{INT}           {fa_verificarRangoInt(yytext);printf("\nInteger: %s\n", yytext); insertarEnLista(&lista, yytext, tINT); return INT;}
+{FLOAT}         {fa_verificarRangoFloat(yytext);printf("\nFloat: %s\n", yytext); insertarEnLista(&lista, yytext, tFLOAT); return FLOAT;}
+{STRING}        {fa_verificarRangoStr(yytext);printf("\nString: %s\n", yytext); insertarEnLista(&lista, yytext, tSTRING); return STRING;}
 {COMENTARIO}    {}
  
 {NOT}           {return NOT;}
@@ -95,7 +96,7 @@ MENOR_IGUAL "<="
 {TIMER}         {return TIMER;}
 {ESTA_CONT}     {return ESTA_CONT;}
 
-{ID}            {insertarEnLista(&lista, yytext); yylval.string_val = strdup(yytext); return ID;}
+{ID}            {fa_validarLongitudID(yytext); insertarEnLista(&lista, yytext, tID) ; return ID;}
  
 {OP_SUM}        {return OP_SUM;}
 {OP_AS}         {return OP_AS;}
@@ -127,6 +128,8 @@ MENOR_IGUAL "<="
 "\r\n"
 .               {printf("[%d] Error, \"%s\" carácter inválido\n", yylineno, yytext); exit(1);}
 %%
+
+
 
 int fa_validarLongitudID(char* ptr) {
     long valor = strlen(ptr);
