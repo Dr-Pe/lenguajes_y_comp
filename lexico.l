@@ -3,17 +3,13 @@
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
+
     #include "tab_simb.h"
-   // #include "constantes.h"
     #include "y.tab.h"
     
-    
     FILE* yyin;
-    
     char* yyltext;
-    
 
-    // int yyerror(void);
     int fa_validarLongitudID(char*);
     int fa_verificarRangoInt(char*);
     int fa_verificarRangoFloat(char*);
@@ -32,7 +28,11 @@ LETRA		[a-zA-Z]
 INT		    {DIGITO}+
 FLOAT       {DIGITO}+\.{DIGITO}*|{DIGITO}*\.{DIGITO}+
 STRING      \".*\"
-COMENTARIO  \*-.*-\*
+COMEN_A             \*-
+COMEN_CONT          [^*]*
+COMEN_C             -\*
+COMENTARIO          {COMEN_A}{COMEN_CONT}{COMEN_C}
+COMENTARIO_ANIDADO  {COMEN_A}({COMEN_CONT}*{COMENTARIO}+{COMEN_CONT}*){COMEN_C}
 /* Palabras reservadas */
 INIT        "init"
 DEC_INT     "Int"
@@ -42,12 +42,12 @@ NOT         "not"
 IF          "if"
 ELSE        "else"
 CICLO       "ciclo"
-/* Funciones builtin */
+/* Funciones built-in */
 WRITE       "write"
 READ        "read"
-CONCAT      "ConcatenarConRecorte"
-TIMER       "Timer"
-ESTA_CONT   "EstaContenido"
+CONCAT      "concatenarConRecorte"
+TIMER       "timer"
+ESTA_CONT   "estaContenido"
 /* ID, TODO: Agregar guiones? */
 ID          {LETRA}({LETRA}|{DIGITO}|_)*
 /* Caracteres especiales */
@@ -83,7 +83,8 @@ MENOR_IGUAL "<="
 {INT}           {fa_verificarRangoInt(yytext); insertarEnLista(&lista, yytext, tINT); return INT;}
 {FLOAT}         {fa_verificarRangoFloat(yytext); insertarEnLista(&lista, yytext, tFLOAT); return FLOAT;}
 {STRING}        {fa_verificarRangoStr(yytext); insertarEnLista(&lista, yytext, tSTRING); return STRING;}
-{COMENTARIO}    {}
+{COMENTARIO}            {}
+{COMENTARIO_ANIDADO}    {}
  
 {NOT}           {return NOT;}
 {IF}            {return IF;}
@@ -96,7 +97,7 @@ MENOR_IGUAL "<="
 {TIMER}         {return TIMER;}
 {ESTA_CONT}     {return ESTA_CONT;}
 
-{ID}            {fa_validarLongitudID(yytext); insertarEnLista(&lista, yytext, tID) ; return ID;}
+{ID}            {fa_validarLongitudID(yytext); insertarEnLista(&lista, yytext, tID); return ID;}
  
 {OP_SUM}        {return OP_SUM;}
 {OP_AS}         {return OP_AS;}
@@ -136,7 +137,7 @@ int fa_validarLongitudID(char* ptr) {
 
     if ( valor < 1 || valor > ID_LARGO_MAX) {
         printf ("[%d] Error, largo de ID fuera de rango\n", yylineno);
-        exit(1);
+        return 1;
     }
 }
 
@@ -145,7 +146,7 @@ int fa_verificarRangoInt(char* ptr) {
 
     if ( valor < 0 || valor > MAX_INT) {
         printf ("[%d] Error, variable Int fuera de rango\n", yylineno);
-        exit(1);
+        return 1;
     }
 }
 
@@ -154,7 +155,7 @@ int fa_verificarRangoFloat(char* ptr) {
 
     if ( valor < 0 || valor > 2147483648) {
         printf ("[%d] Error, variable Float fuera de rango\n", yylineno);
-        exit(1);
+        return 1;
     }
 }
 

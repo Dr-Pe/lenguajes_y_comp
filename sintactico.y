@@ -4,7 +4,6 @@
  
     int yystopparser=0;
     FILE* yyin;
-    // int yylval;
 
     int yyerror();
     int yylex();
@@ -72,12 +71,12 @@ dec: listado_ids DOS_P tipo {printf("listado_ids : tipo es Dec\n");}
 
 listado_ids:
     ID                      {printf("id es Listado_ids\n");}
-    |listado_ids COMA ID    {printf("listado_ids , id es Listado_ids\n");}
+    |listado_ids COMA ID    {printf("\tlistado_ids , id es Listado_ids\n");}
     ;
 
-tipo: DEC_INT       {printf("dec_int es Tipo\n");}
-    | DEC_FLOAT     {printf("dec_float es Tipo\n");}
-    | DEC_STRING    {printf("dec_string es Tipo\n");}
+tipo: DEC_INT       {printf("\t\tdec_int es Tipo\n");}
+    | DEC_FLOAT     {printf("\t\tdec_float es Tipo\n");}
+    | DEC_STRING    {printf("\t\tdec_string es Tipo\n");}
     ;
 
 bloque_ejec: sentencia                  {printf("sentencia es Bloque_ejec\n");}
@@ -100,10 +99,12 @@ asignacion:
 
 string:
     STRING
-    |CONCAT PA STRING COMA STRING COMA INT PC   {printf("ConcatenarConRecorte(String, String, Int) es String\n");}
+    |CONCAT PA STRING COMA STRING COMA INT PC   {printf("concatenarConRecorte(String, String, Int) es String\n");}
     ;
+
 ciclo: CICLO PA condicion PC LLA bloque_ejec LLC    {printf("ciclo(Condicion) {bloque_ejec} es Ciclo\n");}
     ;
+
 eval: 
     IF PA condicion PC LLA bloque_ejec LLC                              {printf("if (condicion) {bloque_ejec} es Eval\n");}
     |IF PA condicion PC LLA bloque_ejec LLC ELSE LLA bloque_ejec LLC    {printf("if (condicion) {bloque_ejec} else {bloque_ejec} es Eval\n");}
@@ -111,13 +112,12 @@ eval:
 
 condicion:
     comparacion                             {printf("comparacion es Condicion\n");}
-    //|condicion op_logico comparacion        {printf("condicion op_logico comparacion es Condicion\n");}
-    |condicion op_logico condicion        {printf("condicion op_logico comparacion es Condicion\n");}
+    |comparacion op_logico comparacion      {printf("comparacion op_logico comparacion es Condicion\n");}
     ;
 
 comparacion:
     expresion comparador expresion          {printf("expresion comparador expresion es Comparacion\n");}
-    |ESTA_CONT PA STRING COMA STRING PC     {printf("EstaContenido(String, String) es Comparacion\n");}
+    |ESTA_CONT PA STRING COMA STRING PC     {printf("estaContenido(String, String) es Comparacion\n");}
     |NOT comparacion                        {printf("not comparacion es Comparacion\n");}
     ;
 
@@ -170,5 +170,5 @@ int main(int argc, char *argv[]) {
  
 int yyerror() {
     printf("Error sintáctico\n");
-    exit (1);
+    exit(1);
 }
