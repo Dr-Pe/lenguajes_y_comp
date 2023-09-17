@@ -27,7 +27,7 @@ DIGITO      [0-9]
 LETRA		[a-zA-Z]
 INT		    {DIGITO}+
 FLOAT       {DIGITO}+\.{DIGITO}*|{DIGITO}*\.{DIGITO}+
-STRING      \".*\"
+STRING      \"[^"]*\"
 COMEN_A             \*-
 COMEN_CONT          [^*]*
 COMEN_C             -\*

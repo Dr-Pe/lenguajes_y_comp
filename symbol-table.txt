@@ -22,9 +22,28 @@ _                                                 |String |                     
 _0123456789012345678901234567890123456789+String  |String |0123456789012345678901234567890123456789+         |41        
 _Cualquier cáracter: @!#'¿?                     |String |Cualquier cáracter: @!#'¿?                      |28        
 _hola, mundo                                      |String |hola, mundo                                       |11        
-_sdsd                                             |String |sdsd                                              |4         
-a                                                 |       |                                                  |0         
-b                                                 |       |                                                  |0         
-_1                                                |Int    |1                                                 |0         
+_pepe                                             |String |pepe                                              |4         
+_pepito                                           |String |pepito                                            |6         
+_10                                               |Int    |10                                                |0         
+_a                                                |String |a                                                 |1         
+_abc                                              |String |abc                                               |3         
 _5                                                |Int    |5                                                 |0         
 _h                                                |String |h                                                 |1         
+a                                                 |       |                                                  |0         
+b                                                 |       |                                                  |0         
+_hola                                             |String |hola                                              |4         
+_hola                                             |String |hola                                              |4         
+_hola                                             |String |hola                                              |4         
+_hola                                             |String |hola                                              |4         
+_hola                                             |String |hola                                              |4         
+_hola                                             |String |hola                                              |4         
+c                                                 |       |                                                  |0         
+_hola                                             |String |hola                                              |4         
+_hola                                             |String |hola                                              |4         
+_hola                                             |String |hola                                              |4         
+_hola                                             |String |hola                                              |4         
+_cad_any                                          |String |cad_any                                           |7         
+_pepe                                             |String |pepe                                              |4         
+_hola                                             |String |hola                                              |4         
+_hola                                             |String |hola                                              |4         
+_hola                                             |String |hola                                              |4         
