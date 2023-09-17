@@ -2,17 +2,18 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include <math.h>
 
-    #include "tab_simb.c"
+    #include "tab_simb.h"
+    #include "y.tab.h"
     
     FILE* yyin;
-    int yylval;
     char* yyltext;
-    int yyerror(void);
+
+    int fa_validarLongitudID(char*);
     int fa_verificarRangoInt(char*);
     int fa_verificarRangoFloat(char*);
     int fa_verificarRangoStr(char*);
-    Lista lista;
 %}
 
 /* OPCIONES */
@@ -26,23 +27,30 @@ DIGITO      [0-9]
 LETRA		[a-zA-Z]
 INT		    {DIGITO}+
 FLOAT       {DIGITO}+\.{DIGITO}*|{DIGITO}*\.{DIGITO}+
-STRING      \".*\"
-COMENTARIO  \*-.*-\*
-
+STRING      \"[^"]*\"
+COMEN_A             \*-
+COMEN_CONT          [^*]*
+COMEN_C             -\*
+COMENTARIO          {COMEN_A}{COMEN_CONT}{COMEN_C}
+COMENTARIO_ANIDADO  {COMEN_A}({COMEN_CONT}*{COMENTARIO}+{COMEN_CONT}*){COMEN_C}
 /* Palabras reservadas */
 INIT        "init"
 DEC_INT     "Int"
 DEC_FLOAT   "Float"
 DEC_STRING  "String"
 NOT         "not"
-WRITE       "write"
-READ        "read"
 IF          "if"
 ELSE        "else"
 CICLO       "ciclo"
-/* TODO: Agregar guiones? */
-ID          {LETRA}({LETRA}|{DIGITO})*
-
+/* Funciones built-in */
+WRITE       "write"
+READ        "read"
+CONCAT      "concatenarConRecorte"
+TIMER       "timer"
+ESTA_CONT   "estaContenido"
+/* ID, TODO: Agregar guiones? */
+ID          {LETRA}({LETRA}|{DIGITO}|_)*
+/* Caracteres especiales */
 PA          "("
 PC		    ")"
 LLA         "{"
@@ -58,101 +66,104 @@ OP_DIV      "/"
 /* Operadores logicos */
 AND         "&"
 OR          "||"
+/* Comparadores */
 MAYOR       ">"
 MENOR       "<"
+IGUAL       "=="
+DISTINTO    "!="
+MAYOR_IGUAL ">="
+MENOR_IGUAL "<="
 
-/**/
+/* Reglas */
 %% 
+{INIT}          {return INIT;}
+{DEC_INT}       {return DEC_INT;}
+{DEC_FLOAT}     {return DEC_FLOAT;}
+{DEC_STRING}    {return DEC_STRING;}
+{INT}           {fa_verificarRangoInt(yytext); insertarEnLista(&lista, yytext, tINT); return INT;}
+{FLOAT}         {fa_verificarRangoFloat(yytext); insertarEnLista(&lista, yytext, tFLOAT); return FLOAT;}
+{STRING}        {fa_verificarRangoStr(yytext); insertarEnLista(&lista, yytext, tSTRING); return STRING;}
+{COMENTARIO}            {}
+{COMENTARIO_ANIDADO}    {}
+ 
+{NOT}           {return NOT;}
+{IF}            {return IF;}
+{CICLO}         {return CICLO;}
+{ELSE}          {return ELSE;}
 
-{INIT}			{printf("\nInit: %s\n", yytext);}
-{DEC_INT}		{printf("\nDec int: %s\n", yytext);}
-{DEC_FLOAT}		{printf("\nDec Float: %s\n", yytext);}
-{DEC_STRING}	{printf("\nDec String: %s\n", yytext);}
-{INT}			{fa_verificarRangoInt(yytext);printf("\nInteger: %s\n", yytext);}
-{FLOAT}         {fa_verificarRangoFloat(yytext);printf("\nFloat: %s\n", yytext);}
-{STRING}		{fa_verificarRangoStr(yytext);printf("\nString: %s\n", yytext);}
-{COMENTARIO}    {}
+{WRITE}         {return WRITE;}
+{READ}          {return READ;}
+{CONCAT}        {return CONCAT;}
+{TIMER}         {return TIMER;}
+{ESTA_CONT}     {return ESTA_CONT;}
 
-{NOT}			{printf("\nNot: %s\n", yytext);}
-{WRITE}			{printf("\nWrite: %s\n", yytext);}
-{READ}			{printf("\nRead: %s\n", yytext);}
-{IF}			{printf("\nIf: %s\n", yytext);}
-{ELSE}          {printf("\nElse: %s", yytext);}
-{CICLO}			{printf("\nCiclo: %s\n", yytext);}
+{ID}            {fa_validarLongitudID(yytext); insertarEnLista(&lista, yytext, tID); return ID;}
+ 
+{OP_SUM}        {return OP_SUM;}
+{OP_AS}         {return OP_AS;}
+{OP_MUL}        {return OP_MUL;}
+{OP_RES}        {return OP_RES;}
+{OP_DIV}        {return OP_DIV;}
+ 
+{PA}            {return PA;}
+{PC}            {return PC;}
+{LLA}           {return LLA;}
+{LLC}           {return LLC;}
+{COMA}          {return COMA;}
+{DOS_P}         {return DOS_P;}
+ 
+{AND}           {return AND;}
+{OR}            {return OR;}
 
-{ID}			{insertarEnLista(&lista, yytext);}
-
-{OP_SUM}		{printf("\nSuma: %s\n", yytext);}
-{OP_AS}			{printf("\nAsignacion: %s\n", yytext);}
-{OP_MUL}		{printf("\nMultiplicacion: %s\n", yytext);}
-{OP_RES}		{printf("\nResta: %s\n", yytext);}
-{OP_DIV}		{printf("\nDivision: %s\n", yytext);}
-
-{PA}			{printf("\nParAbre: %s\n", yytext);}
-{PC}			{printf("\nParCierra: %s\n", yytext);}
-{LLA}			{printf("\nLlaveAbre: %s\n", yytext);}
-{LLC}			{printf("\nLlaveCierra: %s\n", yytext);}
-{COMA}			{printf("\nComa: %s\n", yytext);}
-{DOS_P}			{printf("\nDos puntos: %s\n", yytext);}
-
-{AND}			{printf("\nAnd: %s\n", yytext);}
-{OR}			{printf("\nOr: %s\n", yytext);}
-{MAYOR}			{printf("\nMayor: %s\n", yytext);}
-{MENOR}			{printf("\nMenor: %s\n", yytext);}
+{MAYOR}         {return MAYOR;}
+{MENOR}         {return MENOR;}
+{IGUAL}         {return IGUAL;}
+{DISTINTO}      {return DISTINTO;}
+{MAYOR_IGUAL}   {return MAYOR_IGUAL;}
+{MENOR_IGUAL}   {return MENOR_IGUAL;}
 
 "\n"      		
 "\t"
 "\n\t"
 " "             		
 "\r\n"
-.               {printf("Error"); exit(1);}
+.               {printf("[%d] Error, \"%s\" carácter inválido\n", yylineno, yytext); exit(1);}
 %%
+
+
+
+int fa_validarLongitudID(char* ptr) {
+    long valor = strlen(ptr);
+
+    if ( valor < 1 || valor > ID_LARGO_MAX) {
+        printf ("[%d] Error, largo de ID fuera de rango\n", yylineno);
+        return 1;
+    }
+}
 
 int fa_verificarRangoInt(char* ptr) {
     long long valor = atoi(ptr);
 
-    if ( valor < 0 || valor > 65536) {
-        printf ("Error, variable Int fuera de rango");
+    if ( valor < 0 || valor > MAX_INT) {
+        printf ("[%d] Error, variable Int fuera de rango\n", yylineno);
         return 1;
     }
-    return 0;
 }
 
 int fa_verificarRangoFloat(char* ptr) {
     double valor = atof(ptr);
 
-    if ( valor < 0 || valor > 3.40e38) {
-        printf ("Error, variable Float fuera de rango");
+    if ( valor < 0 || valor > 2147483648) {
+        printf ("[%d] Error, variable Float fuera de rango\n", yylineno);
         return 1;
     }
-
-    return 0;
 }
 
 int fa_verificarRangoStr(char* ptr) {
     long valor = strlen(ptr);
 
-    if ( valor < 2 || valor > 42) {
-        printf ("Error, variable String fuera de rango");
+    if ( valor < 2 || valor > STRING_LARGO_MAX + 2) {
+        printf ("[%d] Error, variable String fuera de rango\n", yylineno);
         return 1;
     }
-    return 0;
-}
-
-int main(int argc, char* argv[]) {
-    yyin = fopen(argv[1], "rt");
-    if(yyin == NULL) {
-        printf("Error\n");
-        return 1;
-    }
-    else {
-        lista = crearLista();
-        printf("OK\n");
-        yylex();
-        imprimirLista(&lista);
-    }
-
-
-    fclose(yyin);
-    return 0;
 }
