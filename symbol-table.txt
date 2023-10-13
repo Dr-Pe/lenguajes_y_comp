@@ -1,2 +1,5 @@
 entero_min                                        |       |                                                  |0         
+entero_max                                        |       |                                                  |0         
+cadena                                            |       |                                                  |0         
+_dasd                                             |String |dasd                                              |4         
 _32768                                            |Int    |32768                                             |0         

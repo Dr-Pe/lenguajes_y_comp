@@ -1,6 +1,7 @@
 init {
-    entero_min: Int *- Multiples variables -*
-   
+    entero_min, entero_max: Int *- Multiples variables -*
+    
 }
 
 entero_min = 32768
+cadena = "dasd"

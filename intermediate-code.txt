@@ -1,7 +1,13 @@
-		entero_min
+			entero_min
+		,
+			entero_max
 	:
 		int
 Programa
-		
-	:=
-		
+			cadena
+		:=
+			32768
+	Sentencia
+			cadena
+		:=
+			"dasd"

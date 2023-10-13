@@ -6,7 +6,7 @@
 
 typedef struct _NodoA
 {
-    char simbolo[10];
+    char simbolo[50];
     struct _NodoA *der;
     struct _NodoA *izq;
 } NodoA;
