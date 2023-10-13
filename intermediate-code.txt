@@ -1,4 +1,7 @@
-		hijopepe
-	pepe
-union
-	derecha
+		entero_min
+	:
+		int
+Programa
+		
+	:=
+		

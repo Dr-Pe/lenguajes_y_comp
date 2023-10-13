@@ -17,7 +17,6 @@ typedef NodoA *Arbol;
 void crearArbol(Arbol* pa);
 
 NodoA* crearNodo(char* simb, NodoA* hIzq, NodoA* hDer);
-NodoA* crearNodoC(NodoA* padre, NodoA* hIzq, NodoA* hDer);
 NodoA* crearHoja(char* simb);
 void imprimirArbol(Arbol* pa);
 void recorrerArbolInOrden(Arbol* pa, int nivel, FILE* fp);

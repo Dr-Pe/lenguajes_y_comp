@@ -3,5 +3,4 @@ init {
    
 }
 
-entero_min = -32768
-entero_min = -32768
+entero_min = 32768
