@@ -4,7 +4,7 @@ void crearArbol(Arbol* pa){
     *pa = NULL;
 }
 
-NodoA* crearNodo(Arbol* pa, tSimbolo simb, NodoA* hIzq, NodoA* hDer){
+NodoA* crearNodo(char* simb, NodoA* hIzq, NodoA* hDer){
 
     NodoA* nuevo = (NodoA*)malloc(sizeof(NodoA));// crearNodoA(el, tam);
     if(!nuevo)
@@ -12,20 +12,35 @@ NodoA* crearNodo(Arbol* pa, tSimbolo simb, NodoA* hIzq, NodoA* hDer){
 
     nuevo->der = hDer;
     nuevo->izq = hIzq;
-    strcpy(nuevo->simb.simbolo, simb.simbolo);
-    *pa = nuevo;
+    strcpy(nuevo->simbolo, simb);
+ 
 
     return nuevo;
 }
-NodoA* crearHoja(Arbol* pa, tSimbolo simb){
-    return crearNodo(pa, simb, NULL, NULL);
+
+
+NodoA* crearHoja(char* simb){
+    return crearNodo(simb, NULL, NULL);
 }
 
-void recorrerArbolInOrden(Arbol* pa){
+void imprimirArbol(Arbol* pa){
+    FILE* arch = fopen("intermediate-code.txt", "w");
+    if (!arch) {
+        printf("No se pudo abrir el archivo para escritura\n");
+        return ;
+    }
+    recorrerArbolInOrden(pa, 0, arch);
+    fclose(arch);
+}
+
+void recorrerArbolInOrden(Arbol* pa, int nivel, FILE* arch){
     if(!*pa)
         return;
 
-    recorrerArbolInOrden(&(*pa)->izq);
-    printf("%s ", &(*pa)->simb.simbolo);
-    recorrerArbolInOrden(&(*pa)->der);
+    recorrerArbolInOrden(&(*pa)->izq, nivel + 1, arch);
+
+    for(int i = 0; i < nivel; i++)
+        fprintf(arch, "\t");
+    fprintf(arch, "%s\n", &(*pa)->simbolo);
+    recorrerArbolInOrden(&(*pa)->der, nivel + 1, arch);
 }

@@ -2,14 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef struct
-{
-    char simbolo[10];
-} tSimbolo;
+
 
 typedef struct _NodoA
 {
-    tSimbolo simb;
+    char simbolo[10];
     struct _NodoA *der;
     struct _NodoA *izq;
 } NodoA;
@@ -19,7 +16,9 @@ typedef NodoA *Arbol;
 
 void crearArbol(Arbol* pa);
 
-NodoA* crearNodo(Arbol* pa, tSimbolo simb, NodoA* hIzq, NodoA* hDer);
-NodoA* crearHoja(Arbol* pa, tSimbolo simb);
-void recorrerArbolInOrden(Arbol* pa);
+NodoA* crearNodo(char* simb, NodoA* hIzq, NodoA* hDer);
+NodoA* crearNodoC(NodoA* padre, NodoA* hIzq, NodoA* hDer);
+NodoA* crearHoja(char* simb);
+void imprimirArbol(Arbol* pa);
+void recorrerArbolInOrden(Arbol* pa, int nivel, FILE* fp);
 

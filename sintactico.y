@@ -8,7 +8,7 @@
     int yyerror();
     int yylex();
 
-
+    Arbol arbol;
 %}
 
  
@@ -170,7 +170,13 @@ int main(int argc, char *argv[]) {
     }
     fclose(yyin);
 
+    NodoA* der = crearHoja("derecha");
+    NodoA* izq = crearHoja("pepe");
+
+    arbol = crearNodo("union", izq, der);
+
     imprimirLista(&lista);
+    imprimirArbol(&arbol);
     return 0;
 }
  

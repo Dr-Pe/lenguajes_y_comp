@@ -41,17 +41,21 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
         nuevo_simbolo.longitud = longitud;
     }
 
-    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, nombre))
+    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) > 0)
     {
         lista = &(*lista)->sig;
     }
-    if (*lista == NULL)
-    {
-        Nodo *nuevo = (Nodo *)malloc(sizeof(Nodo));
-        memcpy(&(nuevo->simb), &nuevo_simbolo, sizeof(Simbolo));
-        nuevo->sig = NULL;
-        *lista = nuevo;
+
+    if(*lista != NULL && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) == 0){
+        return;
     }
+
+   
+    Nodo *nuevo = (Nodo *)malloc(sizeof(Nodo));
+    memcpy(&(nuevo->simb), &nuevo_simbolo, sizeof(Simbolo));
+    nuevo->sig = *lista;
+    *lista = nuevo;
+    
 }
 
 void imprimirLista(Lista *lista)
