@@ -1,15 +1,23 @@
-				2
-			+
-				q
-		:=
-			d
-	IF
+					3
+				:=
+					test3
+			IF
+					2
+				<
+					b
+		BloEjec
+				1
+			:=
+				test2
+	Ciclo
 			2
 		<
 			b
-MSent
+Meje
 			2
-		+
-			q
-	:=
-		d
+		:=
+			test1
+	IF
+			2
+		<
+			c

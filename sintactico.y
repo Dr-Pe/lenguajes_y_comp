@@ -13,6 +13,8 @@
 
     NodoA* CompiladoPtr, *ProgramaPtr, *DeclaPtr, *BloPtr, *DecPtr, *ListPtr, *SentPtr, *AsigPtr, 
             *CicPtr, *EvalPtr, *Eptr, *StrPtr, *ConPtr, *CmpPtr, *EptrAux, *BloAux, *Tptr, *Fptr, *CmpAux, *StrPtrAux;
+    NodoA* EjePtr, * ConAux;
+    
     char  auxTipo[10], strAux[10], strAux2[10], cmpAux[10], opAux[10];
 
     char* concatenar(char*, char*, int);
@@ -75,9 +77,13 @@ programa_prima:
     programa    {printf("R1: COMPILADO\n"); compilado = ProgramaPtr;}
     ;
 programa: 
-    INIT LLA declaraciones LLC bloque_ejec    {printf("\tR2: init {declaraciones} bloque_ejec es Programa\n"); ProgramaPtr = crearNodo("Programa", DeclaPtr, BloPtr);} 
-    | INIT LLA LLC bloque_ejec                      {printf("\tR3: init {} bloque_ejec es Programa\n"); ProgramaPtr = BloPtr;}
+    INIT LLA declaraciones LLC ejecutable    {printf("\tR2: init {declaraciones} bloque_ejec es Programa\n"); ProgramaPtr = crearNodo("Programa", DeclaPtr, EjePtr);} 
+    | INIT LLA LLC ejecutable                      {printf("\tR3: init {} bloque_ejec es Programa\n"); ProgramaPtr = EjePtr;}
     ;
+
+ejecutable:
+    ejecutable bloque_ejec          {printf("\tRAux: ejecutable bloque_ejec es Ejecutable\n"); EjePtr = crearNodo("Meje", EjePtr, BloPtr);}
+    | bloque_ejec                   {printf("\tRAux: bloque_ejec es Ejecutable\n"); EjePtr = BloPtr;}
 
 declaraciones: 
     dec          {printf("\tR4: dec es Declaraciones\n"); DeclaPtr = DecPtr;}
@@ -101,8 +107,11 @@ tipo:
 
 bloque_ejec: 
     sentencia                          {printf("\tR12: sentencia es Bloque_ejec\n"); BloPtr = SentPtr;}
-    | bloque_ejec sentencia            {printf("\tR13: bloque_ejec sentencia es Bloque_ejec\n"); BloPtr = crearNodo("MSent", BloPtr, SentPtr);}
+    | bloque_ejec{BloAux = BloPtr;} sentencia            {printf("\tR13: bloque_ejec sentencia es Bloque_ejec\n"); BloPtr = crearNodo("BloEjec", BloAux, SentPtr);}
     ;
+
+
+
 sentencia:        
     asignacion                          {printf("\t\tR14: asignacion es Sentencia\n"); SentPtr = AsigPtr;}
     |ciclo                              {printf("\t\tR15: ciclo es Sentencia\n"); SentPtr = CicPtr;}
@@ -114,14 +123,19 @@ sentencia:
     ;
  
 asignacion:
-    ID OP_AS expresion {printf("\t\tR21: ID = Expresion es ASIGNACION\n"); AsigPtr = crearNodo(":=", crearHoja($1),Eptr);}
-    |ID OP_AS string    {printf("\t\tR22: ID = String es ASIGNACION\n"); AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);}
+    ID OP_AS expresion {printf("\t\tR21: ID = Expresion es ASIGNACION\n"); AsigPtr = crearNodo(":=", crearHoja($1), Eptr);}
+    |ID OP_AS string   {if(validarTipo($1, "string")){
+        printf("\nError, distinto tipos en asignacion\n"); 
+        return 1;
+        }
+    } {printf("\t\tR22: ID = String es ASIGNACION\n"); AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);}
     ;
 
 string:
     STRING                                      {printf("\t\t\tR23: string es String\n"); StrPtr = crearHoja($1);}
     |CONCAT PA STRING { strcpy(strAux, $3);} COMA STRING { strcpy(strAux2, $6);} COMA INT PC   {printf("\t\t\tR24: concatenarConRecorte(String, String, Int) es String\n"); StrPtr = crearHoja(concatenar(strAux, strAux2, yylval.int_val));}
     ;   //TODO: revisar concat $6 o $5?
+
 
 ciclo: 
     CICLO PA condicion PC LLA bloque_ejec LLC    {printf("\t\tR25: ciclo(Condicion) {bloque_ejec} es Ciclo\n"); CicPtr = crearNodo("Ciclo", ConPtr, BloPtr);}

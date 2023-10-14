@@ -2,13 +2,21 @@ init {
 
 }
 
-if (a < 3) {
-    b = c + 1
+
+
+
+if (c < 2) {
+    test1 = 2
 }
 
 
-if (b < 2) {
-    d = q + 2
+ciclo (a > b) {
+    test2 = 1
+
+    if (b < 2) {
+        test3 = 3
+        if (b < 2) {
+            write("as")
+        }
+    }
 }
-
-

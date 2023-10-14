@@ -73,4 +73,7 @@ void imprimirLista(Lista *lista)
         
     }
 }
+void validarTipo(void* var1, void* var2){
+    
+}
 
