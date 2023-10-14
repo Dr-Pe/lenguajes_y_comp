@@ -12,7 +12,7 @@
     //int yylval;
 
     NodoA* CompiladoPtr, *ProgramaPtr, *DeclaPtr, *BloPtr, *DecPtr, *ListPtr, *SentPtr, *AsigPtr, 
-            *CicPtr, *EvalPtr, *Eptr, *StrPtr, *ConPtr, *CmpPtr, *EptrAux, *BloAux, *Tptr, *Fptr;
+            *CicPtr, *EvalPtr, *Eptr, *StrPtr, *ConPtr, *CmpPtr, *EptrAux, *BloAux, *Tptr, *Fptr, *CmpAux, *StrPtrAux;
     char  auxTipo[10], strAux[10], strAux2[10], cmpAux[10], opAux[10];
 
     char* concatenar(char*, char*, int);
@@ -90,10 +90,11 @@ dec:
 
 listado_ids:
     ID                      {printf("\t\tid es Listado_ids\n"); ListPtr = crearHoja($1);}
-    |listado_ids COMA ID    {printf("\t\tlistado_ids , id es Listado_ids\n"); ListPtr = crearNodo(",", ListPtr, crearHoja(yylval.string_val));}
+    |listado_ids COMA ID    {printf("\t\tlistado_ids , id es Listado_ids\n"); ListPtr = crearNodo(",", ListPtr, crearHoja($3));}
     ;
 
-tipo: DEC_INT       {printf("\t\tdec_int es Tipo\n"); strcpy(auxTipo, "int"); }
+tipo: 
+    DEC_INT       {printf("\t\tdec_int es Tipo\n"); strcpy(auxTipo, "int"); }
     | DEC_FLOAT     {printf("\t\tdec_float es Tipo\n"); strcpy(auxTipo, "float");}
     | DEC_STRING    {printf("\t\tdec_string es Tipo\n"); strcpy(auxTipo, "string");}
     ;
@@ -107,9 +108,9 @@ sentencia:
     |ciclo                              {printf("\t\tciclo es Sentencia\n"); SentPtr = CicPtr;}
     |eval                               {printf("\t\teval es Sentencia\n"); SentPtr = EvalPtr;}
     |TIMER PA INT COMA bloque_ejec PC   {printf("\t\ttimer(int,bloque_ejec) es Sentencia\n"); SentPtr = crearNodo("Ciclo", crearNodo("<", crearHoja("0"), crearHoja(itoa(yylval.int_val, strAux , 10))), BloPtr);}
-    |WRITE PA ID PC                     {printf("\t\twrite(id) es Sentencia\n"); SentPtr = crearNodo("Write", crearHoja(yylval.string_val), crearHoja("DirMem"));}
-    |WRITE PA STRING PC                 {printf("\t\twrite(string) es Sentencia\n"); SentPtr = crearNodo("Write", crearHoja(yylval.string_val), crearHoja("DirMem"));}
-    |READ PA ID PC                      {printf("\t\tread(id) es Sentencia\n"); SentPtr = crearNodo(":=", crearHoja(yylval.string_val), crearHoja("READ"));}
+    |WRITE PA ID PC                     {printf("\t\twrite(id) es Sentencia\n"); SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem"));}
+    |WRITE PA STRING PC                 {printf("\t\twrite(string) es Sentencia\n"); SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem"));}
+    |READ PA ID PC                      {printf("\t\tread(id) es Sentencia\n"); SentPtr = crearNodo(":=", crearHoja($3), crearHoja("READ"));}
     ;
  
 asignacion:
@@ -118,29 +119,28 @@ asignacion:
     ;
 
 string:
-    STRING                                      {printf("\t\t\tstring es String\n"); StrPtr = crearHoja(yylval.string_val);}
-    |CONCAT PA STRING { strcpy(strAux, yylval.string_val);} COMA STRING { strcpy(strAux2, yylval.string_val);} COMA INT PC   {printf("\t\t\ttconcatenarConRecorte(String, String, Int) es String\n"); StrPtr = crearHoja(concatenar(strAux, strAux2, yylval.int_val));}
-    ;
+    STRING                                      {printf("\t\t\tstring es String\n"); StrPtr = crearHoja($1);}
+    |CONCAT PA STRING { strcpy(strAux, $3);} COMA STRING { strcpy(strAux2, $6);} COMA INT PC   {printf("\t\t\ttconcatenarConRecorte(String, String, Int) es String\n"); StrPtr = crearHoja(concatenar(strAux, strAux2, yylval.int_val));}
+    ;   //TODO: revisar concat $6 o $5?
 
 ciclo: CICLO PA condicion PC LLA bloque_ejec LLC    {printf("\t\tciclo(Condicion) {bloque_ejec} es Ciclo\n"); CicPtr = crearNodo("Ciclo", ConPtr, BloPtr);}
     ;
 
 eval: 
     IF PA condicion PC LLA bloque_ejec LLC                              {printf("\t\tR129:if (condicion) {bloque_ejec} es Eval\n"); EvalPtr = crearNodo("IF", ConPtr, BloPtr);}
-    |IF PA condicion PC LLA bloque_ejec cuerpo    {printf("\t\tif (condicion) {bloque_ejec} cuerpo es Eval\n"); EvalPtr = crearNodo("IF", ConPtr, crearNodo("Cuerpo", BloAux, BloPtr));}
+    |IF PA condicion PC LLA bloque_ejec LLC { BloAux = BloPtr ;} ELSE LLA bloque_ejec LLC    { printf("\t\tR130:if (condicion) {bloque_ejec} else {bloque_ejec} es Eval\n"); EvalPtr = crearNodo("IF", ConPtr, crearNodo("Cuerpo", BloAux, BloPtr));}
     ;
-cuerpo:
-    ELSE LLA bloque_ejec LLC {printf("\t\telse {bloque_ejec} es Cuerpo"); BloAux= BloPtr;}
-    ;
+
 
 condicion:
     comparacion                             {printf("\t\t\tcomparacion es Condicion\n"); ConPtr = CmpPtr;}
-    |comparacion {strcpy(cmpAux, CmpPtr->simbolo);} op_logico comparacion      {printf("\t\t\tcomparacion op_logico comparacion es Condicion\n"); ConPtr = crearNodo(opAux, crearHoja(cmpAux), CmpPtr);}
+   // |comparacion {strcpy(cmpAux, CmpPtr->simbolo);} op_logico comparacion      {printf("\t\t\tcomparacion op_logico comparacion es Condicion\n"); ConPtr = crearNodo(opAux, crearHoja(cmpAux), CmpPtr);}
+    |comparacion {CmpAux = CmpPtr;} op_logico comparacion      {printf("\t\t\tcomparacion op_logico comparacion es Condicion\n"); ConPtr = crearNodo(opAux, CmpAux, CmpPtr);}
     ;
 
 comparacion:
-    expresion {EptrAux = Eptr;} comparador expresion          {printf("\t\t\t\texpresion comparador expresion es Comparacion\n"); CmpPtr = crearNodo(cmpAux, EptrAux, Eptr);}
-    |ESTA_CONT PA STRING {strcpy(strAux, yylval.string_val);} COMA STRING PC     {printf("\t\t\t\testaContenido(String, String) es Comparacion\n"); CmpPtr = crearHoja(estaContenido(strAux, yylval.string_val)? "true" : "false" );}
+    expresion {EptrAux = Eptr;} comparador expresion          {printf("\t\t\t\texpresion comparador expresion es Comparacion \n"); CmpPtr = crearNodo(cmpAux, EptrAux, Eptr);}
+    |ESTA_CONT PA STRING {strcpy(strAux, $3);} COMA STRING PC     {printf("\t\t\t\testaContenido(String, String) es Comparacion\n"); CmpPtr = crearHoja(estaContenido(strAux, yylval.string_val)? "true" : "false" );}
     |NOT comparacion                        {printf("\t\t\t\tnot comparacion es Comparacion\n"); CmpPtr = crearNodo("&", crearHoja("false"), CmpPtr);}
     |NOT expresion                          {printf("\t\t\t\tnot expresion es Comparacion\n"); CmpPtr = crearNodo("&", crearHoja("false"), Eptr);}
     ;
@@ -173,9 +173,9 @@ termino:
     ;
 
 factor:
-    ID {printf("\t\t\t\t    ID es Factor \n"); Fptr= crearHoja(yylval.string_val);}
-    | INT {printf("\t\t\t\t    INT es Factor\n"); Fptr= crearHoja(itoa(yylval.int_val, strAux, 10));  }
-    | FLOAT {printf("\t\t\t\t    FLOAT es Factor\n"); sprintf(strAux, "%.2f",yylval.float_val); Fptr= crearHoja(strAux);}
+    ID {printf("\t\t\t\t    ID es Factor \n"); Fptr= crearHoja($1);}
+    | INT {printf("\t\t\t\t    INT es Factor\n"); Fptr= crearHoja(itoa($1, strAux, 10));  }
+    | FLOAT {printf("\t\t\t\t    FLOAT es Factor\n"); sprintf(strAux, "%.2f", $1); Fptr= crearHoja(strAux);}
     | PA expresion PC {printf("\t\t\t\t    Expresion entre parentesis es Factor\n"); Fptr = Eptr;}
     ;
 %%

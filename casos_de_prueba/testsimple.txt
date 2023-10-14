@@ -1,7 +1,11 @@
 init {
-    entero_min, entero_max: Int *- Multiples variables -*
+    pep, entero_max: Int *- Multiples variables -*
     
 }
 
-entero_min = 32768
-cadena = "dasd"
+ciclo (a > b) {
+    write("hola")
+}
+ciclo (e > r) {
+    write("tete")
+}

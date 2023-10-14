@@ -1,13 +1,17 @@
-			entero_min
+			pep
 		,
 			entero_max
 	:
 		int
 Programa
-			cadena
-		:=
-			32768
+			"tete"
+		Write
+			DirMem
 	Sentencia
-			cadena
-		:=
-			"dasd"
+				e
+			>
+				r
+		Ciclo
+				"tete"
+			Write
+				DirMem
