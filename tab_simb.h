@@ -3,6 +3,8 @@
 #include <string.h>
 #include "constantes.h"
 
+
+
 enum tiposDato {
     tID,
     tINT,
@@ -26,7 +28,13 @@ typedef struct _Nodo
 
 typedef Nodo *Lista;
 
-Lista crearLista();
+Lista crearLista(Lista* pl);
 void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato);
 void imprimirLista(Lista *lista);
+
 Lista lista;
+
+int idDeclarado(Lista* lista, char* var1);
+void asignarTipoDato(Lista* lista, char* id, char* tipoDato);
+void vaciarLista(Lista* pl);
+void asignarTipo(Lista* listaIds, char* auxTipo);

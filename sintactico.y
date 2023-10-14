@@ -19,6 +19,8 @@
 
     char* concatenar(char*, char*, int);
     int estaContenido(char*, char*);
+    Lista listaIds;
+   
 %}
 
  
@@ -77,13 +79,9 @@ programa_prima:
     programa    {printf("R1: COMPILADO\n"); compilado = ProgramaPtr;}
     ;
 programa: 
-    INIT LLA declaraciones LLC ejecutable    {printf("\tR2: init {declaraciones} bloque_ejec es Programa\n"); ProgramaPtr = crearNodo("Programa", DeclaPtr, EjePtr);} 
-    | INIT LLA LLC ejecutable                      {printf("\tR3: init {} bloque_ejec es Programa\n"); ProgramaPtr = EjePtr;}
+    INIT LLA declaraciones LLC bloque_ejec    {printf("\tR2: init {declaraciones} bloque_ejec es Programa\n"); ProgramaPtr = crearNodo("Programa", DeclaPtr, BloPtr);} 
+    | INIT LLA LLC bloque_ejec                      {printf("\tR3: init {} bloque_ejec es Programa\n"); ProgramaPtr = BloPtr;}
     ;
-
-ejecutable:
-    ejecutable bloque_ejec          {printf("\tRAux: ejecutable bloque_ejec es Ejecutable\n"); EjePtr = crearNodo("Meje", EjePtr, BloPtr);}
-    | bloque_ejec                   {printf("\tRAux: bloque_ejec es Ejecutable\n"); EjePtr = BloPtr;}
 
 declaraciones: 
     dec          {printf("\tR4: dec es Declaraciones\n"); DeclaPtr = DecPtr;}
@@ -91,12 +89,12 @@ declaraciones:
     ;
 
 dec: 
-    listado_ids DOS_P tipo {printf("\t\tR6: listado_ids : tipo es Dec\n"); DecPtr = crearNodo(":", ListPtr, crearHoja(auxTipo));}
+    listado_ids DOS_P tipo {printf("\t\tR6: listado_ids : tipo es Dec\n"); asignarTipo(&listaIds, auxTipo);DecPtr = crearNodo(":", ListPtr, crearHoja(auxTipo));}
     ;
 
 listado_ids:
-    ID                      {printf("\t\tR7: id es Listado_ids\n"); ListPtr = crearHoja($1);}
-    |listado_ids COMA ID    {printf("\t\tR8: listado_ids , id es Listado_ids\n"); ListPtr = crearNodo(",", ListPtr, crearHoja($3));}
+    ID                      {printf("\t\tR7: id es Listado_ids\n");vaciarLista(&listaIds); insertarEnLista(&listaIds, $1, tID);ListPtr = crearHoja($1);}
+    |listado_ids COMA ID    {printf("\t\tR8: listado_ids , id es Listado_ids\n"); insertarEnLista(&listaIds, $3, tID); ListPtr = crearNodo(",", ListPtr, crearHoja($3));}
     ;
 
 tipo: 
@@ -124,11 +122,7 @@ sentencia:
  
 asignacion:
     ID OP_AS expresion {printf("\t\tR21: ID = Expresion es ASIGNACION\n"); AsigPtr = crearNodo(":=", crearHoja($1), Eptr);}
-    |ID OP_AS string   {if(validarTipo($1, "string")){
-        printf("\nError, distinto tipos en asignacion\n"); 
-        return 1;
-        }
-    } {printf("\t\tR22: ID = String es ASIGNACION\n"); AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);}
+    |ID OP_AS string   {printf("\t\tR22: ID = String es ASIGNACION\n"); AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);}
     ;
 
 string:
@@ -188,7 +182,12 @@ termino:
     ;
 
 factor:
-    ID {printf("\t\t\t\t    R50: ID es Factor \n"); Fptr= crearHoja($1);}
+    ID  {printf("\t\t\t\t    R50: ID es Factor \n"); 
+        if(!idDeclarado(&lista, $1)){
+            printf("\nError, id: *%s* no fue declarado", $1);
+            return 1;
+        }
+         ;Fptr= crearHoja($1);}
     | INT {printf("\t\t\t\t    R51: INT es Factor\n"); Fptr= crearHoja(itoa($1, strAux, 10));  }
     | FLOAT {printf("\t\t\t\t    R52: FLOAT es Factor\n"); sprintf(strAux, "%.2f", $1); Fptr= crearHoja(strAux);}
     | PA expresion PC {printf("\t\t\t\t    R53: Expresion entre parentesis es Factor\n"); Fptr = Eptr;}
@@ -197,6 +196,8 @@ factor:
  
 int main(int argc, char *argv[]) {
     
+    crearLista(&lista);
+    crearLista(&listaIds);
     if((yyin = fopen(argv[1], "rt"))==NULL) {
         printf("\nNo se puede abrir el archivo de prueba: %s\n", argv[1]);
     }

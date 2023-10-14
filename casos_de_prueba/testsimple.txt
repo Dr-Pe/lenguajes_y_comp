@@ -1,8 +1,6 @@
 init {
-
+  c : Int
 }
-
-
 
 
 if (c < 2) {
@@ -13,10 +11,9 @@ if (c < 2) {
 ciclo (a > b) {
     test2 = 1
 
-    if (b < 2) {
-        test3 = 3
-        if (b < 2) {
-            write("as")
-        }
-    }
+
+}
+
+if (a == b){
+    test3 = 3
 }

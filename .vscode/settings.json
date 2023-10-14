@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "arbol.h": "c"
+        "arbol.h": "c",
+        "tab_simb.h": "c"
     }
 }

@@ -6,4 +6,6 @@
 #define MIN_INT -32768
 #define MAX_FLOAT 2147483648
 #define MIN_FLOAT -2147483648
+#define TRUE 1
+#define FALSE 0
 

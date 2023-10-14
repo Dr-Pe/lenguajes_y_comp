@@ -1,8 +1,9 @@
 #include "tab_simb.h"
 
-Lista crearLista()
+Lista crearLista(Lista* pl)
 {
-    return NULL;
+    *pl = NULL;
+    return *pl;
 }
 
 void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
@@ -73,7 +74,53 @@ void imprimirLista(Lista *lista)
         
     }
 }
-void validarTipo(void* var1, void* var2){
+
+int idDeclarado(Lista* lista, char* id){
+
+    printf("\n*%s*\n",id);
     
+    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, id) > 0)
+    {
+        lista = &(*lista)->sig;
+    }
+    printf("\n*%s*\n",(*lista)->simb.tipo_dato);
+
+    if(*lista != NULL && strcmp((*lista)->simb.nombre, id) == 0 && !strlen((*lista)->simb.tipo_dato)){
+        return FALSE;
+    }
+
+    return TRUE;
 }
 
+void asignarTipoDato(Lista* lista, char* id, char* tipoDato){
+
+    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, id) > 0)
+    {
+        lista = &(*lista)->sig;
+    }
+
+
+    if(*lista != NULL && strcmp((*lista)->simb.nombre, id) == 0 ){
+        strcpy((*lista)->simb.tipo_dato, tipoDato);
+    }
+}
+
+void vaciarLista(Lista* pl)
+{
+    Nodo* aux;
+ 
+    while(*pl)
+    {
+        aux = *pl;
+        pl = &(*pl)->sig;
+        free(aux);
+    }
+}
+
+void asignarTipo(Lista* lista, char* auxTipo){
+    while ((*lista != NULL))
+    {
+        strcpy((*lista)->simb.tipo_dato, auxTipo);
+        lista = &(*lista)->sig;
+    }
+}

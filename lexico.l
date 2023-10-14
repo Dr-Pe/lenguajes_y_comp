@@ -14,6 +14,7 @@
     int fa_verificarRangoInt(char*);
     int fa_verificarRangoFloat(char*);
     int fa_verificarRangoStr(char*);
+
 %}
 
 /* OPCIONES */
