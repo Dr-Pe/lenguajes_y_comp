@@ -1,11 +1,14 @@
 init {
-    pep, entero_max: Int *- Multiples variables -*
-    
+
 }
 
-ciclo (a > b) {
-    write("hola")
+if (a < 3) {
+    b = c + 1
 }
-ciclo (e > r) {
-    write("tete")
+
+
+if (b < 2) {
+    d = q + 2
 }
+
+

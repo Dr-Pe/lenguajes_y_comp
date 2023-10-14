@@ -1,17 +1,15 @@
-			pep
-		,
-			entero_max
-	:
-		int
-Programa
-			"tete"
-		Write
-			DirMem
-	Sentencia
-				e
-			>
-				r
-		Ciclo
-				"tete"
-			Write
-				DirMem
+				2
+			+
+				q
+		:=
+			d
+	IF
+			2
+		<
+			b
+MSent
+			2
+		+
+			q
+	:=
+		d
