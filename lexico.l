@@ -81,9 +81,9 @@ MENOR_IGUAL "<="
 {DEC_INT}       {return DEC_INT;}
 {DEC_FLOAT}     {return DEC_FLOAT;}
 {DEC_STRING}    {return DEC_STRING;}
-{INT}           {fa_verificarRangoInt(yytext); insertarEnLista(&lista, yytext, tINT); yylval.int_val = atoi(yytext); return INT;}
-{FLOAT}         {fa_verificarRangoFloat(yytext); insertarEnLista(&lista, yytext, tFLOAT); yylval.float_val = atof(yytext); return FLOAT;}
-{STRING}        {fa_verificarRangoStr(yytext); insertarEnLista(&lista, yytext, tSTRING); strcpy(yylval.string_val, yytext); return STRING;}
+{INT}           {fa_verificarRangoInt(yytext); insertarEnLista(&listaSimbolos, yytext, tINT); yylval.int_val = atoi(yytext); return INT;}
+{FLOAT}         {fa_verificarRangoFloat(yytext); insertarEnLista(&listaSimbolos, yytext, tFLOAT); yylval.float_val = atof(yytext); return FLOAT;}
+{STRING}        {fa_verificarRangoStr(yytext); insertarEnLista(&listaSimbolos, yytext, tSTRING); strcpy(yylval.string_val, yytext); return STRING;}
 {COMENTARIO}            {}
 {COMENTARIO_ANIDADO}    {}
  
@@ -98,7 +98,7 @@ MENOR_IGUAL "<="
 {TIMER}         {return TIMER;}
 {ESTA_CONT}     {return ESTA_CONT;}
 
-{ID}            {fa_validarLongitudID(yytext); insertarEnLista(&lista, yytext, tID); strcpy(yylval.string_val, yytext); return ID;}
+{ID}            {fa_validarLongitudID(yytext); insertarEnLista(&listaSimbolos, yytext, tID); strcpy(yylval.string_val, yytext); return ID;}
  
 {OP_SUM}        {return OP_SUM;}
 {OP_AS}         {return OP_AS;}

@@ -89,7 +89,10 @@ declaraciones:
     ;
 
 dec: 
-    listado_ids DOS_P tipo {printf("\t\tR6: listado_ids : tipo es Dec\n"); asignarTipo(&listaIds, auxTipo);DecPtr = crearNodo(":", ListPtr, crearHoja(auxTipo));}
+    listado_ids DOS_P tipo {printf("\t\tR6: listado_ids : tipo es Dec\n");
+        asignarTipo(&listaIds, auxTipo);
+        fusionarLista(&listaSimbolos, &listaIds);
+        DecPtr = crearNodo(":", ListPtr, crearHoja(auxTipo));}
     ;
 
 listado_ids:
@@ -114,15 +117,38 @@ sentencia:
     asignacion                          {printf("\t\tR14: asignacion es Sentencia\n"); SentPtr = AsigPtr;}
     |ciclo                              {printf("\t\tR15: ciclo es Sentencia\n"); SentPtr = CicPtr;}
     |eval                               {printf("\t\tR16: eval es Sentencia\n"); SentPtr = EvalPtr;}
-    |TIMER PA INT COMA bloque_ejec PC   {printf("\t\tR17: timer(int,bloque_ejec) es Sentencia\n"); SentPtr = crearNodo("Ciclo", crearNodo("<", crearHoja("0"), crearHoja(itoa(yylval.int_val, strAux , 10))), BloPtr);}
-    |WRITE PA ID PC                     {printf("\t\tR18: write(id) es Sentencia\n"); SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem"));}
+    |TIMER PA INT COMA bloque_ejec PC   {printf("\t\tR17: timer(int,bloque_ejec) es Sentencia\n"); 
+    SentPtr = crearNodo("Ciclo", crearNodo("<", crearHoja("_i"), crearHoja(itoa(yylval.int_val, strAux , 10))), crearNodo("BloEjec", BloPtr, crearNodo(":=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))));}
+    |WRITE PA ID PC                     {printf("\t\tR18: write(id) es Sentencia\n"); 
+    if(!idDeclarado(&listaSimbolos, $3)){
+        printf("\nError, id: *%s* no fue declarado\n", $3);
+        return 1;
+    };
+    
+    SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem"));}
     |WRITE PA STRING PC                 {printf("\t\tR19: write(string) es Sentencia\n"); SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem"));}
-    |READ PA ID PC                      {printf("\t\tR20: read(id) es Sentencia\n"); SentPtr = crearNodo(":=", crearHoja($3), crearHoja("READ"));}
+    |READ PA ID PC                      {printf("\t\tR20: read(id) es Sentencia\n"); 
+    if(!idDeclarado(&listaSimbolos, $3)){
+        printf("\nError, id: *%s* no fue declarado\n", $3);
+        return 1;
+    };
+    
+    SentPtr = crearNodo(":=", crearHoja($3), crearHoja("READ"));}
     ;
  
 asignacion:
-    ID OP_AS expresion {printf("\t\tR21: ID = Expresion es ASIGNACION\n"); AsigPtr = crearNodo(":=", crearHoja($1), Eptr);}
-    |ID OP_AS string   {printf("\t\tR22: ID = String es ASIGNACION\n"); AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);}
+    ID OP_AS expresion {printf("\t\tR21: ID = Expresion es ASIGNACION\n");
+    if(!idDeclarado(&listaSimbolos, $1)){
+        printf("\nError, id: *%s* no fue declarado\n", $1);
+        return 1;
+    };
+    AsigPtr = crearNodo(":=", crearHoja($1), Eptr);}
+    |ID OP_AS string   {printf("\t\tR22: ID = String es ASIGNACION\n"); 
+    if(!idDeclarado(&listaSimbolos, $1)){
+        printf("\nError, id: *%s* no fue declarado\n", $1);
+        return 1;
+    };
+    AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);}
     ;
 
 string:
@@ -183,8 +209,8 @@ termino:
 
 factor:
     ID  {printf("\t\t\t\t    R50: ID es Factor \n"); 
-        if(!idDeclarado(&lista, $1)){
-            printf("\nError, id: *%s* no fue declarado", $1);
+        if(!idDeclarado(&listaSimbolos, $1)){
+            printf("\nError, id: *%s* no fue declarado\n", $1);
             return 1;
         }
          ;Fptr= crearHoja($1);}
@@ -196,7 +222,7 @@ factor:
  
 int main(int argc, char *argv[]) {
     
-    crearLista(&lista);
+    crearLista(&listaSimbolos);
     crearLista(&listaIds);
     if((yyin = fopen(argv[1], "rt"))==NULL) {
         printf("\nNo se puede abrir el archivo de prueba: %s\n", argv[1]);
@@ -208,13 +234,12 @@ int main(int argc, char *argv[]) {
 
    
 
-    imprimirLista(&lista);
+    imprimirLista(&listaSimbolos);
     imprimirArbol(&compilado);
     return 0;
 }
  
 int yyerror() {
-   
     printf("Error sintáctico\n");
     exit(1);
 }
@@ -223,6 +248,5 @@ char* concatenar(char* str1, char* str2, int n){
     return strncat(str1,str2,n);
 }
 int estaContenido(char* str1, char* str2){
-
     return strstr(str1,str2) != NULL;
 }

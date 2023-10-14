@@ -1,0 +1,17 @@
+					1
+				+
+					_i
+			:=
+				_i
+		BloEjec
+				2
+			:=
+				a
+	Ciclo
+			2
+		<
+			_i
+Programa
+		int
+	:
+		a

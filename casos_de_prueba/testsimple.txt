@@ -1,19 +1,5 @@
 init {
-  c : Int
+    a : Int
 }
 
-
-if (c < 2) {
-    test1 = 2
-}
-
-
-ciclo (a > b) {
-    test2 = 1
-
-
-}
-
-if (a == b){
-    test3 = 3
-}
+timer(2, a=2)
