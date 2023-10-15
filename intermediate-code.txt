@@ -1,17 +1,41 @@
-					1
-				+
-					_i
+			"pepe""pepito"
+		:=
+			cad_any
+	BloEjec
+				READ
 			:=
-				_i
+				cad_any
 		BloEjec
-				2
-			:=
-				a
-	Ciclo
-			2
-		<
-			_i
+					DirMem
+				Write
+					"hola, mundo"
+			BloEjec
+					DirMem
+				Write
+					cad_any
 Programa
 		int
 	:
-		a
+			pepe4
+		,
+				pepe3
+			,
+					pepe2
+				,
+						pepe1
+					,
+							a4
+						,
+								a3
+							,
+									a2
+								,
+										cad_any
+									,
+											c
+										,
+												b
+											,
+													a
+												,
+													a1

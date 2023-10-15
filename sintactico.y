@@ -2,6 +2,7 @@
     #include "tab_simb.h"
     #include "y.tab.h"
     #include "arbol.h"
+    #include "pila.h"
     int yystopparser=0;
     FILE* yyin;
 
@@ -18,9 +19,11 @@
     char  auxTipo[10], strAux[10], strAux2[10], cmpAux[10], opAux[10];
 
     char* concatenar(char*, char*, int);
+    int intAux;
     int estaContenido(char*, char*);
     Lista listaIds;
-   
+    Pila anidaciones;
+    Pila condAnidados;
 %}
 
  
@@ -107,8 +110,16 @@ tipo:
     ;
 
 bloque_ejec: 
-    sentencia                          {printf("\tR12: sentencia es Bloque_ejec\n"); BloPtr = SentPtr;}
-    | bloque_ejec{BloAux = BloPtr;} sentencia            {printf("\tR13: bloque_ejec sentencia es Bloque_ejec\n"); BloPtr = crearNodo("BloEjec", BloAux, SentPtr);}
+    sentencia{
+        printf("\tR12: sentencia es Bloque_ejec\n"); BloPtr = SentPtr;
+        
+        }
+    | bloque_ejec{apilar(&anidaciones, &BloPtr, sizeof(BloPtr));} sentencia            
+        {printf("\tR13: bloque_ejec sentencia es Bloque_ejec\n"); 
+
+        desapilar(&anidaciones, &BloAux, sizeof(BloAux));
+  
+        BloPtr = crearNodo("BloEjec", BloAux, SentPtr);}
     ;
 
 
@@ -117,8 +128,8 @@ sentencia:
     asignacion                          {printf("\t\tR14: asignacion es Sentencia\n"); SentPtr = AsigPtr;}
     |ciclo                              {printf("\t\tR15: ciclo es Sentencia\n"); SentPtr = CicPtr;}
     |eval                               {printf("\t\tR16: eval es Sentencia\n"); SentPtr = EvalPtr;}
-    |TIMER PA INT COMA bloque_ejec PC   {printf("\t\tR17: timer(int,bloque_ejec) es Sentencia\n"); 
-    SentPtr = crearNodo("Ciclo", crearNodo("<", crearHoja("_i"), crearHoja(itoa(yylval.int_val, strAux , 10))), crearNodo("BloEjec", BloPtr, crearNodo(":=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))));}
+    |TIMER PA INT {intAux = yylval.int_val;} COMA bloque_ejec PC   {printf("\t\tR17: timer(int,bloque_ejec) es Sentencia\n"); 
+    SentPtr = crearNodo("Ciclo", crearNodo("<", crearHoja("_i"), crearHoja(itoa(intAux, strAux , 10))), crearNodo("BloEjec", BloPtr, crearNodo(":=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))));}
     |WRITE PA ID PC                     {printf("\t\tR18: write(id) es Sentencia\n"); 
     if(!idDeclarado(&listaSimbolos, $3)){
         printf("\nError, id: *%s* no fue declarado\n", $3);
@@ -162,15 +173,27 @@ ciclo:
     ;
 
 eval: 
-    IF PA condicion PC LLA bloque_ejec LLC                              {printf("\t\tR26: if (condicion) {bloque_ejec} es Eval\n"); EvalPtr = crearNodo("IF", ConPtr, BloPtr);}
-    |IF PA condicion PC LLA bloque_ejec LLC { BloAux = BloPtr ;} ELSE LLA bloque_ejec LLC    { printf("\t\tR27: if (condicion) {bloque_ejec} else {bloque_ejec} es Eval\n"); EvalPtr = crearNodo("IF", ConPtr, crearNodo("Cuerpo", BloAux, BloPtr));}
+    IF PA condicion PC LLA bloque_ejec LLC {
+        printf("\t\tR26: if (condicion) {bloque_ejec} es Eval\n"); 
+        desapilar(&condAnidados, &ConAux, sizeof(ConAux));
+        EvalPtr = crearNodo("IF", ConAux, BloPtr);}
+    |IF PA condicion PC LLA bloque_ejec LLC{ apilar(&anidaciones, &BloPtr, sizeof(BloPtr));} ELSE LLA bloque_ejec LLC    { 
+        printf("\t\tR27: if (condicion) {bloque_ejec} else {bloque_ejec} es Eval\n"); 
+        desapilar(&condAnidados, &ConAux, sizeof(ConAux));
+        desapilar(&anidaciones, &BloAux, sizeof(BloAux));
+        EvalPtr = crearNodo("IF", ConAux, crearNodo("Cuerpo", BloAux, BloPtr));}
     ;
 
 
 condicion:
-    comparacion                             {printf("\t\t\tR28: comparacion es Condicion\n"); ConPtr = CmpPtr;}
+    comparacion {
+        printf("\t\t\tR28: comparacion es Condicion\n"); ConPtr = CmpPtr;
+        apilar(&condAnidados, &ConPtr, sizeof(ConPtr));}
    // |comparacion {strcpy(cmpAux, CmpPtr->simbolo);} op_logico comparacion      {printf("\t\t\tcomparacion op_logico comparacion es Condicion\n"); ConPtr = crearNodo(opAux, crearHoja(cmpAux), CmpPtr);}
-    |comparacion {CmpAux = CmpPtr;} op_logico comparacion      {printf("\t\t\tR29: comparacion op_logico comparacion es Condicion\n"); ConPtr = crearNodo(opAux, CmpAux, CmpPtr);}
+    |comparacion {CmpAux = CmpPtr; } op_logico comparacion {
+        printf("\t\t\tR29: comparacion op_logico comparacion es Condicion\n"); 
+        ConPtr = crearNodo(opAux, CmpAux, CmpPtr);
+        apilar(&condAnidados, &ConPtr, sizeof(ConPtr));}
     ;
 
 comparacion:
@@ -224,6 +247,9 @@ int main(int argc, char *argv[]) {
     
     crearLista(&listaSimbolos);
     crearLista(&listaIds);
+    crearPila(&anidaciones);
+    crearPila(&condAnidados);
+
     if((yyin = fopen(argv[1], "rt"))==NULL) {
         printf("\nNo se puede abrir el archivo de prueba: %s\n", argv[1]);
     }

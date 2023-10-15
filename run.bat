@@ -1,7 +1,7 @@
 flex lexico.l
 bison -dyv sintactico.y
 
-gcc.exe lex.yy.c y.tab.c tab_simb.c arbol.c -o lyc-compiler-1_0_0.exe
+gcc.exe lex.yy.c y.tab.c tab_simb.c arbol.c pila.c -o lyc-compiler-1_0_0.exe
 
 lyc-compiler-1_0_0.exe casos_de_prueba/testsimple.txt
 

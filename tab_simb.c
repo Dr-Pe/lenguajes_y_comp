@@ -55,7 +55,7 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
         return;
     }
 
-    Nodo *nuevo = (Nodo *)malloc(sizeof(Nodo));
+    NodoL *nuevo = (NodoL *)malloc(sizeof(NodoL));
     memcpy(&(nuevo->simb), &nuevo_simbolo, sizeof(Simbolo));
     nuevo->sig = *lista;
     *lista = nuevo;
@@ -109,7 +109,7 @@ void asignarTipoDato(Lista *lista, char *id, char *tipoDato)
 
 void vaciarLista(Lista *pl)
 {
-    Nodo *aux;
+    NodoL *aux;
 
     while (*pl)
     {

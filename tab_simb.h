@@ -19,13 +19,13 @@ typedef struct
     int longitud;
 } Simbolo;
 
-typedef struct _Nodo
+typedef struct _NodoL
 {
     Simbolo simb;
-    struct _Nodo *sig;
-} Nodo;
+    struct _NodoL *sig;
+} NodoL;
 
-typedef Nodo *Lista;
+typedef NodoL *Lista;
 
 Lista crearLista(Lista *pl);
 void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato);

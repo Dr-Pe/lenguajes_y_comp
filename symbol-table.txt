@@ -1,2 +1,16 @@
+pepe4                                             |int    |                                                  |0         
+pepe3                                             |int    |                                                  |0         
+pepe2                                             |int    |                                                  |0         
+pepe1                                             |int    |                                                  |0         
+cad_any                                           |int    |                                                  |0         
+c                                                 |int    |                                                  |0         
+b                                                 |int    |                                                  |0         
+a4                                                |int    |                                                  |0         
+a3                                                |int    |                                                  |0         
+a2                                                |int    |                                                  |0         
+a1                                                |int    |                                                  |0         
 a                                                 |int    |                                                  |0         
-_2                                                |Int    |2                                                 |0         
+_pepito                                           |String |pepito                                            |6         
+_pepe                                             |String |pepe                                              |4         
+_hola, mundo                                      |String |hola, mundo                                       |11        
+_10                                               |Int    |10                                                |0         
