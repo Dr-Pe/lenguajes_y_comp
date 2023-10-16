@@ -152,13 +152,19 @@ sentencia:
     SentPtr = crearNodo(":=", crearHoja($3), crearHoja("READ"));}
     ;
  
+ //TODO: falta verificar que si tengo un id int, no se le asigne un float o string
+ // en ID OP_AS string, no hay problema, en la regla expresion talvez haya que guardar un string con el tipo de la expresion(float, int) en un auxiliar y enviarselo 
+ // a una funcion de la lista ***
 asignacion:
     ID OP_AS expresion {printf("\t\tR21: ID = Expresion es ASIGNACION\n");
         if(!idDeclarado(&listaSimbolos, $1)){
             printf("\nError, id: *%s* no fue declarado\n", $1);
             return 1;
         };
-        AsigPtr = crearNodo(":=", crearHoja($1), Eptr);}
+        //*** verificarAsignacion(&Lista, $1, expAux);
+        AsigPtr = crearNodo(":=", crearHoja($1), Eptr);
+
+    }
     |ID OP_AS string   {printf("\t\tR22: ID = String es ASIGNACION\n"); 
     if(!idDeclarado(&listaSimbolos, $1)){
         printf("\nError, id: *%s* no fue declarado\n", $1);
@@ -168,13 +174,21 @@ asignacion:
     ;
 
 string:
-    STRING                                      {printf("\t\t\tR23: string es String\n"); StrPtr = crearHoja($1);}
-    |CONCAT PA STRING { strcpy(strAux, $3);} COMA STRING { strcpy(strAux2, $6);} COMA INT PC   {printf("\t\t\tR24: concatenarConRecorte(String, String, Int) es String\n"); StrPtr = crearHoja(concatenar(strAux, strAux2, yylval.int_val));}
-    ;   //TODO: revisar concat $6 o $5?
+    STRING {
+        printf("\t\t\tR23: string es String\n"); 
+        StrPtr = crearHoja($1);
+    }
+    |CONCAT PA STRING { strcpy(strAux, $3);} COMA STRING { strcpy(strAux2, $6);} COMA INT PC   {
+        printf("\t\t\tR24: concatenarConRecorte(String, String, Int) es String\n"); 
+        StrPtr = crearHoja(concatenar(strAux, strAux2, yylval.int_val));
+    }
+    ;  
 
 
 ciclo: 
-    CICLO PA condicion PC LLA bloque_ejec LLC    {printf("\t\tR25: ciclo(Condicion) {bloque_ejec} es Ciclo\n"); CicPtr = crearNodo("Ciclo", ConPtr, BloPtr);}
+    CICLO PA condicion  PC LLA bloque_ejec  LLC    {
+        desapilar(&condAnidados, &ConAux, sizeof(ConAux));
+        printf("\t\tR25: ciclo(Condicion) {bloque_ejec} es Ciclo\n"); CicPtr = crearNodo("Ciclo", ConAux, BloPtr);}
     ;
 
 eval: 
@@ -185,7 +199,7 @@ eval:
     |IF PA condicion PC LLA bloque_ejec LLC{ apilar(&anidaciones, &BloPtr, sizeof(BloPtr));} ELSE LLA bloque_ejec LLC    { 
         printf("\t\tR27: if (condicion) {bloque_ejec} else {bloque_ejec} es Eval\n"); 
         desapilar(&condAnidados, &ConAux, sizeof(ConAux));
-        desapilar(&anidaciones, &BloAux, sizeof(BloAux));
+        desapilar(&anidaciones, &BloAux, sizeof(BloAux));   //el apilar de blo_ejec no funciona aca por que el else ejecuta otra instancia de bloque_Ejec
         EvalPtr = crearNodo("IF", ConAux, crearNodo("Cuerpo", BloAux, BloPtr));}
     ;
 
@@ -269,7 +283,7 @@ int main(int argc, char *argv[]) {
 
     imprimirLista(&listaSimbolos);
     imprimirArbol(&compilado);
-    //vaciarLista(&listaSimbolos);
+    vaciarLista(&listaSimbolos);
     vaciarLista(&listaIds);
     vaciarPila(&anidaciones);
     vaciarPila(&condAnidados);
@@ -284,7 +298,19 @@ int yyerror() {
 }
 
 char* concatenar(char* str1, char* str2, int n){
-    return strncat(str1,str2,n);
+
+    if(strlen(str1) <= n+2 || strlen(str2) <= n+2){     //+2 por ""
+        return "ERROR";
+    } 
+
+    char aux [strlen(str1) + strlen(str2) + 3]; //si n=0
+    aux[0] = '"';
+
+    strcpy(aux+ 1, str1+n+1); 
+    strcpy(aux + strlen(aux) - 1, str2+n+1);  
+    strcpy(str1, aux);
+   
+    return str1;
 }
 int estaContenido(char* str1, char* str2){
     return strstr(str1,str2) != NULL;

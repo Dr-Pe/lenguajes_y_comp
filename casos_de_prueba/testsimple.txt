@@ -1,18 +1,7 @@
 init {
-    entero_min, float_max, entero_max: Int *- Multiples variables -*
-    float_min: Float
-    float_max: Float
-    cad_min: String
-    cad_max: String
-    cad_any: String
-    id_mas_largo_id_mas_id_mas_largo_id_mas_: Int
+    cad_min, test1, test2, test4, test5: String
+
  
 }
 
-
-entero_min = -32768
-entero_max = 32768
-float_min = -2147483648.
-cad_min = ""
-cad_max = "0123456789012345678901234567890123456789"
-cad_any = "Cualquier cáracter: @!#'¿?"
+cad_min = concatenarConRecorte("hola", "mundo", 4) 

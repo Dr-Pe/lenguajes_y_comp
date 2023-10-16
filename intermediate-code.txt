@@ -1,82 +1,244 @@
-			"pepe""pepito"
-		:=
-			cad_min
-	BloEjec
-				READ
-			:=
-				cad_min
-		BloEjec
-					DirMem
-				Write
-					"hola, mundo"
-			BloEjec
 						DirMem
 					Write
-						cad_any
-				BloEjec
-							"Cualquier cáracter: @!#'¿?"
-						:=
-							cad_any
-					BloEjec
-								"0123456789012345678901234567890123456789+"
-							:=
-								cad_max
+						"test6"
+				Ciclo
+						test5
+					>
+						test4
+			BloEjec
+					DirMem
+				Write
+					"test3"
+		Ciclo
+				test2
+			>
+				test1
+	BloEjec
+					DirMem
+				Write
+					"hola"
+			Ciclo
+					b
+				>
+					a
+		BloEjec
+						DirMem
+					Write
+						"pepe"
+				IF
+						entero_min
+					&
+						false
+			BloEjec
+									DirMem
+								Write
+									"caad_anya"
+							IF
+									b
+								<
+									a
 						BloEjec
-									""
-								:=
-									cad_min
+								DirMem
+							Write
+								"hola"
+					IF
+							b
+						<
+							a
+				BloEjec
+									DirMem
+								Write
+									cad_any
+							Cuerpo
+									DirMem
+								Write
+									"hola"
+						IF
+								b
+							<
+								a
+					BloEjec
+									DirMem
+								Write
+									"hola"
+							IF
+										c
+									<
+										b
+								||
+										b
+									<
+										a
+						BloEjec
+										DirMem
+									Write
+										"hola"
+								IF
+											c
+										<
+											b
+									&
+											b
+										<
+											a
 							BloEjec
-										32769
-									:=
-										entero_max
+											DirMem
+										Write
+											"hola"
+									IF
+												b
+											<
+												a
+										&
+											false
 								BloEjec
-												32769
-											*
-												-1
-										:=
-											entero_min
+												DirMem
+											Write
+												"hola"
+										IF
+												b
+											!=
+												a
 									BloEjec
-												214
-											:=
-												float_max
+													DirMem
+												Write
+													"hola"
+											IF
+													b
+												==
+													a
 										BloEjec
-														214
-													*
-														-1
-												:=
-													float_min
+														DirMem
+													Write
+														"hola"
+												IF
+														b
+													>=
+														a
 											BloEjec
-														"Cualquier cáracter: @!#'¿?"
-													:=
-														cad_any
-												BloEjec
-															"0123456789012345678901234567890123456789"
+															READ
 														:=
-															cad_max
+															cad_any
+													IF
+															b
+														<=
+															a
+												BloEjec
+																DirMem
+															Write
+																"hola"
+														IF
+																b
+															>
+																a
 													BloEjec
-																""
-															:=
-																cad_min
-														BloEjec
-																	214
-																:=
-																	float_max
-															BloEjec
-																			214
-																		*
-																			-1
-																	:=
-																		float_min
+																		DirMem
+																	Write
+																		"hola"
 																BloEjec
-																			32768
+																		"teeeest"
+																	:=
+																		cad_min
+															IF
+																	b
+																<
+																	a
+														BloEjec
+																					1
+																				+
+																					_i
+																			:=
+																				_i
+																		BloEjec
+																				DirMem
+																			Write
+																				"h"
+																	Ciclo
+																			5
+																		<
+																			_i
+																IF
+																	false
+															BloEjec
+																		"pepito"
+																	:=
+																		cad_min
+																BloEjec
+																			READ
 																		:=
-																			entero_max
+																			cad_min
 																	BloEjec
-																				32768
-																			*
-																				-1
-																		:=
-																			entero_min
+																				DirMem
+																			Write
+																				"hola, mundo"
+																		BloEjec
+																					DirMem
+																				Write
+																					cad_any
+																			BloEjec
+																						"Cualquier cáracter: @!#'¿?"
+																					:=
+																						cad_any
+																				BloEjec
+																							"0123456789012345678901234567890123456789+"
+																						:=
+																							cad_max
+																					BloEjec
+																								""
+																							:=
+																								cad_min
+																						BloEjec
+																									32769
+																								:=
+																									entero_max
+																							BloEjec
+																											32769
+																										*
+																											-1
+																									:=
+																										entero_min
+																								BloEjec
+																											214
+																										:=
+																											float_max
+																									BloEjec
+																													214
+																												*
+																													-1
+																											:=
+																												float_min
+																										BloEjec
+																													"Cualquier cáracter: @!#'¿?"
+																												:=
+																													cad_any
+																											BloEjec
+																														"0123456789012345678901234567890123456789"
+																													:=
+																														cad_max
+																												BloEjec
+																															""
+																														:=
+																															cad_min
+																													BloEjec
+																																214
+																															:=
+																																float_max
+																														BloEjec
+																																		214
+																																	*
+																																		-1
+																																:=
+																																	float_min
+																															BloEjec
+																																		32768
+																																	:=
+																																		entero_max
+																																BloEjec
+																																			32768
+																																		*
+																																			-1
+																																	:=
+																																		entero_min
 Programa
 			int
 		:
@@ -92,7 +254,15 @@ Programa
 			Mdeclaraciones
 						string
 					:
-						cad_min
+							test5
+						,
+								test4
+							,
+									test2
+								,
+										test1
+									,
+										cad_min
 				Mdeclaraciones
 							float
 						:
@@ -106,4 +276,10 @@ Programa
 							:
 									entero_max
 								,
-									entero_min
+										c
+									,
+											b
+										,
+												a
+											,
+												entero_min
