@@ -1,5 +1,10 @@
 init {
     cad_min, test1, test2, test4, test5: String
+    int_max, int_min: Int
+    float_max, float_min: Float
+
 }
 
-cad_min = concatenarConRecorte("hola", "mundo", 4) 
+cad_min = "dasdsd"
+int_max = int_min
+float_max = 2.3

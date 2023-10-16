@@ -10,6 +10,8 @@
     FILE* yyin;
     char* yyltext;
 
+    extern Lista listaSimbolos;
+
     int fa_validarLongitudID(char*);
     int fa_verificarRangoInt(char*);
     int fa_verificarRangoFloat(char*);

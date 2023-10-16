@@ -143,3 +143,32 @@ void fusionarLista(Lista *lista1, Lista *lista2)
         lista1 = &(*lista1)->sig;
     }
 }
+
+int esMismoTipo(Lista *lista, char* id, char* auxTipo){
+    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, id) > 0)
+    {
+        lista = &(*lista)->sig;
+    }
+
+    if (*lista != NULL && strcmp((*lista)->simb.nombre, id) == 0)
+    {
+        if(strcmp((*lista)->simb.tipo_dato, auxTipo) == 0){
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+char* obtenerTipo(Lista *lista, char* id){
+    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, id) > 0)
+    {
+        lista = &(*lista)->sig;
+    }
+
+    if (*lista != NULL && strcmp((*lista)->simb.nombre, id) == 0)
+    {
+        return (*lista)->simb.tipo_dato;
+    }
+    return NULL;
+}

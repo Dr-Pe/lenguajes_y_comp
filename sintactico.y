@@ -4,7 +4,7 @@
     #include "arbol.h"
     #include "pila.h"
     int yystopparser=0;
-    FILE* yyin;
+    extern FILE* yyin;
 
     int yyerror();
     int yylex();
@@ -12,7 +12,10 @@
     Arbol compilado;
     //int yylval;
 
-    NodoA* CompiladoPtr, *ProgramaPtr, *DeclaPtr, *BloPtr, *DecPtr, *ListPtr, *SentPtr, *AsigPtr, 
+    Lista listaSimbolos;
+
+
+    NodoA* CompiladoPtr, *ProgramaPtr, *DeclaPtr, *BloPtr, *DecPtr, *ListPtr, *SentPtr, *AsigPtr, *tipoAux,
             *CicPtr, *EvalPtr, *Eptr, *StrPtr, *ConPtr, *CmpPtr, *EptrAux, *BloAux, *Tptr, *Fptr, *CmpAux, *StrPtrAux;
     NodoA* EjePtr, * ConAux;
     
@@ -129,8 +132,6 @@ bloque_ejec:
     }
     ;
 
-
-
 sentencia:        
     asignacion  {printf("\t\tR14: asignacion es Sentencia\n"); SentPtr = AsigPtr;}
     |ciclo      {printf("\t\tR15: ciclo es Sentencia\n"); SentPtr = CicPtr;}
@@ -175,21 +176,29 @@ asignacion:
             printf("\nError, id: *%s* no fue declarado\n", $1);
             return 1;
         };
-        //*** verificarAsignacion(&Lista, $1, expAux);
+        if(!esMismoTipo(&listaSimbolos, $1, auxTipo)){
+            printf("\nError, datos de diferente tipo.\n");
+            return 1;
+        }
         AsigPtr = crearNodo(":=", crearHoja($1), Eptr);
     }
-    |ID OP_AS string   {
+    |ID OP_AS string  {
         printf("\t\tR22: ID = String es ASIGNACION\n"); 
         if(!idDeclarado(&listaSimbolos, $1)){
             printf("\nError, id: *%s* no fue declarado\n", $1);
             return 1;
-        };
+        }
+        if(!esMismoTipo(&listaSimbolos, $1, "String")){
+            printf("\nError, datos de diferente tipo.\n");
+            return 1;
+        }
     AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);
     }
     ;
 
 string:
-    STRING  {printf("\t\t\tR23: string es String\n"); StrPtr = crearHoja($1);}
+    STRING  {printf("\t\t\tR23: string es String\n"); StrPtr = crearHoja($1);
+             strcpy(auxTipo, "String");} // Hardcode
     |CONCAT PA STRING { strcpy(strAux, $3);} COMA STRING { strcpy(strAux2, $6);} COMA INT PC {
         printf("\t\t\tR24: concatenarConRecorte(String, String, Int) es String\n"); 
         StrPtr = crearHoja(concatenar(strAux, strAux2, yylval.int_val));
@@ -268,11 +277,16 @@ factor:
             printf("\nError, id: *%s* no fue declarado\n", $1);
             return 1;
         }
-         ;Fptr= crearHoja($1);}
-    | INT   {printf("\t\t\t\t    R51: INT es Factor\n"); snprintf(strAux, sizeof($1), "%d", $1); Fptr= crearHoja(strAux);}
+        strcpy(auxTipo, obtenerTipo(&listaSimbolos, $1)); // Se copia en auxTipo el tipo de la ID (Ojo cuando escala a termino y se pisa)
+        Fptr= crearHoja($1);}
+    | INT   {printf("\t\t\t\t    R51: INT es Factor\n"); 
+             snprintf(strAux, sizeof($1), "%d", $1);
+             strcpy(auxTipo, "Int"); // Hardcode
+             Fptr= crearHoja(strAux);}
     | FLOAT {
         printf("\t\t\t\t    R52: FLOAT es Factor\n"); 
         snprintf(strAux, MIN(sizeof($1), VALOR_LARGO_MAX), "%.2f", $1);
+        strcpy(auxTipo, "Float"); // Hardcode
         Fptr= crearHoja(strAux);
     }
     | PA expresion PC   {printf("\t\t\t\t    R53: Expresion entre parentesis es Factor\n"); Fptr = Eptr;}

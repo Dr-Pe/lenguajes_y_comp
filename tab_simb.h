@@ -32,10 +32,10 @@ Lista crearLista(Lista *pl);
 void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato);
 void imprimirLista(Lista *lista);
 
-Lista listaSimbolos;
-
 int idDeclarado(Lista *lista, char *var1);
 void asignarTipoDato(Lista *lista, char *id, char *tipoDato);
 void vaciarLista(Lista *pl);
 void asignarTipo(Lista *listaIds, char *auxTipo);
 void fusionarLista(Lista *lista1, Lista *lista2);
+int esMismoTipo(Lista*, char*, char*);
+char* obtenerTipo(Lista*, char*);
