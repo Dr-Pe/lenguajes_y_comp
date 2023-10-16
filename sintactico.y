@@ -1,14 +1,18 @@
 %{
+    #include "constantes.h"
     #include "tab_simb.h"
     #include "y.tab.h"
     #include "arbol.h"
     #include "pila.h"
+
     int yystopparser=0;
     FILE* yyin;
 
     int yyerror();
     int yylex();
-
+    char* concatenar(char*, char*, int);
+    int estaContenido(char*, char*);
+    
     Arbol compilado;
     //int yylval;
 
@@ -18,9 +22,7 @@
     
     char  auxTipo[7], strAux[VALOR_LARGO_MAX + 1], strAux2[VALOR_LARGO_MAX + 1], cmpAux[3], opAux[3];
 
-    char* concatenar(char*, char*, int);
     int intAux;
-    int estaContenido(char*, char*);
     Lista listaIds;
     Pila anidaciones;
     Pila condAnidados;
@@ -115,13 +117,13 @@ listado_ids:
     ;
 
 tipo: 
-    DEC_INT         {printf("\t\tR9: dec_int es Tipo\n"); strcpy(auxTipo, "Int"); }
-    | DEC_FLOAT     {printf("\t\tR10: dec_float es Tipo\n"); strcpy(auxTipo, "Float");}
-    | DEC_STRING    {printf("\t\tR11: dec_string es Tipo\n"); strcpy(auxTipo, "String");}
+    DEC_INT         {printf("\t\tR9: dec_int es Tipo\n"); strcpy(auxTipo, ENTERO); }
+    | DEC_FLOAT     {printf("\t\tR10: dec_float es Tipo\n"); strcpy(auxTipo, FLOTANTE);}
+    | DEC_STRING    {printf("\t\tR11: dec_string es Tipo\n"); strcpy(auxTipo, CADENA);}
     ;
 
 bloque_ejec: 
-    sentencia{printf("\tR12: sentencia es Bloque_ejec\n"); BloPtr = SentPtr;}
+    sentencia   {printf("\tR12: sentencia es Bloque_ejec\n"); BloPtr = SentPtr;}
     | bloque_ejec {apilar(&anidaciones, &BloPtr, sizeof(BloPtr));} sentencia {
         printf("\tR13: bloque_ejec sentencia es Bloque_ejec\n"); 
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
@@ -175,16 +177,23 @@ asignacion:
             printf("\nError, id: *%s* no fue declarado\n", $1);
             return 1;
         };
-        //*** verificarAsignacion(&Lista, $1, expAux);
+        if(!verificarAsignacion(&listaSimbolos, $1, Eptr->simbolo)) {
+            printf("\nError: *%s* tipo mal, mejorar mensajes\n", $1);
+            return 1;
+        }
         AsigPtr = crearNodo(":=", crearHoja($1), Eptr);
     }
     |ID OP_AS string   {
         printf("\t\tR22: ID = String es ASIGNACION\n"); 
         if(!idDeclarado(&listaSimbolos, $1)){
-            printf("\nError, id: *%s* no fue declarado\n", $1);
+            printf("\nError: id *%s* no fue declarado\n", $1);
             return 1;
         };
-    AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);
+        if(strcmp(obtenerTipo(&listaSimbolos, $1), CADENA) != 0) {
+            printf("\nError: *%s* tipo mal, mejorar mensajes\n", $1);
+            return 1;
+        }
+        AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);
     }
     ;
 

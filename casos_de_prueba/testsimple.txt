@@ -1,5 +1,7 @@
 init {
-    cad_min, test1, test2, test4, test5: String
+    entero: Int
+    cad_min: String
 }
 
-cad_min = concatenarConRecorte("hola", "mundo", 4) 
+cad_min = concatenarConRecorte("hola", "mundo", 4)
+entero = 28

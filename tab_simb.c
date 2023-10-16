@@ -13,7 +13,7 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
     nuevo_simbolo.valor[0] = '\0';
     nuevo_simbolo.tipo_dato[0] = '\0';
     nuevo_simbolo.longitud = 0;
-   
+
     if (tDato == tID)
     {
         strcpy(nuevo_simbolo.nombre, nombre);
@@ -49,7 +49,6 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
     {
         lista = &(*lista)->sig;
     }
-
     if (*lista != NULL && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) == 0)
     {
         return;
@@ -81,32 +80,15 @@ void imprimirLista(Lista *lista)
 
 int idDeclarado(Lista *lista, char *id)
 {
-
     while ((*lista != NULL) && strcmp((*lista)->simb.nombre, id) > 0)
     {
         lista = &(*lista)->sig;
     }
-
     if (*lista != NULL && strcmp((*lista)->simb.nombre, id) == 0 && !strlen((*lista)->simb.tipo_dato))
     {
         return FALSE;
     }
-
     return TRUE;
-}
-
-void asignarTipoDato(Lista *lista, char *id, char *tipoDato)
-{
-
-    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, id) > 0)
-    {
-        lista = &(*lista)->sig;
-    }
-
-    if (*lista != NULL && strcmp((*lista)->simb.nombre, id) == 0)
-    {
-        strcpy((*lista)->simb.tipo_dato, tipoDato);
-    }
 }
 
 void vaciarLista(Lista *pl)
@@ -119,7 +101,6 @@ void vaciarLista(Lista *pl)
         *pl = (aux)->sig;
         free(aux);
     }
-
 }
 
 void asignarTipo(Lista *lista, char *auxTipo)
@@ -136,10 +117,42 @@ void fusionarLista(Lista *lista1, Lista *lista2)
     {
         if (strcmp((*lista1)->simb.nombre, (*lista2)->simb.nombre) == 0)
         {
-            //printf("\nl1: *%s* l2: *%s*", (*lista1)->simb.nombre, (*lista2)->simb.nombre);
             strcpy((*lista1)->simb.tipo_dato, (*lista2)->simb.tipo_dato);
             lista2 = &(*lista2)->sig;
         }
         lista1 = &(*lista1)->sig;
+    }
+}
+
+int verificarAsignacion(Lista *lista, char *id, char *expresion)
+{
+    return strcmp(obtenerTipo(lista, id), obtenerTipo(lista, expresion)) == 0 ? TRUE : FALSE;
+}
+
+char *obtenerTipo(Lista *lista, char *valor_o_nombre)
+{
+    printf("%s", valor_o_nombre);
+    puts("");
+    // Busqueda por nombre (para ids)
+    while (*lista != NULL && strcmp((*lista)->simb.nombre, valor_o_nombre) > 0)
+    {
+        lista = &(*lista)->sig;
+    }
+    if (*lista != NULL && strcmp((*lista)->simb.nombre, valor_o_nombre) == 0)
+    {
+        printf("%s | %s", (*lista)->simb.nombre, (*lista)->simb.tipo_dato);
+        puts("");
+        return (*lista)->simb.tipo_dato;
+    }
+    // Busqueda por valor (para literales)
+    while (*lista != NULL && strcmp((*lista)->simb.valor, valor_o_nombre) > 0)
+    {
+        lista = &(*lista)->sig;
+    }
+    if (*lista != NULL && strcmp((*lista)->simb.valor, valor_o_nombre) == 0)
+    {
+        printf("%s | %s", (*lista)->simb.nombre, (*lista)->simb.tipo_dato);
+        puts("");
+        return (*lista)->simb.tipo_dato;
     }
 }
