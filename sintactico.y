@@ -12,10 +12,8 @@
     int yylex();
 
     Arbol compilado;
-    //int yylval;
 
     Lista listaSimbolos;
-
 
     NodoA* CompiladoPtr, *ProgramaPtr, *DeclaPtr, *BloPtr, *DecPtr, *ListPtr, *SentPtr, *AsigPtr, *tipoAux,
             *CicPtr, *EvalPtr, *Eptr, *StrPtr, *ConPtr, *CmpPtr, *EptrAux, *BloAux, *Tptr, *Fptr, *CmpAux, *StrPtrAux;
@@ -88,12 +86,12 @@ programa_prima:
     ;
 programa: 
     INIT LLA declaraciones LLC bloque_ejec  { printf("\tR2: init { declaraciones} bloque_ejec es Programa\n"); ProgramaPtr = crearNodo("Programa", DeclaPtr, BloPtr); } 
-    | INIT LLA LLC bloque_ejec              { printf("\tR3: init { } bloque_ejec es Programa\n"); ProgramaPtr = BloPtr; }
+    |INIT LLA LLC bloque_ejec               { printf("\tR3: init { } bloque_ejec es Programa\n"); ProgramaPtr = BloPtr; }
     ;
 
 declaraciones: 
     dec                 { printf("\tR4: dec es Declaraciones\n"); DeclaPtr = DecPtr; }
-    | declaraciones dec { printf("\tR5: declaraciones dec es Declaraciones\n"); DeclaPtr = crearNodo("Mdeclaraciones", DeclaPtr, DecPtr); }
+    |declaraciones dec  { printf("\tR5: declaraciones dec es Declaraciones\n"); DeclaPtr = crearNodo("Mdeclaraciones", DeclaPtr, DecPtr); }
     ;
 
 dec: 
@@ -120,14 +118,14 @@ listado_ids:
     ;
 
 tipo: 
-    DEC_INT         { printf("\t\tR9: dec_int es Tipo\n"); strcpy(auxTipo, TINT); }
-    | DEC_FLOAT     { printf("\t\tR10: dec_float es Tipo\n"); strcpy(auxTipo, TFLOAT); }
-    | DEC_STRING    { printf("\t\tR11: dec_string es Tipo\n"); strcpy(auxTipo, TSTRING); }
+    DEC_INT     { printf("\t\tR9: dec_int es Tipo\n"); strcpy(auxTipo, TINT); }
+    |DEC_FLOAT  { printf("\t\tR10: dec_float es Tipo\n"); strcpy(auxTipo, TFLOAT); }
+    |DEC_STRING { printf("\t\tR11: dec_string es Tipo\n"); strcpy(auxTipo, TSTRING); }
     ;
 
 bloque_ejec: 
-    sentencia{ printf("\tR12: sentencia es Bloque_ejec\n"); BloPtr = SentPtr; }
-    | bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } sentencia { 
+    sentencia { printf("\tR12: sentencia es Bloque_ejec\n"); BloPtr = SentPtr; }
+    |bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } sentencia { 
         printf("\tR13: bloque_ejec sentencia es Bloque_ejec\n"); 
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
         BloPtr = crearNodo("BloEjec", BloAux, SentPtr);
@@ -190,11 +188,11 @@ asignacion:
             printf("\nError, id: *%s* no fue declarado\n", $1);
             return 1;
         }
-        if(!esMismoTipo(&listaSimbolos, $1, "String")){ 
+        if(!esMismoTipo(&listaSimbolos, $1, TSTRING)){ 
             printf("\nError, datos de diferente tipo.\n");
             return 1;
         }
-    AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);
+        AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);
     }
     ;
 
@@ -203,7 +201,7 @@ string:
         printf("\t\t\tR23: string es String\n");
         StrPtr = crearHoja($1);
         strcpy(auxTipo, TSTRING);
-        }
+    }
     |CONCAT PA STRING { strcpy(strAux, $3); } COMA STRING { strcpy(strAux2, $6); } COMA INT PC { 
         printf("\t\t\tR24: concatenarConRecorte(String, String, Int) es String\n"); 
         StrPtr = crearHoja(concatenar(strAux, strAux2, yylval.int_val));
@@ -222,36 +220,40 @@ eval:
     IF PA condicion PC LLA bloque_ejec LLC { 
         printf("\t\tR26: if (condicion) { bloque_ejec} es Eval\n"); 
         desapilar(&condAnidados, &ConAux, sizeof(ConAux));
-        EvalPtr = crearNodo("IF", ConAux, BloPtr); }
-    |IF PA condicion PC LLA bloque_ejec LLC{ apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } ELSE LLA bloque_ejec LLC    { 
+        EvalPtr = crearNodo("IF", ConAux, BloPtr);
+    }
+    |IF PA condicion PC LLA bloque_ejec LLC{ apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } ELSE LLA bloque_ejec LLC { 
         printf("\t\tR27: if (condicion) { bloque_ejec} else { bloque_ejec} es Eval\n"); 
         desapilar(&condAnidados, &ConAux, sizeof(ConAux));
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));   //el apilar de blo_ejec no funciona aca por que el else ejecuta otra instancia de bloque_Ejec
-        EvalPtr = crearNodo("IF", ConAux, crearNodo("Cuerpo", BloAux, BloPtr)); }
+        EvalPtr = crearNodo("IF", ConAux, crearNodo("Cuerpo", BloAux, BloPtr));
+    }
     ;
 
 
 condicion:
     comparacion { 
         printf("\t\t\tR28: comparacion es Condicion\n"); ConPtr = CmpPtr;
-        apilar(&condAnidados, &ConPtr, sizeof(ConPtr)); }
+        apilar(&condAnidados, &ConPtr, sizeof(ConPtr));
+    }
    // |comparacion { strcpy(cmpAux, CmpPtr->simbolo); } op_logico comparacion      { printf("\t\t\tcomparacion op_logico comparacion es Condicion\n"); ConPtr = crearNodo(opAux, crearHoja(cmpAux), CmpPtr); }
     |comparacion { CmpAux = CmpPtr; } op_logico comparacion { 
         printf("\t\t\tR29: comparacion op_logico comparacion es Condicion\n"); 
         ConPtr = crearNodo(opAux, CmpAux, CmpPtr);
-        apilar(&condAnidados, &ConPtr, sizeof(ConPtr)); }
+        apilar(&condAnidados, &ConPtr, sizeof(ConPtr));
+    }
     ;
 
 comparacion:
-    expresion { EptrAux = Eptr; } comparador expresion            { printf("\t\t\t\tR30: expresion comparador expresion es Comparacion \n"); CmpPtr = crearNodo(cmpAux, EptrAux, Eptr); }
-    |ESTA_CONT PA STRING { strcpy(strAux, $3); } COMA STRING PC   { printf("\t\t\t\tR31: estaContenido(String, String) es Comparacion\n"); CmpPtr = crearHoja(estaContenido(strAux, yylval.string_val)? "true" : "false" ); }
+    expresion { EptrAux = Eptr; } comparador expresion          { printf("\t\t\t\tR30: expresion comparador expresion es Comparacion \n"); CmpPtr = crearNodo(cmpAux, EptrAux, Eptr); }
+    |ESTA_CONT PA STRING { strcpy(strAux, $3); } COMA STRING PC { printf("\t\t\t\tR31: estaContenido(String, String) es Comparacion\n"); CmpPtr = crearHoja(estaContenido(strAux, yylval.string_val)? "true" : "false" ); }
     |NOT comparacion                                            { printf("\t\t\t\tR32: not comparacion es Comparacion\n"); CmpPtr = crearNodo("&", crearHoja("false"), CmpPtr); }
     |NOT expresion                                              { printf("\t\t\t\tR33: not expresion es Comparacion\n"); CmpPtr = crearNodo("&", crearHoja("false"), Eptr); }
     ;
 
 op_logico:
     AND             { printf("\t\t\t\tR34: & es Op_logico\n"); strcpy(opAux,"&"); }
-    |OR             { printf("\t\t\t\tR35: || es Op_logico\n"); strcpy(opAux,"||"); }
+    |OR             { printf("\t\t\t\tR35: ||es Op_logico\n"); strcpy(opAux,"||"); }
     ;
 
 comparador:
@@ -277,24 +279,32 @@ termino:
     ;
 
 factor:
-    ID  { printf("\t\t\t\t    R50: ID es Factor \n"); 
+    ID  { 
+        printf("\t\t\t\t    R50: ID es Factor \n"); 
         if(!idDeclarado(&listaSimbolos, $1)){ 
             printf("\nError, id: *%s* no fue declarado\n", $1);
             return 1;
         }
+        if(esMismoTipo(&listaSimbolos, $1, TSTRING)){ 
+            printf("\nError: No es posible realizar operaciones aritmeticas sobre variables String.\n");
+            return 1;
+        }
         strcpy(auxTipo, obtenerTipo(&listaSimbolos, $1)); // Se copia en auxTipo el tipo de la ID (Ojo cuando escala a termino y se pisa)
-        Fptr= crearHoja($1); }
-    | INT   { printf("\t\t\t\t    R51: INT es Factor\n"); 
-             snprintf(strAux, sizeof($1), "%d", $1);
-             strcpy(auxTipo, TINT);
-             Fptr= crearHoja(strAux); }
-    | FLOAT { 
+        Fptr= crearHoja($1); 
+    }
+    |INT   { 
+        printf("\t\t\t\t    R51: INT es Factor\n"); 
+        snprintf(strAux, sizeof($1), "%d", $1);
+        strcpy(auxTipo, TINT);
+        Fptr= crearHoja(strAux); 
+    }
+    |FLOAT { 
         printf("\t\t\t\t    R52: FLOAT es Factor\n"); 
         snprintf(strAux, MIN(sizeof($1), VALOR_LARGO_MAX), "%.2f", $1);
         strcpy(auxTipo, TFLOAT);
         Fptr= crearHoja(strAux);
     }
-    | PA expresion PC   { printf("\t\t\t\t    R53: Expresion entre parentesis es Factor\n"); Fptr = Eptr; }
+    |PA expresion PC    { printf("\t\t\t\t    R53: Expresion entre parentesis es Factor\n"); Fptr = Eptr; }
     ;
 %%
  
@@ -331,7 +341,7 @@ int yyerror() {
 
 char* concatenar(char* str1, char* str2, int n){ 
 
-    if(strlen(str1) <= n+2 || strlen(str2) <= n+2){     //+2 por ""
+    if(strlen(str1) <= n+2 ||strlen(str2) <= n+2){  //+2 por ""
         return "ERROR";
     } 
 

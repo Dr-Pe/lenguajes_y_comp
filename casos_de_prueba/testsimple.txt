@@ -1,10 +1,11 @@
 init {
-    cad_min, test1, test2, test4, test5: String
+    cad_min: String
     int_max, int_min: Int
     float_max, float_min: Float
 
 }
 
-cad_min = "dasdsd"
+cad_min = "hola"
+cad_min = cad_min + "mundo"
 int_max = 20
 float_max = 2.3

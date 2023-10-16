@@ -49,7 +49,6 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
     {
         lista = &(*lista)->sig;
     }
-
     if (*lista != NULL && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) == 0)
     {
         return;
@@ -86,7 +85,6 @@ int idDeclarado(Lista *lista, char *id)
     {
         lista = &(*lista)->sig;
     }
-
     if (*lista != NULL && strcmp((*lista)->simb.nombre, id) == 0 && !strlen((*lista)->simb.tipo_dato))
     {
         return FALSE;
@@ -102,7 +100,6 @@ void asignarTipoDato(Lista *lista, char *id, char *tipoDato)
     {
         lista = &(*lista)->sig;
     }
-
     if (*lista != NULL && strcmp((*lista)->simb.nombre, id) == 0)
     {
         strcpy((*lista)->simb.tipo_dato, tipoDato);
@@ -149,7 +146,6 @@ int esMismoTipo(Lista *lista, char *id, char *auxTipo)
     {
         lista = &(*lista)->sig;
     }
-
     if (*lista != NULL && strcmp((*lista)->simb.nombre, id) == 0)
     {
         if (strcmp((*lista)->simb.tipo_dato, auxTipo) == 0)
@@ -157,7 +153,6 @@ int esMismoTipo(Lista *lista, char *id, char *auxTipo)
             return TRUE;
         }
     }
-
     return FALSE;
 }
 
@@ -167,7 +162,6 @@ char *obtenerTipo(Lista *lista, char *id)
     {
         lista = &(*lista)->sig;
     }
-
     if (*lista != NULL && strcmp((*lista)->simb.nombre, id) == 0)
     {
         return (*lista)->simb.tipo_dato;

@@ -3,7 +3,6 @@
 #include <string.h>
 #include "constantes.h"
 
-
 enum tiposDato
 {
     tID,
@@ -37,5 +36,5 @@ void asignarTipoDato(Lista *lista, char *id, char *tipoDato);
 void vaciarLista(Lista *pl);
 void asignarTipo(Lista *listaIds, char *auxTipo);
 void fusionarLista(Lista *lista1, Lista *lista2);
-int esMismoTipo(Lista*, char*, char*);
-char* obtenerTipo(Lista*, char*);
+int esMismoTipo(Lista *, char *, char *);
+char *obtenerTipo(Lista *, char *);
