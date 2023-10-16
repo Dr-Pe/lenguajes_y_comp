@@ -11,22 +11,20 @@
     int yyerror();
     int yylex();
 
-    Arbol compilado;
+    char* concatenar(char*, char*, int);
+    int estaContenido(char*, char*);
 
+    Arbol compilado;
     Lista listaSimbolos;
+    Lista listaIds;
+    Pila anidaciones;
+    Pila condAnidados;
 
     NodoA* CompiladoPtr, *ProgramaPtr, *DeclaPtr, *BloPtr, *DecPtr, *ListPtr, *SentPtr, *AsigPtr, *tipoAux,
             *CicPtr, *EvalPtr, *Eptr, *StrPtr, *ConPtr, *CmpPtr, *EptrAux, *BloAux, *Tptr, *Fptr, *CmpAux, *StrPtrAux;
     NodoA* EjePtr, * ConAux;
-    
     char  auxTipo[7], strAux[VALOR_LARGO_MAX + 1], strAux2[VALOR_LARGO_MAX + 1], cmpAux[3], opAux[3];
-
-    char* concatenar(char*, char*, int);
     int intAux;
-    int estaContenido(char*, char*);
-    Lista listaIds;
-    Pila anidaciones;
-    Pila condAnidados;
 %}
 
  
@@ -140,10 +138,10 @@ sentencia:
         printf("\t\tR17: timer(int,bloque_ejec) es Sentencia\n");
         snprintf(strAux, sizeof(intAux), "%d", intAux);
         SentPtr = crearNodo(
-            "Ciclo", 
+            "ciclo", 
             crearNodo("<", crearHoja("_i"), crearHoja(strAux)),
             crearNodo(
-                "BloEjec", BloPtr, crearNodo(":=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))
+                "BloEjec", BloPtr, crearNodo("=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))
             )
         );
     }
@@ -162,7 +160,7 @@ sentencia:
             printf("\nError, id: *%s* no fue declarado\n", $3);
             return 1;
         };
-    SentPtr = crearNodo(":=", crearHoja($3), crearHoja("READ"));
+    SentPtr = crearNodo("=", crearHoja($3), crearHoja("READ"));
     }
     ;
  
@@ -180,7 +178,7 @@ asignacion:
             printf("\nError, datos de diferente tipo.\n");
             return 1;
         }
-        AsigPtr = crearNodo(":=", crearHoja($1), Eptr);
+        AsigPtr = crearNodo("=", crearHoja($1), Eptr);
     }
     |ID OP_AS string  { 
         printf("\t\tR22: ID = String es ASIGNACION\n"); 
@@ -192,7 +190,7 @@ asignacion:
             printf("\nError, datos de diferente tipo.\n");
             return 1;
         }
-        AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);
+        AsigPtr = crearNodo("=", crearHoja($1), StrPtr);
     }
     ;
 
@@ -212,7 +210,7 @@ string:
 ciclo: 
     CICLO PA condicion  PC LLA bloque_ejec  LLC    { 
         desapilar(&condAnidados, &ConAux, sizeof(ConAux));
-        printf("\t\tR25: ciclo(Condicion) { bloque_ejec} es Ciclo\n"); CicPtr = crearNodo("Ciclo", ConAux, BloPtr);
+        printf("\t\tR25: ciclo(Condicion) { bloque_ejec} es Ciclo\n"); CicPtr = crearNodo("ciclo", ConAux, BloPtr);
     }
     ;
 
@@ -220,13 +218,13 @@ eval:
     IF PA condicion PC LLA bloque_ejec LLC { 
         printf("\t\tR26: if (condicion) { bloque_ejec} es Eval\n"); 
         desapilar(&condAnidados, &ConAux, sizeof(ConAux));
-        EvalPtr = crearNodo("IF", ConAux, BloPtr);
+        EvalPtr = crearNodo("if", ConAux, BloPtr);
     }
     |IF PA condicion PC LLA bloque_ejec LLC{ apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } ELSE LLA bloque_ejec LLC { 
         printf("\t\tR27: if (condicion) { bloque_ejec} else { bloque_ejec} es Eval\n"); 
         desapilar(&condAnidados, &ConAux, sizeof(ConAux));
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));   //el apilar de blo_ejec no funciona aca por que el else ejecuta otra instancia de bloque_Ejec
-        EvalPtr = crearNodo("IF", ConAux, crearNodo("Cuerpo", BloAux, BloPtr));
+        EvalPtr = crearNodo("if", ConAux, crearNodo("Cuerpo", BloAux, BloPtr));
     }
     ;
 

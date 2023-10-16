@@ -132,7 +132,6 @@ void fusionarLista(Lista *lista1, Lista *lista2)
     {
         if (strcmp((*lista1)->simb.nombre, (*lista2)->simb.nombre) == 0)
         {
-            // printf("\nl1: *%s* l2: *%s*", (*lista1)->simb.nombre, (*lista2)->simb.nombre);
             strcpy((*lista1)->simb.tipo_dato, (*lista2)->simb.tipo_dato);
             lista2 = &(*lista2)->sig;
         }
