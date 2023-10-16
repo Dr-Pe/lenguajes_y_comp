@@ -6,7 +6,7 @@ init {
     cad_max: String
     cad_any: String
     id_mas_largo_id_mas_id_mas_largo_id_mas_: Int
-    id_fuera_de_rango_id_fuera_de_rango_id_fu: Int
+ 
 }
 
 *-

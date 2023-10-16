@@ -1,8 +1,12 @@
 init {
-    a1,a,b,c, cad_any, a2, a3, a4, pepe1, pepe2, pepe3, pepe4: Int
+    entero_min, entero_max: Int *- Multiples variables -*
+    float_min: Float
+    float_max: Float
+    cad_min: String
+    cad_max: String
+    cad_any: String
+    entero_max: Int
 }
 
-write(cad_any)
-write("hola, mundo")
-read(cad_any)
-cad_any = concatenarConRecorte("pepe", "pepito", 10)
+
+entero_max = 1

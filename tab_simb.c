@@ -13,7 +13,7 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
     nuevo_simbolo.valor[0] = '\0';
     nuevo_simbolo.tipo_dato[0] = '\0';
     nuevo_simbolo.longitud = 0;
-
+   
     if (tDato == tID)
     {
         strcpy(nuevo_simbolo.nombre, nombre);
@@ -69,12 +69,14 @@ void imprimirLista(Lista *lista)
         printf("Error al abrir el archivo\n");
         return;
     }
-
+    fprintf(arch, "%-50s|%-7s|%-50s|%-10s\n", "nombre", "tipoDato", "valor", "longitud");
     while (*lista != NULL)
     {
         fprintf(arch, "%-50s|%-7s|%-50s|%-10d\n", (*lista)->simb.nombre, (*lista)->simb.tipo_dato, (*lista)->simb.valor, (*lista)->simb.longitud);
         lista = &(*lista)->sig;
     }
+
+    fclose(arch);
 }
 
 int idDeclarado(Lista *lista, char *id)
@@ -114,9 +116,10 @@ void vaciarLista(Lista *pl)
     while (*pl)
     {
         aux = *pl;
-        pl = &(*pl)->sig;
+        *pl = (aux)->sig;
         free(aux);
     }
+
 }
 
 void asignarTipo(Lista *lista, char *auxTipo)
@@ -133,6 +136,7 @@ void fusionarLista(Lista *lista1, Lista *lista2)
     {
         if (strcmp((*lista1)->simb.nombre, (*lista2)->simb.nombre) == 0)
         {
+            //printf("\nl1: *%s* l2: *%s*", (*lista1)->simb.nombre, (*lista2)->simb.nombre);
             strcpy((*lista1)->simb.tipo_dato, (*lista2)->simb.tipo_dato);
             lista2 = &(*lista2)->sig;
         }

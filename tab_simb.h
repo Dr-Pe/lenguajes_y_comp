@@ -3,6 +3,7 @@
 #include <string.h>
 #include "constantes.h"
 
+
 enum tiposDato
 {
     tID,
@@ -14,8 +15,8 @@ enum tiposDato
 typedef struct
 {
     char nombre[ID_LARGO_MAX + 2];
-    char tipo_dato[TIPO_DATO_LARGO_MAX];
-    char valor[VALOR_LARGO_MAX];
+    char tipo_dato[TIPO_DATO_LARGO_MAX + 1];
+    char valor[VALOR_LARGO_MAX + 1];
     int longitud;
 } Simbolo;
 

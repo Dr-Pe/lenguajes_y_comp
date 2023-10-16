@@ -1,41 +1,45 @@
-			"pepe""pepito"
+				2147483648.00
+			*
+				-1
 		:=
-			cad_any
+			float_min
 	BloEjec
-				READ
+				32768
 			:=
-				cad_any
+				entero_max
 		BloEjec
-					DirMem
-				Write
-					"hola, mundo"
-			BloEjec
-					DirMem
-				Write
-					cad_any
+					32768
+				*
+					-1
+			:=
+				entero_min
 Programa
-		int
-	:
-			pepe4
-		,
-				pepe3
-			,
-					pepe2
-				,
-						pepe1
-					,
-							a4
-						,
-								a3
-							,
-									a2
+			int
+		:
+			id_mas_largo_id_mas_id_mas_largo_id_mas_
+	Mdeclaraciones
+				string
+			:
+				cad_any
+		Mdeclaraciones
+					string
+				:
+					cad_max
+			Mdeclaraciones
+						string
+					:
+						cad_min
+				Mdeclaraciones
+							float
+						:
+							float_max
+					Mdeclaraciones
+								float
+							:
+								float_min
+						Mdeclaraciones
+								int
+							:
+									entero_max
 								,
-										cad_any
-									,
-											c
-										,
-												b
-											,
-													a
-												,
-													a1
+									entero_min

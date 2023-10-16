@@ -8,3 +8,5 @@
 #define MIN_FLOAT -2147483648
 #define TRUE 1
 #define FALSE 0
+
+#define MIN(a,b)((a < b) ? a : b)

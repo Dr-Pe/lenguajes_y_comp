@@ -1,6 +1,5 @@
 #include "pila.h"
 
-#define MIN(a,b)((a < b) ? a : b)
  
 Pila crearPila(Pila* pp)
 {
@@ -40,9 +39,7 @@ int desapilar(Pila* pp, void* p_elem, size_t tam_el)
     *pp = aux->sig;
     // Copio datos del nodo
     
-    printf("\ndesapilo1: %p\n\n", p_elem);
     memcpy(p_elem, aux->pdato, MIN(tam_el, aux->tamElem));
-    printf("\ndesapilo2\n\n");
     // Libero memoria
     free(aux->pdato);
     free(aux);

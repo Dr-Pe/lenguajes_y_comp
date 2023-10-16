@@ -1,16 +1,11 @@
-pepe4                                             |int    |                                                  |0         
-pepe3                                             |int    |                                                  |0         
-pepe2                                             |int    |                                                  |0         
-pepe1                                             |int    |                                                  |0         
-cad_any                                           |int    |                                                  |0         
-c                                                 |int    |                                                  |0         
-b                                                 |int    |                                                  |0         
-a4                                                |int    |                                                  |0         
-a3                                                |int    |                                                  |0         
-a2                                                |int    |                                                  |0         
-a1                                                |int    |                                                  |0         
-a                                                 |int    |                                                  |0         
-_pepito                                           |String |pepito                                            |6         
-_pepe                                             |String |pepe                                              |4         
-_hola, mundo                                      |String |hola, mundo                                       |11        
-_10                                               |Int    |10                                                |0         
+nombre                                            |tipoDato|valor                                             |longitud  
+id_mas_largo_id_mas_id_mas_largo_id_mas_          |int    |                                                  |0         
+float_min                                         |float  |                                                  |0         
+float_max                                         |float  |                                                  |0         
+entero_min                                        |int    |                                                  |0         
+entero_max                                        |int    |                                                  |0         
+cad_min                                           |string |                                                  |0         
+cad_max                                           |string |                                                  |0         
+cad_any                                           |string |                                                  |0         
+_32768                                            |Int    |32768                                             |0         
+_2147483648.                                      |Float  |2147483648.                                       |0         

@@ -45,3 +45,14 @@ void recorrerArbolInOrden(Arbol* pa, int nivel, FILE* arch){
     
      recorrerArbolInOrden(&(*pa)->izq, nivel + 1, arch);
 }
+
+void vaciarArbol(Arbol* pa){
+    if(!*pa)
+        return;
+
+    vaciarArbol(&(*pa)->izq);
+    vaciarArbol(&(*pa)->der);
+    free((*pa)->simbolo);
+    free(*pa);
+    *pa = NULL;
+}

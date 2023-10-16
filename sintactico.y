@@ -95,12 +95,19 @@ dec:
     listado_ids DOS_P tipo {printf("\t\tR6: listado_ids : tipo es Dec\n");
         asignarTipo(&listaIds, auxTipo);
         fusionarLista(&listaSimbolos, &listaIds);
+        vaciarLista(&listaIds);
         DecPtr = crearNodo(":", ListPtr, crearHoja(auxTipo));}
     ;
 
 listado_ids:
-    ID                      {printf("\t\tR7: id es Listado_ids\n");vaciarLista(&listaIds); insertarEnLista(&listaIds, $1, tID);ListPtr = crearHoja($1);}
-    |listado_ids COMA ID    {printf("\t\tR8: listado_ids , id es Listado_ids\n"); insertarEnLista(&listaIds, $3, tID); ListPtr = crearNodo(",", ListPtr, crearHoja($3));}
+    ID {
+        printf("\t\tR7: id es Listado_ids\n");
+        insertarEnLista(&listaIds, $1, tID);
+        ListPtr = crearHoja($1);}
+    |listado_ids COMA ID    {printf("\t\tR8: listado_ids , id es Listado_ids\n"); 
+        insertarEnLista(&listaIds, $3, tID); 
+        ListPtr = crearNodo(",", ListPtr, crearHoja($3));
+        }
     ;
 
 tipo: 
@@ -116,9 +123,7 @@ bloque_ejec:
         }
     | bloque_ejec{apilar(&anidaciones, &BloPtr, sizeof(BloPtr));} sentencia            
         {printf("\tR13: bloque_ejec sentencia es Bloque_ejec\n"); 
-
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
-  
         BloPtr = crearNodo("BloEjec", BloAux, SentPtr);}
     ;
 
@@ -129,7 +134,7 @@ sentencia:
     |ciclo                              {printf("\t\tR15: ciclo es Sentencia\n"); SentPtr = CicPtr;}
     |eval                               {printf("\t\tR16: eval es Sentencia\n"); SentPtr = EvalPtr;}
     |TIMER PA INT {intAux = yylval.int_val;} COMA bloque_ejec PC   {printf("\t\tR17: timer(int,bloque_ejec) es Sentencia\n"); 
-    SentPtr = crearNodo("Ciclo", crearNodo("<", crearHoja("_i"), crearHoja(itoa(intAux, strAux , 10))), crearNodo("BloEjec", BloPtr, crearNodo(":=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))));}
+        SentPtr = crearNodo("Ciclo", crearNodo("<", crearHoja("_i"), crearHoja(itoa(intAux, strAux , 10))), crearNodo("BloEjec", BloPtr, crearNodo(":=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))));}
     |WRITE PA ID PC                     {printf("\t\tR18: write(id) es Sentencia\n"); 
     if(!idDeclarado(&listaSimbolos, $3)){
         printf("\nError, id: *%s* no fue declarado\n", $3);
@@ -262,6 +267,12 @@ int main(int argc, char *argv[]) {
 
     imprimirLista(&listaSimbolos);
     imprimirArbol(&compilado);
+    vaciarLista(&listaSimbolos);
+    vaciarLista(&listaIds);
+    vaciarPila(&anidaciones);
+    vaciarPila(&condAnidados);
+    vaciarArbol(&compilado);
+
     return 0;
 }
  
