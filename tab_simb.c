@@ -13,7 +13,7 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
     nuevo_simbolo.valor[0] = '\0';
     nuevo_simbolo.tipo_dato[0] = '\0';
     nuevo_simbolo.longitud = 0;
-   
+
     if (tDato == tID)
     {
         strcpy(nuevo_simbolo.nombre, nombre);
@@ -22,14 +22,14 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
     {
         strcpy(nuevo_simbolo.nombre, "_");
         strcat(nuevo_simbolo.nombre, nombre);
-        strcpy(nuevo_simbolo.tipo_dato, "Int");
+        strcpy(nuevo_simbolo.tipo_dato, TINT);
         strcpy(nuevo_simbolo.valor, nombre);
     }
     else if (tDato == tFLOAT)
     {
         strcpy(nuevo_simbolo.nombre, "_");
         strcat(nuevo_simbolo.nombre, nombre);
-        strcpy(nuevo_simbolo.tipo_dato, "Float");
+        strcpy(nuevo_simbolo.tipo_dato, TFLOAT);
         strcpy(nuevo_simbolo.valor, nombre);
     }
     else if (tDato == tSTRING)
@@ -40,7 +40,7 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
         nNombre[longitud] = '\0';               // strncpy no mete \0
         strcpy(nuevo_simbolo.nombre, "_");
         strcat(nuevo_simbolo.nombre, nNombre);
-        strcpy(nuevo_simbolo.tipo_dato, "String");
+        strcpy(nuevo_simbolo.tipo_dato, TSTRING);
         strcpy(nuevo_simbolo.valor, nNombre);
         nuevo_simbolo.longitud = longitud;
     }
@@ -119,7 +119,6 @@ void vaciarLista(Lista *pl)
         *pl = (aux)->sig;
         free(aux);
     }
-
 }
 
 void asignarTipo(Lista *lista, char *auxTipo)
@@ -136,7 +135,7 @@ void fusionarLista(Lista *lista1, Lista *lista2)
     {
         if (strcmp((*lista1)->simb.nombre, (*lista2)->simb.nombre) == 0)
         {
-            //printf("\nl1: *%s* l2: *%s*", (*lista1)->simb.nombre, (*lista2)->simb.nombre);
+            // printf("\nl1: *%s* l2: *%s*", (*lista1)->simb.nombre, (*lista2)->simb.nombre);
             strcpy((*lista1)->simb.tipo_dato, (*lista2)->simb.tipo_dato);
             lista2 = &(*lista2)->sig;
         }
@@ -144,7 +143,8 @@ void fusionarLista(Lista *lista1, Lista *lista2)
     }
 }
 
-int esMismoTipo(Lista *lista, char* id, char* auxTipo){
+int esMismoTipo(Lista *lista, char *id, char *auxTipo)
+{
     while ((*lista != NULL) && strcmp((*lista)->simb.nombre, id) > 0)
     {
         lista = &(*lista)->sig;
@@ -152,7 +152,8 @@ int esMismoTipo(Lista *lista, char* id, char* auxTipo){
 
     if (*lista != NULL && strcmp((*lista)->simb.nombre, id) == 0)
     {
-        if(strcmp((*lista)->simb.tipo_dato, auxTipo) == 0){
+        if (strcmp((*lista)->simb.tipo_dato, auxTipo) == 0)
+        {
             return TRUE;
         }
     }
@@ -160,7 +161,8 @@ int esMismoTipo(Lista *lista, char* id, char* auxTipo){
     return FALSE;
 }
 
-char* obtenerTipo(Lista *lista, char* id){
+char *obtenerTipo(Lista *lista, char *id)
+{
     while ((*lista != NULL) && strcmp((*lista)->simb.nombre, id) > 0)
     {
         lista = &(*lista)->sig;

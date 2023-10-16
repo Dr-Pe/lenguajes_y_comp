@@ -6,5 +6,5 @@ init {
 }
 
 cad_min = "dasdsd"
-int_max = int_min
+int_max = 20
 float_max = 2.3
