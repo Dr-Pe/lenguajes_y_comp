@@ -1,9 +1,0 @@
-nombre                                            |tipoDato|valor                                             |longitud  
-test5                                             |String |                                                  |0         
-test4                                             |String |                                                  |0         
-test2                                             |String |                                                  |0         
-test1                                             |String |                                                  |0         
-cad_min                                           |String |                                                  |0         
-_mundo                                            |String |mundo                                             |5         
-_hola                                             |String |hola                                              |4         
-_4                                                |Int    |4                                                 |0         
