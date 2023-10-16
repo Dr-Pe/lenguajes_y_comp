@@ -16,7 +16,7 @@
             *CicPtr, *EvalPtr, *Eptr, *StrPtr, *ConPtr, *CmpPtr, *EptrAux, *BloAux, *Tptr, *Fptr, *CmpAux, *StrPtrAux;
     NodoA* EjePtr, * ConAux;
     
-    char  auxTipo[10], strAux[10], strAux2[10], cmpAux[10], opAux[10];
+    char  auxTipo[7], strAux[VALOR_LARGO_MAX + 1], strAux2[VALOR_LARGO_MAX + 1], cmpAux[3], opAux[3];
 
     char* concatenar(char*, char*, int);
     int intAux;
@@ -82,113 +82,126 @@ programa_prima:
     programa    {printf("R1: COMPILADO\n"); compilado = ProgramaPtr;}
     ;
 programa: 
-    INIT LLA declaraciones LLC bloque_ejec    {printf("\tR2: init {declaraciones} bloque_ejec es Programa\n"); ProgramaPtr = crearNodo("Programa", DeclaPtr, BloPtr);} 
-    | INIT LLA LLC bloque_ejec                      {printf("\tR3: init {} bloque_ejec es Programa\n"); ProgramaPtr = BloPtr;}
+    INIT LLA declaraciones LLC bloque_ejec  {printf("\tR2: init {declaraciones} bloque_ejec es Programa\n"); ProgramaPtr = crearNodo("Programa", DeclaPtr, BloPtr);} 
+    | INIT LLA LLC bloque_ejec              {printf("\tR3: init {} bloque_ejec es Programa\n"); ProgramaPtr = BloPtr;}
     ;
 
 declaraciones: 
-    dec          {printf("\tR4: dec es Declaraciones\n"); DeclaPtr = DecPtr;}
-    | declaraciones dec     {printf("\tR5: declaraciones dec es Declaraciones\n"); DeclaPtr = crearNodo("Mdeclaraciones", DeclaPtr, DecPtr);}
+    dec                 {printf("\tR4: dec es Declaraciones\n"); DeclaPtr = DecPtr;}
+    | declaraciones dec {printf("\tR5: declaraciones dec es Declaraciones\n"); DeclaPtr = crearNodo("Mdeclaraciones", DeclaPtr, DecPtr);}
     ;
 
 dec: 
-    listado_ids DOS_P tipo {printf("\t\tR6: listado_ids : tipo es Dec\n");
+    listado_ids DOS_P tipo  {
+        printf("\t\tR6: listado_ids : tipo es Dec\n");
         asignarTipo(&listaIds, auxTipo);
         fusionarLista(&listaSimbolos, &listaIds);
         vaciarLista(&listaIds);
-        DecPtr = crearNodo(":", ListPtr, crearHoja(auxTipo));}
+        DecPtr = crearNodo(":", ListPtr, crearHoja(auxTipo));
+    }
     ;
 
 listado_ids:
-    ID {
+    ID  {
         printf("\t\tR7: id es Listado_ids\n");
         insertarEnLista(&listaIds, $1, tID);
-        ListPtr = crearHoja($1);}
-    |listado_ids COMA ID    {printf("\t\tR8: listado_ids , id es Listado_ids\n"); 
+        ListPtr = crearHoja($1);
+    }
+    |listado_ids COMA ID    {
+        printf("\t\tR8: listado_ids , id es Listado_ids\n"); 
         insertarEnLista(&listaIds, $3, tID); 
         ListPtr = crearNodo(",", ListPtr, crearHoja($3));
-        }
+    }
     ;
 
 tipo: 
-    DEC_INT       {printf("\t\tR9: dec_int es Tipo\n"); strcpy(auxTipo, "int"); }
-    | DEC_FLOAT     {printf("\t\tR10: dec_float es Tipo\n"); strcpy(auxTipo, "float");}
-    | DEC_STRING    {printf("\t\tR11: dec_string es Tipo\n"); strcpy(auxTipo, "string");}
+    DEC_INT         {printf("\t\tR9: dec_int es Tipo\n"); strcpy(auxTipo, "Int"); }
+    | DEC_FLOAT     {printf("\t\tR10: dec_float es Tipo\n"); strcpy(auxTipo, "Float");}
+    | DEC_STRING    {printf("\t\tR11: dec_string es Tipo\n"); strcpy(auxTipo, "String");}
     ;
 
 bloque_ejec: 
-    sentencia{
-        printf("\tR12: sentencia es Bloque_ejec\n"); BloPtr = SentPtr;
-        
-        }
-    | bloque_ejec{apilar(&anidaciones, &BloPtr, sizeof(BloPtr));} sentencia            
-        {printf("\tR13: bloque_ejec sentencia es Bloque_ejec\n"); 
+    sentencia{printf("\tR12: sentencia es Bloque_ejec\n"); BloPtr = SentPtr;}
+    | bloque_ejec {apilar(&anidaciones, &BloPtr, sizeof(BloPtr));} sentencia {
+        printf("\tR13: bloque_ejec sentencia es Bloque_ejec\n"); 
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
-        BloPtr = crearNodo("BloEjec", BloAux, SentPtr);}
+        BloPtr = crearNodo("BloEjec", BloAux, SentPtr);
+    }
     ;
 
 
 
 sentencia:        
-    asignacion                          {printf("\t\tR14: asignacion es Sentencia\n"); SentPtr = AsigPtr;}
-    |ciclo                              {printf("\t\tR15: ciclo es Sentencia\n"); SentPtr = CicPtr;}
-    |eval                               {printf("\t\tR16: eval es Sentencia\n"); SentPtr = EvalPtr;}
-    |TIMER PA INT {intAux = yylval.int_val;} COMA bloque_ejec PC   {printf("\t\tR17: timer(int,bloque_ejec) es Sentencia\n"); 
-        SentPtr = crearNodo("Ciclo", crearNodo("<", crearHoja("_i"), crearHoja(itoa(intAux, strAux , 10))), crearNodo("BloEjec", BloPtr, crearNodo(":=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))));}
-    |WRITE PA ID PC                     {printf("\t\tR18: write(id) es Sentencia\n"); 
-    if(!idDeclarado(&listaSimbolos, $3)){
-        printf("\nError, id: *%s* no fue declarado\n", $3);
-        return 1;
-    };
-    
-    SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem"));}
-    |WRITE PA STRING PC                 {printf("\t\tR19: write(string) es Sentencia\n"); SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem"));}
-    |READ PA ID PC                      {printf("\t\tR20: read(id) es Sentencia\n"); 
-    if(!idDeclarado(&listaSimbolos, $3)){
-        printf("\nError, id: *%s* no fue declarado\n", $3);
-        return 1;
-    };
-    
-    SentPtr = crearNodo(":=", crearHoja($3), crearHoja("READ"));}
+    asignacion  {printf("\t\tR14: asignacion es Sentencia\n"); SentPtr = AsigPtr;}
+    |ciclo      {printf("\t\tR15: ciclo es Sentencia\n"); SentPtr = CicPtr;}
+    |eval       {printf("\t\tR16: eval es Sentencia\n"); SentPtr = EvalPtr;}
+    |TIMER PA INT {intAux = yylval.int_val;} COMA bloque_ejec PC {
+        printf("\t\tR17: timer(int,bloque_ejec) es Sentencia\n");
+        snprintf(strAux, sizeof(intAux), "%d", intAux);
+        SentPtr = crearNodo(
+            "Ciclo", 
+            crearNodo("<", crearHoja("_i"), crearHoja(strAux)),
+            crearNodo(
+                "BloEjec", BloPtr, crearNodo(":=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))
+            )
+        );
+    }
+    |WRITE PA ID PC {
+        printf("\t\tR18: write(id) es Sentencia\n"); 
+        if(!idDeclarado(&listaSimbolos, $3)){
+            printf("\nError, id: *%s* no fue declarado\n", $3);
+            return 1;
+        };
+    SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem"));
+    }
+    |WRITE PA STRING PC {printf("\t\tR19: write(string) es Sentencia\n"); SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem"));}
+    |READ PA ID PC      {
+        printf("\t\tR20: read(id) es Sentencia\n"); 
+        if(!idDeclarado(&listaSimbolos, $3)){
+            printf("\nError, id: *%s* no fue declarado\n", $3);
+            return 1;
+        };
+    SentPtr = crearNodo(":=", crearHoja($3), crearHoja("READ"));
+    }
     ;
  
  //TODO: falta verificar que si tengo un id int, no se le asigne un float o string
  // en ID OP_AS string, no hay problema, en la regla expresion talvez haya que guardar un string con el tipo de la expresion(float, int) en un auxiliar y enviarselo 
  // a una funcion de la lista ***
 asignacion:
-    ID OP_AS expresion {printf("\t\tR21: ID = Expresion es ASIGNACION\n");
+    ID OP_AS expresion {
+        printf("\t\tR21: ID = Expresion es ASIGNACION\n");
         if(!idDeclarado(&listaSimbolos, $1)){
             printf("\nError, id: *%s* no fue declarado\n", $1);
             return 1;
         };
         //*** verificarAsignacion(&Lista, $1, expAux);
         AsigPtr = crearNodo(":=", crearHoja($1), Eptr);
-
     }
-    |ID OP_AS string   {printf("\t\tR22: ID = String es ASIGNACION\n"); 
-    if(!idDeclarado(&listaSimbolos, $1)){
-        printf("\nError, id: *%s* no fue declarado\n", $1);
-        return 1;
-    };
-    AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);}
+    |ID OP_AS string   {
+        printf("\t\tR22: ID = String es ASIGNACION\n"); 
+        if(!idDeclarado(&listaSimbolos, $1)){
+            printf("\nError, id: *%s* no fue declarado\n", $1);
+            return 1;
+        };
+    AsigPtr = crearNodo(":=", crearHoja($1), StrPtr);
+    }
     ;
 
 string:
-    STRING {
-        printf("\t\t\tR23: string es String\n"); 
-        StrPtr = crearHoja($1);
-    }
-    |CONCAT PA STRING { strcpy(strAux, $3);} COMA STRING { strcpy(strAux2, $6);} COMA INT PC   {
+    STRING  {printf("\t\t\tR23: string es String\n"); StrPtr = crearHoja($1);}
+    |CONCAT PA STRING { strcpy(strAux, $3);} COMA STRING { strcpy(strAux2, $6);} COMA INT PC {
         printf("\t\t\tR24: concatenarConRecorte(String, String, Int) es String\n"); 
         StrPtr = crearHoja(concatenar(strAux, strAux2, yylval.int_val));
     }
-    ;  
+    ;
 
 
 ciclo: 
     CICLO PA condicion  PC LLA bloque_ejec  LLC    {
         desapilar(&condAnidados, &ConAux, sizeof(ConAux));
-        printf("\t\tR25: ciclo(Condicion) {bloque_ejec} es Ciclo\n"); CicPtr = crearNodo("Ciclo", ConAux, BloPtr);}
+        printf("\t\tR25: ciclo(Condicion) {bloque_ejec} es Ciclo\n"); CicPtr = crearNodo("Ciclo", ConAux, BloPtr);
+    }
     ;
 
 eval: 
@@ -237,16 +250,16 @@ comparador:
     ;
 
 expresion:
-    termino {printf("\t\t\t\tR42: Termino es Expresion\n"); Eptr = Tptr;}
-    |expresion OP_SUM termino {printf("\t\t\t\tR43: Expresion+Termino es Expresion\n"); Eptr = crearNodo("+", Eptr, Tptr);}
-    |expresion OP_RES termino {printf("\t\t\t\tR44: Expresion-Termino es Expresion\n"); Eptr = crearNodo("-", Eptr, Tptr);}
+    termino                     {printf("\t\t\t\tR42: Termino es Expresion\n"); Eptr = Tptr;}
+    |expresion OP_SUM termino   {printf("\t\t\t\tR43: Expresion+Termino es Expresion\n"); Eptr = crearNodo("+", Eptr, Tptr);}
+    |expresion OP_RES termino   {printf("\t\t\t\tR44: Expresion-Termino es Expresion\n"); Eptr = crearNodo("-", Eptr, Tptr);}
     ;
  
 termino:
-    factor {printf("\t\t\t\t  R45: Factor es Termino\n"); Tptr = Fptr;}
-    |OP_RES factor  {printf("\t\t\t\t  R46: -Factor es Termino\n"); Tptr = crearNodo("*", crearHoja("-1"), Fptr);}
-    |termino OP_MUL factor {printf("\t\t\t\t  R47: Termino*Factor es Termino\n"); Tptr = crearNodo("*", Tptr, Fptr);}
-    |termino OP_DIV factor {printf("\t\t\t\t  R48: Termino/Factor es Termino\n"); Tptr = crearNodo("/", Tptr, Fptr);}
+    factor                  {printf("\t\t\t\t  R45: Factor es Termino\n"); Tptr = Fptr;}
+    |OP_RES factor          {printf("\t\t\t\t  R46: -Factor es Termino\n"); Tptr = crearNodo("*", crearHoja("-1"), Fptr);}
+    |termino OP_MUL factor  {printf("\t\t\t\t  R47: Termino*Factor es Termino\n"); Tptr = crearNodo("*", Tptr, Fptr);}
+    |termino OP_DIV factor  {printf("\t\t\t\t  R48: Termino/Factor es Termino\n"); Tptr = crearNodo("/", Tptr, Fptr);}
     ;
 
 factor:
@@ -256,16 +269,18 @@ factor:
             return 1;
         }
          ;Fptr= crearHoja($1);}
-    | INT {printf("\t\t\t\t    R51: INT es Factor\n"); Fptr= crearHoja(itoa($1, strAux, 10));  }
-    | FLOAT {printf("\t\t\t\t    R52: FLOAT es Factor\n"); 
-    snprintf(strAux, sizeof($1), "%.2f", $1);
-    Fptr= crearHoja(strAux);}
-    | PA expresion PC {printf("\t\t\t\t    R53: Expresion entre parentesis es Factor\n"); Fptr = Eptr;}
+    | INT   {printf("\t\t\t\t    R51: INT es Factor\n"); snprintf(strAux, sizeof($1), "%d", $1); Fptr= crearHoja(strAux);}
+    | FLOAT {
+        printf("\t\t\t\t    R52: FLOAT es Factor\n"); 
+        snprintf(strAux, MIN(sizeof($1), VALOR_LARGO_MAX), "%.2f", $1);
+        Fptr= crearHoja(strAux);
+    }
+    | PA expresion PC   {printf("\t\t\t\t    R53: Expresion entre parentesis es Factor\n"); Fptr = Eptr;}
     ;
 %%
  
 int main(int argc, char *argv[]) {
-    
+  
     crearLista(&listaSimbolos);
     crearLista(&listaIds);
     crearPila(&anidaciones);
@@ -279,16 +294,14 @@ int main(int argc, char *argv[]) {
     }
     fclose(yyin);
 
-   
-
     imprimirLista(&listaSimbolos);
     imprimirArbol(&compilado);
+    
     vaciarLista(&listaSimbolos);
     vaciarLista(&listaIds);
     vaciarPila(&anidaciones);
     vaciarPila(&condAnidados);
     vaciarArbol(&compilado);
-
     return 0;
 }
  
@@ -312,6 +325,7 @@ char* concatenar(char* str1, char* str2, int n){
    
     return str1;
 }
+
 int estaContenido(char* str1, char* str2){
     return strstr(str1,str2) != NULL;
 }

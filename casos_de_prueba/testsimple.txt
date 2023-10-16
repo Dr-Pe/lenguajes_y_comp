@@ -1,7 +1,5 @@
 init {
     cad_min, test1, test2, test4, test5: String
-
- 
 }
 
 cad_min = concatenarConRecorte("hola", "mundo", 4) 
