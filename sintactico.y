@@ -154,11 +154,11 @@ sentencia:
  
 asignacion:
     ID OP_AS expresion {printf("\t\tR21: ID = Expresion es ASIGNACION\n");
-    if(!idDeclarado(&listaSimbolos, $1)){
-        printf("\nError, id: *%s* no fue declarado\n", $1);
-        return 1;
-    };
-    AsigPtr = crearNodo(":=", crearHoja($1), Eptr);}
+        if(!idDeclarado(&listaSimbolos, $1)){
+            printf("\nError, id: *%s* no fue declarado\n", $1);
+            return 1;
+        };
+        AsigPtr = crearNodo(":=", crearHoja($1), Eptr);}
     |ID OP_AS string   {printf("\t\tR22: ID = String es ASIGNACION\n"); 
     if(!idDeclarado(&listaSimbolos, $1)){
         printf("\nError, id: *%s* no fue declarado\n", $1);
@@ -243,7 +243,9 @@ factor:
         }
          ;Fptr= crearHoja($1);}
     | INT {printf("\t\t\t\t    R51: INT es Factor\n"); Fptr= crearHoja(itoa($1, strAux, 10));  }
-    | FLOAT {printf("\t\t\t\t    R52: FLOAT es Factor\n"); sprintf(strAux, "%.2f", $1); Fptr= crearHoja(strAux);}
+    | FLOAT {printf("\t\t\t\t    R52: FLOAT es Factor\n"); 
+    snprintf(strAux, sizeof($1), "%.2f", $1);
+    Fptr= crearHoja(strAux);}
     | PA expresion PC {printf("\t\t\t\t    R53: Expresion entre parentesis es Factor\n"); Fptr = Eptr;}
     ;
 %%
@@ -267,7 +269,7 @@ int main(int argc, char *argv[]) {
 
     imprimirLista(&listaSimbolos);
     imprimirArbol(&compilado);
-    vaciarLista(&listaSimbolos);
+    //vaciarLista(&listaSimbolos);
     vaciarLista(&listaIds);
     vaciarPila(&anidaciones);
     vaciarPila(&condAnidados);

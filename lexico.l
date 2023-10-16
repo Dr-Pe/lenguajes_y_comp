@@ -89,6 +89,7 @@ MENOR_IGUAL "<="
 {FLOAT}         {   if (fa_verificarRangoFloat(yytext) == TRUE){
                         insertarEnLista(&listaSimbolos, yytext, tFLOAT);
                     }; 
+                    
                     yylval.float_val = atof(yytext); return FLOAT;}
 {STRING}        {   if(fa_verificarRangoStr(yytext)){
                         insertarEnLista(&listaSimbolos, yytext, tSTRING);

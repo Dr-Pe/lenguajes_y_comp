@@ -1,18 +1,82 @@
-				2147483648.00
-			*
-				-1
+			"pepe""pepito"
 		:=
-			float_min
+			cad_min
 	BloEjec
-				32768
+				READ
 			:=
-				entero_max
+				cad_min
 		BloEjec
-					32768
-				*
-					-1
-			:=
-				entero_min
+					DirMem
+				Write
+					"hola, mundo"
+			BloEjec
+						DirMem
+					Write
+						cad_any
+				BloEjec
+							"Cualquier cáracter: @!#'¿?"
+						:=
+							cad_any
+					BloEjec
+								"0123456789012345678901234567890123456789+"
+							:=
+								cad_max
+						BloEjec
+									""
+								:=
+									cad_min
+							BloEjec
+										32769
+									:=
+										entero_max
+								BloEjec
+												32769
+											*
+												-1
+										:=
+											entero_min
+									BloEjec
+												214
+											:=
+												float_max
+										BloEjec
+														214
+													*
+														-1
+												:=
+													float_min
+											BloEjec
+														"Cualquier cáracter: @!#'¿?"
+													:=
+														cad_any
+												BloEjec
+															"0123456789012345678901234567890123456789"
+														:=
+															cad_max
+													BloEjec
+																""
+															:=
+																cad_min
+														BloEjec
+																	214
+																:=
+																	float_max
+															BloEjec
+																			214
+																		*
+																			-1
+																	:=
+																		float_min
+																BloEjec
+																			32768
+																		:=
+																			entero_max
+																	BloEjec
+																				32768
+																			*
+																				-1
+																		:=
+																			entero_min
 Programa
 			int
 		:
