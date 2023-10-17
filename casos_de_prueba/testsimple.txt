@@ -1,8 +1,0 @@
-init {
-    entero_max: Int *- Multiples variables -*
-
-    cad : String
-}
-
-cad = "2"
-entero_max = 2
