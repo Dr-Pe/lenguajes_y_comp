@@ -121,9 +121,9 @@ ciclo (a > b) {
     write("hola")
 }
 
-ciclo (test1 > test2) {
+ciclo (a > b) {
     write("test3")
-    ciclo (test4 > test5) {
+    ciclo (a < b) {
         write("test6")
     }
 }

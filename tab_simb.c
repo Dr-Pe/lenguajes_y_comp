@@ -45,11 +45,21 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
         nuevo_simbolo.longitud = longitud;
     }
 
-    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) > 0)
+    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) > 0 )
     {
         lista = &(*lista)->sig;
     }
-    if (*lista != NULL && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) == 0)
+
+    // a int
+    // a
+    // a str
+
+   
+    if (*lista != NULL && tDato == tID && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) == 0)
+    {
+        return;
+    }
+    else if (*lista != NULL && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) == 0 &&  strcmp((*lista)->simb.tipo_dato, nuevo_simbolo.tipo_dato) == 0)
     {
         return;
     }
