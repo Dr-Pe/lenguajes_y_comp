@@ -51,7 +51,12 @@ READ        "read"
 CONCAT      "concatenarConRecorte"
 TIMER       "timer"
 ESTA_CONT   "estaContenido"
-/* ID, TODO: Agregar guiones? */
+SETSWITCH   "SET SWITCH"
+CASE        "CASE"
+ELSECASE    "ELSECASE"
+ENDSETCASE  "ENDSETCASE"
+FIB         "FIB"
+/* ID */
 ID          {LETRA}({LETRA}|{DIGITO}|_)*
 /* Caracteres especiales */
 PA          "("
@@ -83,23 +88,31 @@ MENOR_IGUAL "<="
 {DEC_INT}       {return DEC_INT;}
 {DEC_FLOAT}     {return DEC_FLOAT;}
 {DEC_STRING}    {return DEC_STRING;}
-{INT}           {   if (fa_verificarRangoInt(yytext) == TRUE){ 
-                        insertarEnLista(&listaSimbolos, yytext, tINT); 
-                    };
-                    yylval.int_val = atoi(yytext); return INT;}
+{INT}           {
+    if (fa_verificarRangoInt(yytext) == TRUE) { 
+        insertarEnLista(&listaSimbolos, yytext, tINT); 
+    }
+    yylval.int_val = atoi(yytext); 
+    return INT;
+    }
 
-{FLOAT}         {   if (fa_verificarRangoFloat(yytext) == TRUE){
-                        insertarEnLista(&listaSimbolos, yytext, tFLOAT);
-                    }; 
-                    
-                    yylval.float_val = atof(yytext); return FLOAT;}
-{STRING}        {   if(fa_verificarRangoStr(yytext)){
-                        insertarEnLista(&listaSimbolos, yytext, tSTRING);
-                    }; 
-                    strcpy(yylval.string_val, yytext); return STRING;}
+{FLOAT}         {
+    if (fa_verificarRangoFloat(yytext) == TRUE){
+        insertarEnLista(&listaSimbolos, yytext, tFLOAT);
+    }                
+    yylval.float_val = atof(yytext); 
+    return FLOAT;
+    }
+{STRING}        {
+    if(fa_verificarRangoStr(yytext)){
+        insertarEnLista(&listaSimbolos, yytext, tSTRING);
+    }
+    strcpy(yylval.string_val, yytext); 
+    return STRING;
+    }
 {COMENTARIO}            {}
 {COMENTARIO_ANIDADO}    {}
- 
+
 {NOT}           {return NOT;}
 {IF}            {return IF;}
 {CICLO}         {return CICLO;}
@@ -110,26 +123,33 @@ MENOR_IGUAL "<="
 {CONCAT}        {return CONCAT;}
 {TIMER}         {return TIMER;}
 {ESTA_CONT}     {return ESTA_CONT;}
+{SETSWITCH}     {return SETSWITCH;}
+{CASE}          {return CASE;}
+{ELSECASE}      {return ELSECASE;}
+{ENDSETCASE}    {return ENDSETCASE;}
+{FIB}           {return FIB;}
 
 {ID}            {
-                    if(fa_validarLongitudID(yytext) == TRUE){
-                        insertarEnLista(&listaSimbolos, yytext, tID);
-                    }
-                ;  strcpy(yylval.string_val, yytext); return ID;}
- 
+    if(fa_validarLongitudID(yytext) == TRUE){
+        insertarEnLista(&listaSimbolos, yytext, tID);
+    }
+    strcpy(yylval.string_val, yytext); 
+    return ID;
+    }
+
 {OP_SUM}        {return OP_SUM;}
 {OP_AS}         {return OP_AS;}
 {OP_MUL}        {return OP_MUL;}
 {OP_RES}        {return OP_RES;}
 {OP_DIV}        {return OP_DIV;}
- 
+
 {PA}            {return PA;}
 {PC}            {return PC;}
 {LLA}           {return LLA;}
 {LLC}           {return LLC;}
 {COMA}          {return COMA;}
 {DOS_P}         {return DOS_P;}
- 
+
 {AND}           {return AND;}
 {OR}            {return OR;}
 

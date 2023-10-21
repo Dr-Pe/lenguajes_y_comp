@@ -23,7 +23,7 @@
 
     NodoA* CompiladoPtr, *ProgramaPtr, *DeclaPtr, *BloPtr, *DecPtr, *ListPtr, *SentPtr, *AsigPtr, *tipoAux,
             *CicPtr, *EvalPtr, *Eptr, *StrPtr, *ConPtr, *CmpPtr, *EptrAux, *BloAux, *Tptr, *Fptr, *CmpAux, *StrPtrAux;
-    NodoA* EjePtr, * ConAux;
+    NodoA* EjePtr, * ConAux, *CasePtr, *ExPtrSwitch;
     char  auxTipo[7], strAux[VALOR_LARGO_MAX + 1], strAux2[VALOR_LARGO_MAX + 1], cmpAux[3], opAux[3];
     int intAux;
 %}
@@ -47,6 +47,11 @@
 %token CONCAT
 %token TIMER
 %token ESTA_CONT
+%token FIB          // Agregada grupo 6
+%token SETSWITCH    // Agregada grupo 6
+%token CASE
+%token ELSECASE
+%token ENDSETCASE
 // ID
 %token <string_val>ID
 // Caracteres especiales   
@@ -81,14 +86,17 @@
  
 %%
 programa_prima: 
-    programa    { if(boolCompiladoOK == 1){
-                    printf("R1: COMPILACION EXITOSA\n");
-                }
-                else{
-                    printf("R1: ERROR DE COMPILACION\n");
-                }
-                ; compilado = ProgramaPtr; }
+    programa    { 
+                    if(boolCompiladoOK == 1){
+                        printf("R1: COMPILACION EXITOSA\n");
+                    }
+                    else{
+                        printf("R1: ERROR DE COMPILACION\n");
+                    }
+                    compilado = ProgramaPtr; 
+    }
     ;
+
 programa: 
     INIT LLA declaraciones LLC bloque_ejec  { printf("\tR2: init { declaraciones} bloque_ejec es Programa\n"); ProgramaPtr = crearNodo("Programa", DeclaPtr, BloPtr); } 
     |INIT LLA LLC bloque_ejec               { printf("\tR3: init { } bloque_ejec es Programa\n"); ProgramaPtr = BloPtr; }
@@ -153,21 +161,21 @@ sentencia:
         );
     }
     |WRITE PA ID PC { 
-        printf("\t\tR18: write(id) es Sentencia\n"); 
         if(!idDeclarado(&listaSimbolos, $3)){ 
             printf("\nError, id: *%s* no fue declarado\n", $3);
             return 1;
         };
-    SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem"));
+        printf("\t\tR18: write(id) es Sentencia\n");
+        SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem"));
     }
     |WRITE PA STRING PC { printf("\t\tR19: write(string) es Sentencia\n"); SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem")); }
     |READ PA ID PC      { 
-        printf("\t\tR20: read(id) es Sentencia\n"); 
         if(!idDeclarado(&listaSimbolos, $3)){ 
             printf("\nError, id: *%s* no fue declarado\n", $3);
             return 1;
         };
-    SentPtr = crearNodo("=", crearHoja($3), crearHoja("READ"));
+        printf("\t\tR20: read(id) es Sentencia\n"); 
+        SentPtr = crearNodo("=", crearHoja($3), crearHoja("READ"));
     }
     ;
  
@@ -176,7 +184,6 @@ sentencia:
  // a una funcion de la lista ***
 asignacion:
     ID OP_AS expresion { 
-        printf("\t\tR21: ID = Expresion es ASIGNACION\n");
         if(!idDeclarado(&listaSimbolos, $1)){ 
             printf("\nError, id: *%s* no fue declarado\n", $1);
             return 1;
@@ -185,10 +192,10 @@ asignacion:
             printf("\nError, datos de diferente tipo.\n");
             return 1;
         }
+        printf("\t\tR22: ID = String es ASIGNACION\n");
         AsigPtr = crearNodo("=", crearHoja($1), Eptr);
     }
     |ID OP_AS string  { 
-        printf("\t\tR22: ID = String es ASIGNACION\n"); 
         if(!idDeclarado(&listaSimbolos, $1)){ 
             printf("\nError, id: *%s* no fue declarado\n", $1);
             return 1;
@@ -197,6 +204,7 @@ asignacion:
             printf("\nError, datos de diferente tipo.\n");
             return 1;
         }
+        printf("\t\tR22: ID = String es ASIGNACION\n");
         AsigPtr = crearNodo("=", crearHoja($1), StrPtr);
     }
     ;
@@ -227,21 +235,45 @@ eval:
         desapilar(&condAnidados, &ConAux, sizeof(ConAux));
         EvalPtr = crearNodo("if", ConAux, BloPtr);
     }
-    |IF PA condicion PC LLA bloque_ejec LLC{ apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } ELSE LLA bloque_ejec LLC { 
+    |IF PA condicion PC LLA bloque_ejec LLC { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } ELSE LLA bloque_ejec LLC { 
         printf("\t\tR27: if (condicion) { bloque_ejec} else { bloque_ejec} es Eval\n"); 
         desapilar(&condAnidados, &ConAux, sizeof(ConAux));
-        desapilar(&anidaciones, &BloAux, sizeof(BloAux));   //el apilar de blo_ejec no funciona aca por que el else ejecuta otra instancia de bloque_Ejec
+        desapilar(&anidaciones, &BloAux, sizeof(BloAux));   // el apilar de blo_ejec no funciona aca por que el else ejecuta otra instancia de bloque_Ejec
         EvalPtr = crearNodo("if", ConAux, crearNodo("Cuerpo", BloAux, BloPtr));
+    }
+    |SETSWITCH PA expresion PC { ExPtrSwitch = Eptr; } cases ENDSETCASE {
+        printf("\t\tR28: SET SWITCH (expresion) cases ENDSETCASE es Eval\n");
+        EvalPtr = CasePtr;
+    }
+    |SETSWITCH PA expresion PC { ExPtrSwitch = Eptr; } cases ELSECASE DOS_P bloque_ejec ENDSETCASE {
+        printf("\t\tR28: SET SWITCH (expresion) cases ELSECASE: bloque_ejec ENDSETCASE es Eval\n");
+
     }
     ;
 
+cases:
+    CASE INT DOS_P bloque_ejec {
+        printf("\t\t\tR28: CASE INT: bloque_ejec es cases\n");
+        snprintf(strAux, sizeof($2), "%d", $2);
+        CasePtr = crearNodo("if", crearNodo("==", ExPtrSwitch, crearHoja(strAux)), BloPtr);
+    }
+    |CASE INT DOS_P bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } cases {
+        printf("\t\t\tR28: cases CASE INT: bloque_ejec es cases\n");
+        snprintf(strAux, sizeof($2), "%d", $2);
+        desapilar(&anidaciones, &BloAux, sizeof(BloAux));
+        CasePtr = crearNodo(
+            "if",
+            crearNodo("==", ExPtrSwitch, crearHoja(strAux)),
+            crearNodo("CUERPO", BloAux, CasePtr));
+    }
+    ;
 
 condicion:
     comparacion { 
-        printf("\t\t\tR28: comparacion es Condicion\n"); ConPtr = CmpPtr;
+        printf("\t\t\tR28: comparacion es Condicion\n"); 
+        ConPtr = CmpPtr;
         apilar(&condAnidados, &ConPtr, sizeof(ConPtr));
     }
-   // |comparacion { strcpy(cmpAux, CmpPtr->simbolo); } op_logico comparacion      { printf("\t\t\tcomparacion op_logico comparacion es Condicion\n"); ConPtr = crearNodo(opAux, crearHoja(cmpAux), CmpPtr); }
     |comparacion { CmpAux = CmpPtr; } op_logico comparacion { 
         printf("\t\t\tR29: comparacion op_logico comparacion es Condicion\n"); 
         ConPtr = crearNodo(opAux, CmpAux, CmpPtr);
@@ -285,7 +317,6 @@ termino:
 
 factor:
     ID  { 
-        printf("\t\t\t\t    R50: ID es Factor \n"); 
         if(!idDeclarado(&listaSimbolos, $1)){ 
             printf("\nError, id: *%s* no fue declarado\n", $1);
             return 1;
@@ -294,6 +325,7 @@ factor:
             printf("\nError: No es posible realizar operaciones aritmeticas sobre variables String.\n");
             return 1;
         }
+        printf("\t\t\t\t    R50: ID es Factor \n");
         strcpy(auxTipo, obtenerTipo(&listaSimbolos, $1)); // Se copia en auxTipo el tipo de la ID (Ojo cuando escala a termino y se pisa)
         Fptr= crearHoja($1); 
     }
@@ -305,11 +337,22 @@ factor:
     }
     |FLOAT { 
         printf("\t\t\t\t    R52: FLOAT es Factor\n"); 
-        snprintf(strAux, MIN(sizeof($1), VALOR_LARGO_MAX), "%.2f", $1);
+        snprintf(strAux, VALOR_LARGO_MAX + 1, "%.2f", $1);
         strcpy(auxTipo, TFLOAT);
         Fptr= crearHoja(strAux);
     }
     |PA expresion PC    { printf("\t\t\t\t    R53: Expresion entre parentesis es Factor\n"); Fptr = Eptr; }
+    |FIB PA ID PC      { 
+        if(!idDeclarado(&listaSimbolos, $3)){ 
+            printf("\nError: id *%s* no fue declarado.\n", $3);
+            return 1;
+        }
+        if(!esMismoTipo(&listaSimbolos, $3, TINT)){ 
+            printf("\nError: id *%s* no es de tipo Int.\n", $3);
+            return 1;
+        }
+        printf("\t\t\t\t    R54: FIB(ID) es Factor\n");
+    }
     ;
 %%
  

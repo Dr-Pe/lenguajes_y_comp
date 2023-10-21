@@ -1,0 +1,12 @@
+init {
+    a: Int
+}
+
+SET SWITCH (a)
+CASE 1:
+    write("uno")
+CASE 2:
+    write("dos")
+CASE 3:
+    write("tres")
+ENDSETCASE

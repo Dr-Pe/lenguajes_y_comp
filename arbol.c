@@ -45,7 +45,7 @@ void recorrerArbolInOrden(Arbol *pa, int nivel, FILE *arch)
 
     for (int i = 0; i < nivel; i++)
         fprintf(arch, "\t");
-    fprintf(arch, "%s\n", &(*pa)->simbolo);
+    fprintf(arch, "%s\n", (*pa)->simbolo);
 
     recorrerArbolInOrden(&(*pa)->izq, nivel + 1, arch);
 }
