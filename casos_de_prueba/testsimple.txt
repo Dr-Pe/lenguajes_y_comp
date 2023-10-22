@@ -4,11 +4,10 @@ init {
 
 SET SWITCH (a)
 CASE 1:
-    write("uno")
+    SET SWITCH (a)
+    CASE 1:
+        write("uno interno")
+    ENDSETCASE
 CASE 2:
     write("dos")
-CASE 3:
-    write("tres")
-ELSECASE:
-    write("else")
 ENDSETCASE

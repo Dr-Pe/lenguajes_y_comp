@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "constantes.h"
+
 typedef struct _NodoA
 {
-    char simbolo[50];
+    char simbolo[VALOR_LARGO_MAX + 1];
     struct _NodoA *der;
     struct _NodoA *izq;
 } NodoA;
