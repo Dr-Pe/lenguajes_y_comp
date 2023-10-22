@@ -141,7 +141,7 @@ bloque_ejec:
     |bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } sentencia { 
         printf("\tR13: bloque_ejec sentencia es Bloque_ejec\n"); 
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
-        BloPtr = crearNodo("BloEjec", BloAux, SentPtr);
+        BloPtr = crearNodo("BloqEjec", BloAux, SentPtr);
     }
     ;
 
@@ -156,7 +156,7 @@ sentencia:
             "ciclo", 
             crearNodo("<", crearHoja("_i"), crearHoja(strAux)),
             crearNodo(
-                "BloEjec", BloPtr, crearNodo("=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))
+                "BloqEjec", BloPtr, crearNodo("=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))
             )
         );
     }
@@ -243,7 +243,11 @@ eval:
     }
     |SETSWITCH PA expresion PC { ExPtrSwitch = Eptr; } cases ENDSETCASE {
         printf("\t\tR28: SET SWITCH (expresion) cases ENDSETCASE es Eval\n");
-        EvalPtr = CasePtr;
+        EvalPtr = crearNodo(
+            "BloqEjec", 
+            crearNodo("=", crearHoja("@ax"), ExPtrSwitch),
+            CasePtr
+            );
     }
     ;
 
@@ -251,7 +255,7 @@ cases:
     CASE INT DOS_P bloque_ejec {
         printf("\t\t\tR28: CASE INT: bloque_ejec es cases\n");
         snprintf(strAux, sizeof($2), "%d", $2);
-        CasePtr = crearNodo("if", crearNodo("==", ExPtrSwitch, crearHoja(strAux)), BloPtr);
+        CasePtr = crearNodo("if", crearNodo("==", crearHoja("@ax"), crearHoja(strAux)), BloPtr);
     }
     |CASE INT DOS_P bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } cases {
         printf("\t\t\tR28: cases CASE INT: bloque_ejec es cases\n");
@@ -259,7 +263,7 @@ cases:
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
         CasePtr = crearNodo(
             "if",
-            crearNodo("==", ExPtrSwitch, crearHoja(strAux)),
+            crearNodo("==", crearHoja("@ax"), crearHoja(strAux)),
             crearNodo("CUERPO", BloAux, CasePtr));
     }
     |CASE INT DOS_P bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } ELSECASE DOS_P bloque_ejec {
@@ -268,7 +272,7 @@ cases:
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
         CasePtr = crearNodo(
             "if",
-            crearNodo("==", ExPtrSwitch, crearHoja(strAux)),
+            crearNodo("==", crearHoja("@ax"), crearHoja(strAux)),
             crearNodo("CUERPO", BloAux, BloPtr));
     }
     ;
@@ -359,7 +363,7 @@ factor:
         printf("\t\t\t\t    R54: FIB(ID) es Factor\n");
 
         // Creo las asignaciones
-        FibAsigPtr = crearNodo("BloAsig", 
+        FibAsigPtr = crearNodo("BloqAsig", 
             crearNodo("=", crearHoja("@ax"), crearHoja("0")),  
             crearNodo("=", crearHoja("@bx"), crearHoja("1"))
         );
@@ -388,7 +392,7 @@ factor:
         );
 
         // Anidacion final
-        Fptr = crearNodo("BloEjec", 
+        Fptr = crearNodo("BloqEjec", 
             crearNodo("BloqEjec", FibAsigPtr, FibEjecPtr),
             crearNodo("=", crearHoja("FIB"), crearHoja("@bx"))
         );

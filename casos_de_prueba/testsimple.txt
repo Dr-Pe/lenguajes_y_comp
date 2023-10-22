@@ -2,14 +2,15 @@ init {
     a,b: Int
 }
 
-b = FIB(a)
+b = FIB(b)
 
-*- SET SWITCH (a)
+SET SWITCH (a)
 CASE 1:
-    SET SWITCH (a)
-    CASE 1:
-        write("uno interno")
-    ENDSETCASE
+    write("uno")
 CASE 2:
     write("dos")
-ENDSETCASE -*
+CASE 3:
+    write("tres")
+ELSECASE:
+    write("else")
+ENDSETCASE
