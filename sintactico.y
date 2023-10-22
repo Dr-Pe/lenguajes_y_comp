@@ -23,7 +23,7 @@
 
     NodoA* CompiladoPtr, *ProgramaPtr, *DeclaPtr, *BloPtr, *DecPtr, *ListPtr, *SentPtr, *AsigPtr, *tipoAux,
             *CicPtr, *EvalPtr, *Eptr, *StrPtr, *ConPtr, *CmpPtr, *EptrAux, *BloAux, *Tptr, *Fptr, *CmpAux, *StrPtrAux;
-    NodoA* EjePtr, * ConAux, *CasePtr, *ExPtrSwitch;
+    NodoA* EjePtr, * ConAux, *CasePtr, *ExPtrSwitch, *FibPtr, *FibAsigPtr, *FibEjecPtr;
     char  auxTipo[7], strAux[VALOR_LARGO_MAX + 1], strAux2[VALOR_LARGO_MAX + 1], cmpAux[3], opAux[3];
     int intAux;
 %}
@@ -357,6 +357,41 @@ factor:
             return 1;
         }
         printf("\t\t\t\t    R54: FIB(ID) es Factor\n");
+
+        // Creo las asignaciones
+        FibAsigPtr = crearNodo("BloAsig", 
+            crearNodo("=", crearHoja("@ax"), crearHoja("0")),  
+            crearNodo("=", crearHoja("@bx"), crearHoja("1"))
+        );
+
+        // Creo la ejecución del ciclo
+        FibPtr = crearNodo("=", crearHoja("@cx"), crearNodo("+", crearHoja("@ax"),  crearHoja("@bx")));
+        FibEjecPtr = crearNodo("BloqEjec", FibPtr, crearNodo("=", crearHoja("@ax"), crearHoja("@bx")));
+
+        FibPtr = FibEjecPtr;
+
+        FibEjecPtr = crearNodo("BloqEjec", FibPtr, crearNodo("=", crearHoja("@bx"), crearHoja("@cx")));
+
+        FibPtr = FibEjecPtr;
+
+        FibEjecPtr = crearNodo("BloqEjec",
+            FibPtr,
+            crearNodo("=", crearHoja($3), crearNodo("-", crearHoja($3), crearHoja("1")))
+        );
+
+        FibPtr = FibEjecPtr;
+
+        // Creo el ciclo
+        FibEjecPtr = crearNodo("ciclo", 
+            crearNodo(">", crearHoja($3), crearHoja("1")), //Condicion
+            FibPtr
+        );
+
+        // Anidacion final
+        Fptr = crearNodo("BloEjec", 
+            crearNodo("BloqEjec", FibAsigPtr, FibEjecPtr),
+            crearNodo("=", crearHoja("FIB"), crearHoja("@bx"))
+        );
     }
     ;
 %%

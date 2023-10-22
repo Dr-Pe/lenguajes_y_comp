@@ -1,8 +1,10 @@
 init {
-    a: Int
+    a,b: Int
 }
 
-SET SWITCH (a)
+b = FIB(a)
+
+*- SET SWITCH (a)
 CASE 1:
     SET SWITCH (a)
     CASE 1:
@@ -10,4 +12,4 @@ CASE 1:
     ENDSETCASE
 CASE 2:
     write("dos")
-ENDSETCASE
+ENDSETCASE -*
