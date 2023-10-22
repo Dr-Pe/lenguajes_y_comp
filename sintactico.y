@@ -245,10 +245,6 @@ eval:
         printf("\t\tR28: SET SWITCH (expresion) cases ENDSETCASE es Eval\n");
         EvalPtr = CasePtr;
     }
-    |SETSWITCH PA expresion PC { ExPtrSwitch = Eptr; } cases ELSECASE DOS_P bloque_ejec ENDSETCASE {
-        printf("\t\tR28: SET SWITCH (expresion) cases ELSECASE: bloque_ejec ENDSETCASE es Eval\n");
-
-    }
     ;
 
 cases:
@@ -265,6 +261,15 @@ cases:
             "if",
             crearNodo("==", ExPtrSwitch, crearHoja(strAux)),
             crearNodo("CUERPO", BloAux, CasePtr));
+    }
+    |CASE INT DOS_P bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } ELSECASE DOS_P bloque_ejec {
+        printf("\t\t\tR28: CASE INT: bloque_ejec ELSECASE bloque_ejec es cases\n");
+        snprintf(strAux, sizeof($2), "%d", $2);
+        desapilar(&anidaciones, &BloAux, sizeof(BloAux));
+        CasePtr = crearNodo(
+            "if",
+            crearNodo("==", ExPtrSwitch, crearHoja(strAux)),
+            crearNodo("CUERPO", BloAux, BloPtr));
     }
     ;
 

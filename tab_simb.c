@@ -37,7 +37,8 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
     else if (tDato == tSTRING)
     {
         char aux[] = "\"\"";
-        if(strcmp(nombre, aux) == 0){    //no guarda string vacios
+        if (strcmp(nombre, aux) == 0)
+        { // no guarda string vacios
             return;
         }
         int longitud = strlen(nombre) - 2; // -1 para sacar\0 -1 para "
@@ -51,7 +52,7 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
         nuevo_simbolo.longitud = longitud;
     }
 
-    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) > 0 )
+    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) > 0)
     {
         lista = &(*lista)->sig;
     }
@@ -60,7 +61,7 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
     {
         return;
     }
-    else if (*lista != NULL && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) == 0 &&  strcmp((*lista)->simb.tipo_dato, nuevo_simbolo.tipo_dato) == 0)
+    else if (*lista != NULL && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) == 0 && strcmp((*lista)->simb.tipo_dato, nuevo_simbolo.tipo_dato) == 0)
     {
         return;
     }
@@ -137,6 +138,7 @@ void asignarTipo(Lista *lista, char *auxTipo)
         lista = &(*lista)->sig;
     }
 }
+
 void fusionarLista(Lista *lista1, Lista *lista2)
 {
     while ((*lista2 != NULL && *lista1 != NULL))

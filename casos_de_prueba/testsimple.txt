@@ -9,4 +9,6 @@ CASE 2:
     write("dos")
 CASE 3:
     write("tres")
+ELSECASE:
+    write("else")
 ENDSETCASE
