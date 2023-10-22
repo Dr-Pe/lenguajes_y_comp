@@ -178,10 +178,7 @@ sentencia:
         SentPtr = crearNodo("=", crearHoja($3), crearHoja("READ"));
     }
     ;
- 
- //TODO: falta verificar que si tengo un id int, no se le asigne un float o string
- // en ID OP_AS string, no hay problema, en la regla expresion talvez haya que guardar un string con el tipo de la expresion(float, int) en un auxiliar y enviarselo 
- // a una funcion de la lista ***
+
 asignacion:
     ID OP_AS expresion { 
         if(!idDeclarado(&listaSimbolos, $1)){ 
@@ -192,7 +189,7 @@ asignacion:
             printf("\nError, datos de diferente tipo.\n");
             return 1;
         }
-        printf("\t\tR22: ID = String es ASIGNACION\n");
+        printf("\t\tR21: ID = String es ASIGNACION\n");
         AsigPtr = crearNodo("=", crearHoja($1), Eptr);
     }
     |ID OP_AS string  { 
@@ -253,12 +250,12 @@ eval:
 
 cases:
     CASE INT DOS_P bloque_ejec {
-        printf("\t\t\tR28: CASE INT: bloque_ejec es cases\n");
+        printf("\t\t\tR29: CASE INT: bloque_ejec es cases\n");
         snprintf(strAux, sizeof($2), "%d", $2);
         CasePtr = crearNodo("if", crearNodo("==", crearHoja("@ax"), crearHoja(strAux)), BloPtr);
     }
     |CASE INT DOS_P bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } cases {
-        printf("\t\t\tR28: cases CASE INT: bloque_ejec es cases\n");
+        printf("\t\t\tR30: cases CASE INT: bloque_ejec es cases\n");
         snprintf(strAux, sizeof($2), "%d", $2);
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
         CasePtr = crearNodo(
@@ -267,7 +264,7 @@ cases:
             crearNodo("CUERPO", BloAux, CasePtr));
     }
     |CASE INT DOS_P bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } ELSECASE DOS_P bloque_ejec {
-        printf("\t\t\tR28: CASE INT: bloque_ejec ELSECASE bloque_ejec es cases\n");
+        printf("\t\t\tR31: CASE INT: bloque_ejec ELSECASE bloque_ejec es cases\n");
         snprintf(strAux, sizeof($2), "%d", $2);
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
         CasePtr = crearNodo(
@@ -279,49 +276,49 @@ cases:
 
 condicion:
     comparacion { 
-        printf("\t\t\tR28: comparacion es Condicion\n"); 
+        printf("\t\t\tR32: comparacion es Condicion\n"); 
         ConPtr = CmpPtr;
         apilar(&condAnidados, &ConPtr, sizeof(ConPtr));
     }
     |comparacion { CmpAux = CmpPtr; } op_logico comparacion { 
-        printf("\t\t\tR29: comparacion op_logico comparacion es Condicion\n"); 
+        printf("\t\t\tR33: comparacion op_logico comparacion es Condicion\n"); 
         ConPtr = crearNodo(opAux, CmpAux, CmpPtr);
         apilar(&condAnidados, &ConPtr, sizeof(ConPtr));
     }
     ;
 
 comparacion:
-    expresion { EptrAux = Eptr; } comparador expresion          { printf("\t\t\t\tR30: expresion comparador expresion es Comparacion \n"); CmpPtr = crearNodo(cmpAux, EptrAux, Eptr); }
-    |ESTA_CONT PA STRING { strcpy(strAux, $3); } COMA STRING PC { printf("\t\t\t\tR31: estaContenido(String, String) es Comparacion\n"); CmpPtr = crearHoja(estaContenido(strAux, yylval.string_val)? "true" : "false" ); }
-    |NOT comparacion                                            { printf("\t\t\t\tR32: not comparacion es Comparacion\n"); CmpPtr = crearNodo("&", crearHoja("false"), CmpPtr); }
-    |NOT expresion                                              { printf("\t\t\t\tR33: not expresion es Comparacion\n"); CmpPtr = crearNodo("&", crearHoja("false"), Eptr); }
+    expresion { EptrAux = Eptr; } comparador expresion          { printf("\t\t\t\tR34: expresion comparador expresion es Comparacion \n"); CmpPtr = crearNodo(cmpAux, EptrAux, Eptr); }
+    |ESTA_CONT PA STRING { strcpy(strAux, $3); } COMA STRING PC { printf("\t\t\t\tR35: estaContenido(String, String) es Comparacion\n"); CmpPtr = crearHoja(estaContenido(strAux, yylval.string_val)? "true" : "false" ); }
+    |NOT comparacion                                            { printf("\t\t\t\tR36: not comparacion es Comparacion\n"); CmpPtr = crearNodo("&", crearHoja("false"), CmpPtr); }
+    |NOT expresion                                              { printf("\t\t\t\tR37: not expresion es Comparacion\n"); CmpPtr = crearNodo("&", crearHoja("false"), Eptr); }
     ;
 
 op_logico:
-    AND             { printf("\t\t\t\tR34: & es Op_logico\n"); strcpy(opAux,"&"); }
-    |OR             { printf("\t\t\t\tR35: ||es Op_logico\n"); strcpy(opAux,"||"); }
+    AND             { printf("\t\t\t\tR38: & es Op_logico\n"); strcpy(opAux,"&"); }
+    |OR             { printf("\t\t\t\tR39: ||es Op_logico\n"); strcpy(opAux,"||"); }
     ;
 
 comparador:
-    MAYOR           { printf("\t\t\t\t  R36: > es Comparador\n"); strcpy(cmpAux,">"); }
-    |MENOR          { printf("\t\t\t\t  R37: < es Comparador\n"); strcpy(cmpAux,"<"); }
-    |IGUAL          { printf("\t\t\t\t  R38: == es Comparador\n"); strcpy(cmpAux,"=="); }
-    |DISTINTO       { printf("\t\t\t\t  R39: != es Comparador\n"); strcpy(cmpAux,"!="); }
-    |MAYOR_IGUAL    { printf("\t\t\t\t  R40: >= es Comparador\n"); strcpy(cmpAux,">="); }
-    |MENOR_IGUAL    { printf("\t\t\t\t  R41: <= es Comparador\n"); strcpy(cmpAux,"<="); }
+    MAYOR           { printf("\t\t\t\t  R40: > es Comparador\n"); strcpy(cmpAux,">"); }
+    |MENOR          { printf("\t\t\t\t  R41: < es Comparador\n"); strcpy(cmpAux,"<"); }
+    |IGUAL          { printf("\t\t\t\t  R42: == es Comparador\n"); strcpy(cmpAux,"=="); }
+    |DISTINTO       { printf("\t\t\t\t  R43: != es Comparador\n"); strcpy(cmpAux,"!="); }
+    |MAYOR_IGUAL    { printf("\t\t\t\t  R44: >= es Comparador\n"); strcpy(cmpAux,">="); }
+    |MENOR_IGUAL    { printf("\t\t\t\t  R45: <= es Comparador\n"); strcpy(cmpAux,"<="); }
     ;
 
 expresion:
-    termino                     { printf("\t\t\t\tR42: Termino es Expresion\n"); Eptr = Tptr; }
-    |expresion OP_SUM termino   { printf("\t\t\t\tR43: Expresion+Termino es Expresion\n"); Eptr = crearNodo("+", Eptr, Tptr); }
-    |expresion OP_RES termino   { printf("\t\t\t\tR44: Expresion-Termino es Expresion\n"); Eptr = crearNodo("-", Eptr, Tptr); }
+    termino                     { printf("\t\t\t\tR46: Termino es Expresion\n"); Eptr = Tptr; }
+    |expresion OP_SUM termino   { printf("\t\t\t\tR47: Expresion+Termino es Expresion\n"); Eptr = crearNodo("+", Eptr, Tptr); }
+    |expresion OP_RES termino   { printf("\t\t\t\tR48: Expresion-Termino es Expresion\n"); Eptr = crearNodo("-", Eptr, Tptr); }
     ;
  
 termino:
-    factor                  { printf("\t\t\t\t  R45: Factor es Termino\n"); Tptr = Fptr; }
-    |OP_RES factor          { printf("\t\t\t\t  R46: -Factor es Termino\n"); Tptr = crearNodo("*", crearHoja("-1"), Fptr); }
-    |termino OP_MUL factor  { printf("\t\t\t\t  R47: Termino*Factor es Termino\n"); Tptr = crearNodo("*", Tptr, Fptr); }
-    |termino OP_DIV factor  { printf("\t\t\t\t  R48: Termino/Factor es Termino\n"); Tptr = crearNodo("/", Tptr, Fptr); }
+    factor                  { printf("\t\t\t\t  R49: Factor es Termino\n"); Tptr = Fptr; }
+    |OP_RES factor          { printf("\t\t\t\t  R50: -Factor es Termino\n"); Tptr = crearNodo("*", crearHoja("-1"), Fptr); }
+    |termino OP_MUL factor  { printf("\t\t\t\t  R51: Termino*Factor es Termino\n"); Tptr = crearNodo("*", Tptr, Fptr); }
+    |termino OP_DIV factor  { printf("\t\t\t\t  R52: Termino/Factor es Termino\n"); Tptr = crearNodo("/", Tptr, Fptr); }
     ;
 
 factor:
@@ -334,24 +331,24 @@ factor:
             printf("\nError: No es posible realizar operaciones aritmeticas sobre variables String.\n");
             return 1;
         }
-        printf("\t\t\t\t    R50: ID es Factor \n");
+        printf("\t\t\t\t    R53: ID es Factor \n");
         strcpy(auxTipo, obtenerTipo(&listaSimbolos, $1)); // Se copia en auxTipo el tipo de la ID (Ojo cuando escala a termino y se pisa)
         Fptr= crearHoja($1); 
     }
     |INT   { 
-        printf("\t\t\t\t    R51: INT es Factor\n"); 
+        printf("\t\t\t\t    R54: INT es Factor\n"); 
         snprintf(strAux, sizeof($1), "%d", $1);
         strcpy(auxTipo, TINT);
         Fptr= crearHoja(strAux); 
     }
     |FLOAT { 
-        printf("\t\t\t\t    R52: FLOAT es Factor\n"); 
+        printf("\t\t\t\t    R55: FLOAT es Factor\n"); 
         snprintf(strAux, VALOR_LARGO_MAX + 1, "%.2f", $1);
         strcpy(auxTipo, TFLOAT);
         Fptr= crearHoja(strAux);
     }
-    |PA expresion PC    { printf("\t\t\t\t    R53: Expresion entre parentesis es Factor\n"); Fptr = Eptr; }
-    |FIB PA ID PC      { 
+    |PA expresion PC    { printf("\t\t\t\t    R56: Expresion entre parentesis es Factor\n"); Fptr = Eptr; }
+    |FIB PA ID PC       { 
         if(!idDeclarado(&listaSimbolos, $3)){ 
             printf("\nError: id *%s* no fue declarado.\n", $3);
             return 1;
@@ -360,7 +357,7 @@ factor:
             printf("\nError: id *%s* no es de tipo Int.\n", $3);
             return 1;
         }
-        printf("\t\t\t\t    R54: FIB(ID) es Factor\n");
+        printf("\t\t\t\t    R57: FIB(ID) es Factor\n");
 
         // Creo las asignaciones
         FibAsigPtr = crearNodo("BloqAsig", 
@@ -371,18 +368,13 @@ factor:
         // Creo la ejecución del ciclo
         FibPtr = crearNodo("=", crearHoja("@cx"), crearNodo("+", crearHoja("@ax"),  crearHoja("@bx")));
         FibEjecPtr = crearNodo("BloqEjec", FibPtr, crearNodo("=", crearHoja("@ax"), crearHoja("@bx")));
-
         FibPtr = FibEjecPtr;
-
         FibEjecPtr = crearNodo("BloqEjec", FibPtr, crearNodo("=", crearHoja("@bx"), crearHoja("@cx")));
-
         FibPtr = FibEjecPtr;
-
         FibEjecPtr = crearNodo("BloqEjec",
             FibPtr,
             crearNodo("=", crearHoja($3), crearNodo("-", crearHoja($3), crearHoja("1")))
         );
-
         FibPtr = FibEjecPtr;
 
         // Creo el ciclo
