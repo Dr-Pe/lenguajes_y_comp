@@ -15,3 +15,5 @@
 #define TSTRING "String"
 
 #define MIN(a, b) ((a < b) ? a : b)
+
+#define FILENAME_ASM "final.asm"

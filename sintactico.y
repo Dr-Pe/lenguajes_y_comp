@@ -11,8 +11,9 @@
     int yyerror();
     int yylex();
 
-    char* concatenar(char*, char*, int);
-    int estaContenido(char*, char*);
+    char* concatenar(char* str1, char* str2, int n);
+    int estaContenido(char* str1, char* str2);
+    void generarAssembler(Arbol* parbol, char* filename);
 
     Arbol compilado;
     Lista listaSimbolos;
@@ -26,6 +27,8 @@
     NodoA* EjePtr, * ConAux, *CasePtr, *ExPtrSwitch, *FibPtr, *FibAsigPtr, *FibEjecPtr;
     char  auxTipo[7], strAux[VALOR_LARGO_MAX + 1], strAux2[VALOR_LARGO_MAX + 1], cmpAux[3], opAux[3];
     int intAux;
+
+    #define ES_OPERACION_ARITMETICA(op) (strcmp(op, "+") == 0 || strcmp(op, "-") == 0 || strcmp(op, "*") == 0 || strcmp(op, "/") == 0 || strcmp(op, "=") == 0)
 %}
 
  
@@ -87,13 +90,14 @@
 %%
 programa_prima: 
     programa    { 
+                    compilado = ProgramaPtr; 
                     if(boolCompiladoOK == 1){
                         printf("R1: COMPILACION EXITOSA\n");
+                        generarAssembler(&compilado, FILENAME_ASM);
                     }
                     else{
                         printf("R1: ERROR DE COMPILACION\n");
                     }
-                    compilado = ProgramaPtr; 
     }
     ;
 
@@ -423,7 +427,7 @@ int yyerror() {
     exit(1);
 }
 
-char* concatenar(char* str1, char* str2, int n){ 
+char* concatenar(char* str1, char* str2, int n) { 
 
     if(strlen(str1) <= n+2 ||strlen(str2) <= n+2){  //+2 por ""
         return "ERROR";
@@ -444,6 +448,82 @@ char* concatenar(char* str1, char* str2, int n){
     return str1;
 }
 
-int estaContenido(char* str1, char* str2){ 
+int estaContenido(char* str1, char* str2) { 
     return strstr(str1,str2) != NULL;
+}
+
+void generarAssembler(Arbol* parbol, char* filename) {
+    FILE* fp = fopen(filename, "w");
+    if(!fp) { 
+        printf("\nNo se puede crear el archivo de codigo assembler.\n");
+    }
+    int contOps = 1;
+    char aux[STRING_LARGO_MAX+1];
+    char auxOperando[VALOR_LARGO_MAX+1];
+
+    NodoA* nodo = padreMasIzq(parbol);
+    while(nodo) {
+        // printf("\n*%s*\n", nodo->simbolo);
+
+        while(ES_OPERACION_ARITMETICA(nodo->simbolo)) {
+            // printf("\n*%s*\n", nodo->simbolo);
+
+            if(strcmp(nodo->simbolo, "=") == 0) {
+                fprintf(fp, "FLD %s\n", nodo->der->simbolo);
+                fprintf(fp, "FRNDINT\n");
+                fprintf(fp, "FSTP %s\n", nodo->izq->simbolo);
+            }
+            else if(strcmp(nodo->simbolo, "+") == 0) {
+                fprintf(fp, "FLD %s\n", nodo->izq->simbolo);
+                fprintf(fp, "FLD %s\n", nodo->der->simbolo);
+                fprintf(fp, "FADD\n");
+                fprintf(fp, "FSTP @aux%d\n", contOps);
+                strcpy(aux, "@aux");
+                snprintf(auxOperando, sizeof(contOps), "%d", contOps);
+                strcat(aux, auxOperando);
+                strcpy(nodo->simbolo, aux);
+            }
+            else if(strcmp(nodo->simbolo, "-") == 0){
+                fprintf(fp, "FLD %s\n", nodo->izq->simbolo);
+                fprintf(fp, "FLD %s\n", nodo->der->simbolo);
+                fprintf(fp, "FSUB\n");
+                fprintf(fp, "FSTP @aux%d\n", contOps);
+                strcpy(aux, "@aux");
+                snprintf(auxOperando, sizeof(contOps), "%d", contOps);
+                strcat(aux, auxOperando);
+                strcpy(nodo->simbolo, aux);
+            }
+            else if(strcmp(nodo->simbolo, "*") == 0){
+                fprintf(fp, "FLD %s\n", nodo->izq->simbolo);
+                fprintf(fp, "FLD %s\n", nodo->der->simbolo);
+                fprintf(fp, "FMUL\n");
+                fprintf(fp, "FSTP @aux%d\n", contOps);
+                strcpy(aux, "@aux");
+                snprintf(auxOperando, sizeof(contOps), "%d", contOps);
+                strcat(aux, auxOperando);
+                strcpy(nodo->simbolo, aux);
+            }
+            else if(strcmp(nodo->simbolo, "/") == 0){
+                fprintf(fp, "FLD %s\n", nodo->izq->simbolo);
+                fprintf(fp, "FLD %s\n", nodo->der->simbolo);
+                fprintf(fp, "FDIV\n");
+                fprintf(fp, "FSTP @aux%d\n", contOps);
+                strcpy(aux, "@aux");
+                snprintf(auxOperando, sizeof(contOps), "%d", contOps);
+                strcat(aux, auxOperando);
+                strcpy(nodo->simbolo, aux);
+            }
+            contOps++;
+            eliminarHijos(nodo);
+            nodo = padreMasIzq(parbol);
+        }
+        contOps = 0;
+
+        if(nodo != NULL) {
+            eliminarHijos(nodo);
+            nodo = padreMasIzq(parbol);
+        }
+    }
+
+    fclose(fp);
 }

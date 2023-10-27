@@ -1,16 +1,6 @@
 init {
-    a,b: Int
+    z, a, b, c, d: Int
+
 }
 
-b = FIB(b)
-
-SET SWITCH (a)
-CASE 1:
-    write("uno")
-CASE 2:
-    write("dos")
-CASE 3:
-    write("tres")
-ELSECASE:
-    write("else")
-ENDSETCASE
+z = a + b * c - d / 20
