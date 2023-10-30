@@ -1,4 +1,4 @@
-#include "tab_simb.h"
+#include "lista_simbolos.h"
 
 Lista crearLista(Lista *pl)
 {

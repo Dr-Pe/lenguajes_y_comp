@@ -1,3 +1,6 @@
+#ifndef _ARBOLH_
+#define _ARBOLH_
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -22,3 +25,5 @@ void recorrerArbolInOrden(Arbol *pa, int nivel, FILE *fp);
 void vaciarArbol(Arbol *pa);
 NodoA *padreMasIzq(Arbol *pa);
 void eliminarHijos(NodoA *pa);
+
+#endif

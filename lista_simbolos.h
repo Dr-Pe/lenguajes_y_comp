@@ -1,6 +1,10 @@
+#ifndef _LISTA_SIMBOLOS_
+#define _LISTA_SIMBOLOS_
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
 #include "constantes.h"
 
 enum tiposDato
@@ -38,3 +42,5 @@ void asignarTipo(Lista *listaIds, char *auxTipo);
 void fusionarLista(Lista *lista1, Lista *lista2);
 int esMismoTipo(Lista *, char *, char *);
 char *obtenerTipo(Lista *, char *);
+
+#endif
