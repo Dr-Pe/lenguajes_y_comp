@@ -170,13 +170,24 @@ int esMismoTipo(Lista *lista, char *id, char *auxTipo)
 
 char *obtenerTipo(Lista *lista, char *id)
 {
-    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, id) > 0)
+    while (*lista && strcmp((*lista)->simb.nombre, id) > 0)
     {
         lista = &(*lista)->sig;
     }
-    if (*lista != NULL && strcmp((*lista)->simb.nombre, id) == 0)
+    if (*lista && strcmp((*lista)->simb.nombre, id) == 0)
     {
         return (*lista)->simb.tipo_dato;
     }
     return NULL;
+}
+
+void generarEncabezado(FILE *fp, Lista *lista)
+{
+    fprintf(fp, ".MODEL LARGE\n.386\n.STACK 200h\n.DATA\n\n");
+    while (*lista)
+    {
+        fprintf(fp, "%s dd %s\n", (*lista)->simb.nombre, (*lista)->simb.valor);
+        lista = &(*lista)->sig;
+    }
+    fprintf(fp, "\n");
 }

@@ -1,6 +1,9 @@
 init {
-    z, a, b, c, d: Int
-
+    a, b, c: Int
 }
 
-z = a + b * c - d / 20
+if (a > b) {
+    a = 1 + 2
+}
+
+write(a)

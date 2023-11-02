@@ -22,7 +22,7 @@
     Pila condAnidados;
     int boolCompiladoOK = 1;
 
-    NodoA* CompiladoPtr, *ProgramaPtr, *DeclaPtr, *BloPtr, *DecPtr, *ListPtr, *SentPtr, *AsigPtr, *tipoAux,
+    NodoA* CompiladoPtr, *ProgramaPtr, *BloPtr, *ListPtr, *SentPtr, *AsigPtr, *tipoAux,
             *CicPtr, *EvalPtr, *Eptr, *StrPtr, *ConPtr, *CmpPtr, *EptrAux, *BloAux, *Tptr, *Fptr, *CmpAux, *StrPtrAux;
     NodoA* EjePtr, * ConAux, *CasePtr, *ExPtrSwitch, *FibPtr, *FibAsigPtr, *FibEjecPtr;
     char  auxTipo[7], strAux[VALOR_LARGO_MAX + 1], strAux2[VALOR_LARGO_MAX + 1], cmpAux[3], opAux[3];
@@ -89,25 +89,32 @@
 programa_prima: 
     programa    { 
                     compilado = ProgramaPtr; 
-                    if(boolCompiladoOK == 1){
+                    if(boolCompiladoOK == 1) {
                         printf("R1: COMPILACION EXITOSA\n");
-                        generarAssembler(&compilado, &listaSimbolos, FILENAME_ASM);
+                        imprimirArbol(&compilado);
+                        FILE *fp = fopen(FILENAME_ASM, "w");
+                        if (!fp) {
+                        printf("\nNo se puede crear el archivo de codigo assembler.\n");
+                        }
+                        generarEncabezado(fp, &listaSimbolos);
+                        generarAssembler(&compilado, fp, 0, 0, 0);
+                        fclose(fp);
                     }
-                    else{
+                    else {
                         printf("R1: ERROR DE COMPILACION\n");
                     }
     }
     ;
 
 programa: 
-    INIT LLA declaraciones LLC bloque_ejec  { printf("\tR2: init { declaraciones} bloque_ejec es Programa\n"); ProgramaPtr = crearNodo("Programa", DeclaPtr, BloPtr); } 
+    INIT LLA declaraciones LLC bloque_ejec  { printf("\tR2: init { declaraciones} bloque_ejec es Programa\n"); ProgramaPtr = crearNodo("Programa", BloPtr, NULL); } 
     |INIT LLA LLC bloque_ejec               { printf("\tR3: init { } bloque_ejec es Programa\n"); ProgramaPtr = BloPtr; }
     |INIT LLA declaraciones LLC             { printf("\tR4: init { declaraciones } es Programa\n"); ProgramaPtr = BloPtr; }
     ;
 
 declaraciones: 
-    dec                 { printf("\tR5: dec es Declaraciones\n"); DeclaPtr = DecPtr; }
-    |declaraciones dec  { printf("\tR6: declaraciones dec es Declaraciones\n"); DeclaPtr = crearNodo("Mdeclaraciones", DeclaPtr, DecPtr); }
+    dec                 { printf("\tR5: dec es Declaraciones\n"); }
+    |declaraciones dec  { printf("\tR6: declaraciones dec es Declaraciones\n"); }
     ;
 
 dec: 
@@ -116,7 +123,6 @@ dec:
         asignarTipo(&listaIds, auxTipo);
         fusionarLista(&listaSimbolos, &listaIds);
         vaciarLista(&listaIds);
-        DecPtr = crearNodo(":", ListPtr, crearHoja(auxTipo));
     }
     ;
 
@@ -193,7 +199,7 @@ asignacion:
             return 1;
         }
         printf("\t\tR22: ID = String es ASIGNACION\n");
-        AsigPtr = crearNodo("=", crearHoja($1), Eptr);
+        AsigPtr = crearNodo("=", Eptr, crearHoja($1));
     }
     |ID OP_AS string  { 
         if(!idDeclarado(&listaSimbolos, $1)){ 
@@ -205,7 +211,7 @@ asignacion:
             return 1;
         }
         printf("\t\tR23: ID = String es ASIGNACION\n");
-        AsigPtr = crearNodo("=", crearHoja($1), StrPtr);
+        AsigPtr = crearNodo("=", StrPtr, crearHoja($1));
     }
     ;
 
@@ -410,7 +416,6 @@ int main(int argc, char *argv[]) {
     fclose(yyin);
 
     imprimirLista(&listaSimbolos);
-    imprimirArbol(&compilado);
     
     vaciarLista(&listaSimbolos);
     vaciarLista(&listaIds);

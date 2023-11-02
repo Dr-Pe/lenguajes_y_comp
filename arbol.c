@@ -32,22 +32,22 @@ void imprimirArbol(Arbol *pa)
         printf("No se pudo abrir el archivo para escritura\n");
         return;
     }
-    recorrerArbolInOrden(pa, 0, arch);
+    recorrerArbolInOrdenEspejado(pa, 0, arch);
     fclose(arch);
 }
 
-void recorrerArbolInOrden(Arbol *pa, int nivel, FILE *arch)
+void recorrerArbolInOrdenEspejado(Arbol *pa, int nivel, FILE *arch)
 {
     if (!*pa)
         return;
 
-    recorrerArbolInOrden(&(*pa)->der, nivel + 1, arch);
+    recorrerArbolInOrdenEspejado(&(*pa)->der, nivel + 1, arch);
 
     for (int i = 0; i < nivel; i++)
         fprintf(arch, "\t");
     fprintf(arch, "%s\n", (*pa)->simbolo);
 
-    recorrerArbolInOrden(&(*pa)->izq, nivel + 1, arch);
+    recorrerArbolInOrdenEspejado(&(*pa)->izq, nivel + 1, arch);
 }
 
 void vaciarArbol(Arbol *pa)
@@ -70,12 +70,12 @@ NodoA *padreMasIzq(Arbol *pa)
     if (res)
         return res;
 
+    if ((*pa)->izq && (*pa)->der)
+        return *pa;
+
     res = padreMasIzq(&(*pa)->der);
     if (res)
         return res;
-
-    if ((*pa)->izq && (*pa)->der)
-        return *pa;
 
     return NULL;
 }

@@ -6,8 +6,8 @@
 #include "arbol.h"
 #include "pila.h"
 
-#define ES_OPERACION_ARITMETICA(op) (strcmp(op, "+") == 0 || strcmp(op, "-") == 0 || strcmp(op, "*") == 0 || strcmp(op, "/") == 0 || strcmp(op, "=") == 0)
+#define ES_COMPARADOR(op) (strcmp(op, "<") == 0 || strcmp(op, "<=") == 0 || strcmp(op, ">") == 0 || strcmp(op, ">=") == 0 || strcmp(op, "==") == 0 || strcmp(op, "!=") == 0)
 
-void generarAssembler(Arbol *parbol, Lista *plista, char *filename);
+void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdadero, int contFalso);
 
 #endif
