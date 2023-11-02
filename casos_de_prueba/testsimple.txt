@@ -2,8 +2,4 @@ init {
     a, b, c: Int
 }
 
-if (a > b) {
-    a = 1 + 2
-}
-
-write(a)
+a = 2

@@ -25,7 +25,7 @@
     NodoA* CompiladoPtr, *ProgramaPtr, *BloPtr, *ListPtr, *SentPtr, *AsigPtr, *tipoAux,
             *CicPtr, *EvalPtr, *Eptr, *StrPtr, *ConPtr, *CmpPtr, *EptrAux, *BloAux, *Tptr, *Fptr, *CmpAux, *StrPtrAux;
     NodoA* EjePtr, * ConAux, *CasePtr, *ExPtrSwitch, *FibPtr, *FibAsigPtr, *FibEjecPtr;
-    char  auxTipo[7], strAux[VALOR_LARGO_MAX + 1], strAux2[VALOR_LARGO_MAX + 1], cmpAux[3], opAux[3];
+    char  auxTipo[7], strAux[VALOR_LARGO_MAX + 1], strAux2[VALOR_LARGO_MAX + 2], cmpAux[3], opAux[3];
     int intAux;
 %}
 
@@ -347,14 +347,18 @@ factor:
     |INT   { 
         printf("\t\t\t\t    R55: INT es Factor\n"); 
         snprintf(strAux, sizeof($1), "%d", $1);
+        strcpy(strAux2, "_");       // strAux2 = "_"
+        strcat(strAux2, strAux);    // Ejemplo: "_2" para el dos
         strcpy(auxTipo, TINT);
-        Fptr= crearHoja(strAux); 
+        Fptr= crearHoja(strAux2); 
     }
     |FLOAT { 
         printf("\t\t\t\t    R56: FLOAT es Factor\n"); 
         snprintf(strAux, VALOR_LARGO_MAX + 1, "%.2f", $1);
+        strcpy(strAux2, "_");       // strAux2 = "_"
+        strcat(strAux2, strAux);    // Ejemplo: "_2.5" para el dos punto cinco
         strcpy(auxTipo, TFLOAT);
-        Fptr= crearHoja(strAux);
+        Fptr= crearHoja(strAux2);
     }
     |PA expresion PC    { printf("\t\t\t\t    R57: Expresion entre parentesis es Factor\n"); Fptr = Eptr; }
     |FIB PA ID PC       { 
