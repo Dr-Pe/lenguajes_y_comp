@@ -6,7 +6,7 @@
     #include "pila.h"
     #include "generar_assembler.h"
 
-    int yystopparser=0;
+    int yystopparser = 0;
     extern FILE* yyin;
 
     int yyerror();
@@ -14,6 +14,7 @@
 
     char* concatenar(char* str1, char* str2, int n);
     int estaContenido(char* str1, char* str2);
+    char* manipularCadena(char* dest, char* str);
 
     Arbol compilado;
     Lista listaSimbolos;
@@ -25,8 +26,11 @@
     NodoA* CompiladoPtr, *ProgramaPtr, *BloPtr, *ListPtr, *SentPtr, *AsigPtr, *tipoAux,
             *CicPtr, *EvalPtr, *Eptr, *StrPtr, *ConPtr, *CmpPtr, *EptrAux, *BloAux, *Tptr, *Fptr, *CmpAux, *StrPtrAux;
     NodoA* EjePtr, * ConAux, *CasePtr, *ExPtrSwitch, *FibPtr, *FibAsigPtr, *FibEjecPtr;
+    
     char  auxTipo[7], strAux[VALOR_LARGO_MAX + 1], strAux2[VALOR_LARGO_MAX + 2], cmpAux[3], opAux[3];
     int intAux;
+    int cantAux = 0;
+    int contAux_ = 0;
 %}
 
  
@@ -96,7 +100,7 @@ programa_prima:
                         if (!fp) {
                         printf("\nNo se puede crear el archivo de codigo assembler.\n");
                         }
-                        generarEncabezado(fp, &listaSimbolos);
+                        generarEncabezado(fp, &listaSimbolos, cantAux);
                         generarAssembler(&compilado, fp, 0, 0, 0, 0);
                         fclose(fp);
                     }
@@ -181,8 +185,8 @@ sentencia:
         SentPtr = crearNodo("write", crearHoja($3), crearHoja("NULL"));
     }
     |WRITE PA STRING PC { 
-        printf("\t\tR20: write(string) es Sentencia\n"); 
-        SentPtr = crearNodo("write", crearHoja($3), crearHoja("NULL")); 
+        printf("\t\tR20: write(string) es Sentencia\n");
+        SentPtr = crearNodo("write", crearHoja(manipularCadena(strAux, $3)), crearHoja("NULL")); 
     }
     |READ PA ID PC      { 
         if(!idDeclarado(&listaSimbolos, $3)){ 
@@ -204,8 +208,12 @@ asignacion:
             printf("\nError, datos de diferente tipo.\n");
             return 1;
         }
-        printf("\t\tR22: ID = String es ASIGNACION\n");
+        printf("\t\tR22: ID = Expresion es ASIGNACION\n");
         AsigPtr = crearNodo("=", crearHoja($1), Eptr);
+        if(cantAux < contAux_) {
+            cantAux = contAux_;
+        }
+        contAux_ = 0;
     }
     |ID OP_AS string  { 
         if(!idDeclarado(&listaSimbolos, $1)){ 
@@ -224,7 +232,7 @@ asignacion:
 string:
     STRING  { 
         printf("\t\t\tR24: string es String\n");
-        StrPtr = crearHoja($1);
+        StrPtr = crearHoja(manipularCadena(strAux, $1));
         strcpy(auxTipo, TSTRING);
     }
     |CONCAT PA STRING { strcpy(strAux, $3); } COMA STRING { strcpy(strAux2, $6); } COMA INT PC { 
@@ -251,7 +259,7 @@ eval:
         printf("\t\tR28: if (condicion) { bloque_ejec} else { bloque_ejec} es Eval\n"); 
         desapilar(&condAnidados, &ConAux, sizeof(ConAux));
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));   // El apilar de blo_ejec no funciona aca por que el else ejecuta otra instancia de bloque_Ejec
-        EvalPtr = crearNodo("if", ConAux, crearNodo("Cuerpo", BloAux, BloPtr));
+        EvalPtr = crearNodo("if", ConAux, crearNodo("CUERPO", BloAux, BloPtr));
     }
     |SETSWITCH PA expresion PC { ExPtrSwitch = Eptr; } cases ENDSETCASE {
         printf("\t\tR29: SET SWITCH (expresion) cases ENDSETCASE es Eval\n");
@@ -336,9 +344,9 @@ comparador:
     ;
 
 expresion:
-    termino                     { printf("\t\t\t\tR47: Termino es Expresion\n"); Eptr = Tptr; }
-    |expresion OP_SUM termino   { printf("\t\t\t\tR48: Expresion+Termino es Expresion\n"); Eptr = crearNodo("+", Eptr, Tptr); }
-    |expresion OP_RES termino   { printf("\t\t\t\tR49: Expresion-Termino es Expresion\n"); Eptr = crearNodo("-", Eptr, Tptr); }
+    termino                     { printf("\t\t\t\tR47: Termino es Expresion\n"); Eptr = Tptr; contAux_++; }
+    |expresion OP_SUM termino   { printf("\t\t\t\tR48: Expresion+Termino es Expresion\n"); Eptr = crearNodo("+", Eptr, Tptr); contAux_++; }
+    |expresion OP_RES termino   { printf("\t\t\t\tR49: Expresion-Termino es Expresion\n"); Eptr = crearNodo("-", Eptr, Tptr); contAux_++; }
     ;
  
 termino:
@@ -475,4 +483,16 @@ char* concatenar(char* str1, char* str2, int n) {
 
 int estaContenido(char* str1, char* str2) { 
     return strstr(str1,str2) != NULL;
+}
+
+char* manipularCadena(char* dest, char* str) {
+    char strAux[VALOR_LARGO_MAX + 2];
+    char strAux2[VALOR_LARGO_MAX + 2];
+    
+    strcpy(dest, "_");
+    strncpy(strAux2, str + 1, strlen(str) - 2); // saco los "" del string
+    strAux2[strlen(str) -1 ] = '\0';
+    strcat(dest, strAux2);
+
+    return dest;
 }

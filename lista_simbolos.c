@@ -37,8 +37,9 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
     else if (tDato == tSTRING)
     {
         char aux[] = "\"\"";
+        // No guarda string vacios
         if (strcmp(nombre, aux) == 0)
-        { // no guarda string vacios
+        {
             return;
         }
         int longitud = strlen(nombre) - 2; // -1 para sacar\0 -1 para "
@@ -74,20 +75,20 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
 
 void imprimirLista(Lista *lista)
 {
-    FILE *arch = fopen("symbol-table.txt", "w");
-    if (arch == NULL)
+    FILE *fp = fopen("symbol-table.txt", "w");
+    if (fp == NULL)
     {
         printf("Error al abrir el archivo\n");
         return;
     }
-    fprintf(arch, "%-50s|%-7s|%-50s|%-10s\n", "nombre", "tipoDato", "valor", "longitud");
+    fprintf(fp, "%-50s|%-7s|%-50s|%-10s\n", "nombre", "tipoDato", "valor", "longitud");
     while (*lista != NULL)
     {
-        fprintf(arch, "%-50s|%-7s|%-50s|%-10d\n", (*lista)->simb.nombre, (*lista)->simb.tipo_dato, (*lista)->simb.valor, (*lista)->simb.longitud);
+        fprintf(fp, "%-50s|%-7s|%-50s|%-10d\n", (*lista)->simb.nombre, (*lista)->simb.tipo_dato, (*lista)->simb.valor, (*lista)->simb.longitud);
         lista = &(*lista)->sig;
     }
 
-    fclose(arch);
+    fclose(fp);
 }
 
 int idDeclarado(Lista *lista, char *id)
@@ -181,13 +182,40 @@ char *obtenerTipo(Lista *lista, char *id)
     return NULL;
 }
 
-void generarEncabezado(FILE *fp, Lista *lista)
+void generarEncabezado(FILE *fp, Lista *lista, int cantAux)
 {
     fprintf(fp, ".MODEL LARGE\n.386\n.STACK 200h\n.DATA\n\n");
-    while (*lista)
+    while (*lista != NULL)
     {
-        fprintf(fp, "%s dd %s\n", (*lista)->simb.nombre, (*lista)->simb.valor);
+        if (strlen((*lista)->simb.valor) == 0)
+        {
+            // Si es ID
+            fprintf(fp, "%s dd ??\n", (*lista)->simb.nombre);
+        }
+        else if (strcmp((*lista)->simb.tipo_dato, "Int") == 0)
+        {
+            fprintf(fp, "%s dd %s.0\n", (*lista)->simb.nombre, (*lista)->simb.valor);
+        }
+        else if (strcmp((*lista)->simb.tipo_dato, "Float") == 0)
+        {
+            fprintf(fp, "%s dd %s\n", (*lista)->simb.nombre, (*lista)->simb.valor); // si es float
+        }
+        else
+        {
+            fprintf(fp, "%s db \"%s\" , '$', %d dup (?)\n", (*lista)->simb.nombre, (*lista)->simb.valor, (*lista)->simb.longitud);
+        }
         lista = &(*lista)->sig;
     }
+    int i = 1;
+    if (cantAux != -1)
+    {
+        while (cantAux != 0)
+        {
+            fprintf(fp, "@aux%d dd ??\n", i);
+            i++;
+            cantAux--;
+        }
+    }
+
     fprintf(fp, "\n");
 }

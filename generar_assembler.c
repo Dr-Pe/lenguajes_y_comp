@@ -70,18 +70,9 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdadero, i
                 if (strcmp(nodo->izq->simbolo, "&") == 0)
                 {
                     // 1era condicion
-                    fprintf(fp, "FLD %s\n", opLogico->izq->izq->simbolo);
-                    fprintf(fp, "FCOMP %s\n", opLogico->izq->der->simbolo);
-                    fprintf(fp, "FSTSW @ax\n"); // Los flags del coprocesador en memoria
-                    fprintf(fp, "SAHF\n");      // Guardo los flags que estan en memoria en el registro FLAG del cpu
-                    generarComparacion(fp, nodo->izq, TAG_FALSO, contFalso);
-
+                    generarComparacion(fp, opLogico->izq, TAG_FALSO, contFalso);
                     // 2da condicion
-                    fprintf(fp, "FLD %s\n", opLogico->der->izq->simbolo);
-                    fprintf(fp, "FCOMP %s\n", opLogico->der->der->simbolo);
-                    fprintf(fp, "FSTSW @ax\n"); // Los flags del coprocesador en memoria
-                    fprintf(fp, "SAHF\n");      // Guardo los flags que estan en memoria en el registro FLAG del cpu
-                    generarComparacion(fp, nodo->der, TAG_FALSO, contFalso);
+                    generarComparacion(fp, opLogico->der, TAG_FALSO, contFalso);
 
                     apilar(&falsos, &contFalso, sizeof(contFalso));
                     contFalso++;
@@ -89,19 +80,10 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdadero, i
                 else if (strcmp(nodo->izq->simbolo, "||") == 0)
                 {
                     invertirCondicion(opLogico->izq);
-
-                    fprintf(fp, "FLD %s\n", opLogico->izq->izq->simbolo);
-                    fprintf(fp, "FCOMP %s\n", opLogico->izq->der->simbolo);
-                    fprintf(fp, "FSTSW @ax\n"); // Los flags del coprocesador en memoria
-                    fprintf(fp, "SAHF\n");      // Guardo los flags que estan en memoria en el registro FLAG del cpu
+                    // 1era condicion
                     generarComparacion(fp, opLogico->izq, TAG_FALSO, contFalso);
                     contFalso++;
-
                     // 2da condicion
-                    fprintf(fp, "FLD %s\n", opLogico->der->izq->simbolo);
-                    fprintf(fp, "FCOMP %s\n", opLogico->der->der->simbolo);
-                    fprintf(fp, "FSTSW @ax\n"); // Los flags del coprocesador en memoria
-                    fprintf(fp, "SAHF\n");      // Guardo los flags que estan en memoria en el registro FLAG del cpu
                     generarComparacion(fp, opLogico->der->izq, TAG_OR, contOr);
 
                     // if (existeElse == 1)
@@ -137,7 +119,7 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdadero, i
                     desapilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
                     fprintf(fp, "%s%d\n", TAG_VERDADERO, contVerdadero);
 
-                    operadorOr = 0;
+                    operadorOr = FALSE;
                 }
                 else
                 {
@@ -146,11 +128,10 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdadero, i
                     contVerdadero++;
                     apilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
                     fprintf(fp, "BI %s%d\n", TAG_VERDADERO, contVerdadero);
-
                     desapilar(&falsos, &contFalso, sizeof(contFalso));
                     fprintf(fp, "%s%d\n", TAG_FALSO, contFalso);
                     // False
-                    generarAssembler(&nodo->der->izq, fp, contAux, contVerdadero, contFalso, contOr);
+                    generarAssembler(&nodo->der->der, fp, contAux, contVerdadero, contFalso, contOr);
                     desapilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
                     fprintf(fp, "%s%d\n", TAG_VERDADERO, contVerdadero);
                 }
@@ -158,14 +139,14 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdadero, i
             // if sin else
             else
             {
-                if (operadorOr == 1)
+                if (operadorOr)
                 {
                     desapilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
                     fprintf(fp, "%s%d\n", TAG_VERDADERO, contVerdadero);
                     generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
                     desapilar(&ors, &contOr, sizeof(contOr));
                     fprintf(fp, "%s%d\n", TAG_OR, contOr);
-                    operadorOr = 0;
+                    operadorOr = FALSE;
                 }
                 else
                 {

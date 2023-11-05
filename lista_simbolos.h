@@ -42,6 +42,6 @@ void asignarTipo(Lista *listaIds, char *auxTipo);
 void fusionarLista(Lista *lista1, Lista *lista2);
 int esMismoTipo(Lista *lista, char *id, char *auxTipo);
 char *obtenerTipo(Lista *lista, char *id);
-void generarEncabezado(FILE *fp, Lista *lista);
+void generarEncabezado(FILE *fp, Lista *lista, int cantAux);
 
 #endif

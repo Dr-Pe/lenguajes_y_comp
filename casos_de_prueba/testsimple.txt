@@ -1,7 +1,13 @@
 init {
     a, b, c: Int
+    cad: String
 }
 
 if (a > b) {
-    c = 1
-} 
+    write("A")
+}
+else {
+    write("B")
+}
+
+cad = "cadena"

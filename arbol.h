@@ -7,6 +7,8 @@
 
 #include "constantes.h"
 
+#define ES_COMPARADOR(op) (strcmp(op, "<") == 0 || strcmp(op, "<=") == 0 || strcmp(op, ">") == 0 || strcmp(op, ">=") == 0 || strcmp(op, "==") == 0 || strcmp(op, "!=") == 0)
+
 typedef struct _NodoA
 {
     char simbolo[VALOR_LARGO_MAX + 1];
