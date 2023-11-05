@@ -206,15 +206,12 @@ void generarEncabezado(FILE *fp, Lista *lista, int cantAux)
         }
         lista = &(*lista)->sig;
     }
-    int i = 1;
-    if (cantAux != -1)
+    int i = 0;
+    while (cantAux != 0)
     {
-        while (cantAux != 0)
-        {
-            fprintf(fp, "@aux%d dd ??\n", i);
-            i++;
-            cantAux--;
-        }
+        fprintf(fp, "@aux%d dd ??\n", i);
+        i++;
+        cantAux--;
     }
 
     fprintf(fp, "\n");

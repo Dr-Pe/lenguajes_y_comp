@@ -19,10 +19,13 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdadero, i
         }
         else if (strcmp(nodo->simbolo, "=") == 0)
         {
+            generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
             fprintf(fp, "FLD %s\nFRNDINT\nFSTP %s\n", nodo->der->simbolo, nodo->izq->simbolo);
         }
         else if (strcmp(nodo->simbolo, "+") == 0)
         {
+            generarAssembler(&nodo->izq, fp, contAux, contVerdadero, contFalso, contOr);
+            generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
             fprintf(fp, "FLD %s\nFLD %s\nFADD\nFSTP @aux%d\n", nodo->izq->simbolo, nodo->der->simbolo, contAux);
             strcpy(aux, "@aux");
             snprintf(auxOperando, sizeof(contAux), "%d", contAux);
@@ -31,6 +34,8 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdadero, i
         }
         else if (strcmp(nodo->simbolo, "-") == 0)
         {
+            generarAssembler(&nodo->izq, fp, contAux, contVerdadero, contFalso, contOr);
+            generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
             fprintf(fp, "FLD %s\nFLD %s\nFSUB\nFSTP @aux%d\n", nodo->izq->simbolo, nodo->der->simbolo, contAux);
             strcpy(aux, "@aux");
             snprintf(auxOperando, sizeof(contAux), "%d", contAux);
@@ -39,6 +44,8 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdadero, i
         }
         else if (strcmp(nodo->simbolo, "*") == 0)
         {
+            generarAssembler(&nodo->izq, fp, contAux, contVerdadero, contFalso, contOr);
+            generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
             fprintf(fp, "FLD %s\nFLD %s\nFMUL\nFSTP @aux%d\n", nodo->izq->simbolo, nodo->der->simbolo, contAux);
             strcpy(aux, "@aux");
             snprintf(auxOperando, sizeof(contAux), "%d", contAux);
@@ -47,6 +54,8 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdadero, i
         }
         else if (strcmp(nodo->simbolo, "/") == 0)
         {
+            generarAssembler(&nodo->izq, fp, contAux, contVerdadero, contFalso, contOr);
+            generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
             fprintf(fp, "FLD %s\nFLD %s\nFDIV\nFSTP @aux%d\n", nodo->izq->simbolo, nodo->der->simbolo, contAux);
             strcpy(aux, "@aux");
             snprintf(auxOperando, sizeof(contAux), "%d", contAux);

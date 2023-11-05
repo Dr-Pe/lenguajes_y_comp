@@ -1,13 +1,5 @@
 init {
     a, b, c: Int
-    cad: String
 }
 
-if (a > b) {
-    write("A")
-}
-else {
-    write("B")
-}
-
-cad = "cadena"
+a = 2 * (1 + 1)
