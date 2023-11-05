@@ -97,7 +97,7 @@ programa_prima:
                         printf("\nNo se puede crear el archivo de codigo assembler.\n");
                         }
                         generarEncabezado(fp, &listaSimbolos);
-                        generarAssembler(&compilado, fp, 0, 0, 0);
+                        generarAssembler(&compilado, fp, 0, 0, 0, 0);
                         fclose(fp);
                     }
                     else {
@@ -107,7 +107,10 @@ programa_prima:
     ;
 
 programa: 
-    INIT LLA declaraciones LLC bloque_ejec  { printf("\tR2: init { declaraciones} bloque_ejec es Programa\n"); ProgramaPtr = crearNodo("Programa", BloPtr, NULL); } 
+    INIT LLA declaraciones LLC bloque_ejec  { 
+        printf("\tR2: init { declaraciones} bloque_ejec es Programa\n"); 
+        ProgramaPtr = crearNodo("PROGRAMA", BloPtr, NULL); 
+    } 
     |INIT LLA LLC bloque_ejec               { printf("\tR3: init { } bloque_ejec es Programa\n"); ProgramaPtr = BloPtr; }
     |INIT LLA declaraciones LLC             { printf("\tR4: init { declaraciones } es Programa\n"); ProgramaPtr = BloPtr; }
     ;
@@ -150,7 +153,7 @@ bloque_ejec:
     |bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } sentencia { 
         printf("\tR14: bloque_ejec sentencia es Bloque_ejec\n"); 
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
-        BloPtr = crearNodo("BloqEjec", BloAux, SentPtr);
+        BloPtr = crearNodo("BLOQ_EJEC", BloAux, SentPtr);
     }
     ;
 
@@ -165,7 +168,7 @@ sentencia:
             "ciclo", 
             crearNodo("<", crearHoja("_i"), crearHoja(strAux)),
             crearNodo(
-                "BloqEjec", BloPtr, crearNodo("=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))
+                "BLOQ_EJEC", BloPtr, crearNodo("=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))
             )
         );
     }
@@ -175,16 +178,19 @@ sentencia:
             return 1;
         };
         printf("\t\tR19: write(id) es Sentencia\n");
-        SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem"));
+        SentPtr = crearNodo("write", crearHoja($3), crearHoja("NULL"));
     }
-    |WRITE PA STRING PC { printf("\t\tR20: write(string) es Sentencia\n"); SentPtr = crearNodo("Write", crearHoja($3), crearHoja("DirMem")); }
+    |WRITE PA STRING PC { 
+        printf("\t\tR20: write(string) es Sentencia\n"); 
+        SentPtr = crearNodo("write", crearHoja($3), crearHoja("NULL")); 
+    }
     |READ PA ID PC      { 
         if(!idDeclarado(&listaSimbolos, $3)){ 
             printf("\nError, id: *%s* no fue declarado\n", $3);
             return 1;
         };
         printf("\t\tR21: read(id) es Sentencia\n"); 
-        SentPtr = crearNodo("=", crearHoja($3), crearHoja("READ"));
+        SentPtr = crearNodo("read", crearHoja($3), crearHoja("NULL"));
     }
     ;
 
@@ -199,7 +205,7 @@ asignacion:
             return 1;
         }
         printf("\t\tR22: ID = String es ASIGNACION\n");
-        AsigPtr = crearNodo("=", Eptr, crearHoja($1));
+        AsigPtr = crearNodo("=", crearHoja($1), Eptr);
     }
     |ID OP_AS string  { 
         if(!idDeclarado(&listaSimbolos, $1)){ 
@@ -211,7 +217,7 @@ asignacion:
             return 1;
         }
         printf("\t\tR23: ID = String es ASIGNACION\n");
-        AsigPtr = crearNodo("=", StrPtr, crearHoja($1));
+        AsigPtr = crearNodo("=", crearHoja($1), StrPtr);
     }
     ;
 
@@ -244,13 +250,13 @@ eval:
     |IF PA condicion PC LLA bloque_ejec LLC { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } ELSE LLA bloque_ejec LLC { 
         printf("\t\tR28: if (condicion) { bloque_ejec} else { bloque_ejec} es Eval\n"); 
         desapilar(&condAnidados, &ConAux, sizeof(ConAux));
-        desapilar(&anidaciones, &BloAux, sizeof(BloAux));   // el apilar de blo_ejec no funciona aca por que el else ejecuta otra instancia de bloque_Ejec
+        desapilar(&anidaciones, &BloAux, sizeof(BloAux));   // El apilar de blo_ejec no funciona aca por que el else ejecuta otra instancia de bloque_Ejec
         EvalPtr = crearNodo("if", ConAux, crearNodo("Cuerpo", BloAux, BloPtr));
     }
     |SETSWITCH PA expresion PC { ExPtrSwitch = Eptr; } cases ENDSETCASE {
         printf("\t\tR29: SET SWITCH (expresion) cases ENDSETCASE es Eval\n");
         EvalPtr = crearNodo(
-            "BloqEjec", 
+            "BLOQ_EJEC", 
             crearNodo("=", crearHoja("@ax"), ExPtrSwitch),
             CasePtr
             );
@@ -297,10 +303,22 @@ condicion:
     ;
 
 comparacion:
-    expresion { EptrAux = Eptr; } comparador expresion          { printf("\t\t\t\tR35: expresion comparador expresion es Comparacion \n"); CmpPtr = crearNodo(cmpAux, EptrAux, Eptr); }
-    |ESTA_CONT PA STRING { strcpy(strAux, $3); } COMA STRING PC { printf("\t\t\t\tR36: estaContenido(String, String) es Comparacion\n"); CmpPtr = crearHoja(estaContenido(strAux, yylval.string_val)? "true" : "false" ); }
-    |NOT comparacion                                            { printf("\t\t\t\tR37: not comparacion es Comparacion\n"); CmpPtr = crearNodo("&", crearHoja("false"), CmpPtr); }
-    |NOT expresion                                              { printf("\t\t\t\tR38: not expresion es Comparacion\n"); CmpPtr = crearNodo("&", crearHoja("false"), Eptr); }
+    expresion { EptrAux = Eptr; } comparador expresion          { 
+        printf("\t\t\t\tR35: expresion comparador expresion es Comparacion \n"); 
+        CmpPtr = crearNodo(cmpAux, EptrAux, Eptr); 
+    }
+    |ESTA_CONT PA STRING { strcpy(strAux, $3); } COMA STRING PC { 
+        printf("\t\t\t\tR36: estaContenido(String, String) es Comparacion\n");
+        CmpPtr = crearHoja(estaContenido(strAux, yylval.string_val)? "true" : "false" ); 
+    }
+    |NOT comparacion                                            { 
+        printf("\t\t\t\tR37: not comparacion es Comparacion\n");
+        CmpPtr = crearNodo("&", crearHoja("false"), CmpPtr); 
+    }
+    |NOT expresion                                              { 
+        printf("\t\t\t\tR38: not expresion es Comparacion\n");
+        CmpPtr = crearNodo("&", crearHoja("false"), Eptr); 
+    }
     ;
 
 op_logico:
@@ -380,11 +398,11 @@ factor:
 
         // Creo la ejecución del ciclo
         FibPtr = crearNodo("=", crearHoja("@cx"), crearNodo("+", crearHoja("@ax"),  crearHoja("@bx")));
-        FibEjecPtr = crearNodo("BloqEjec", FibPtr, crearNodo("=", crearHoja("@ax"), crearHoja("@bx")));
+        FibEjecPtr = crearNodo("BLOQ_EJEC", FibPtr, crearNodo("=", crearHoja("@ax"), crearHoja("@bx")));
         FibPtr = FibEjecPtr;
-        FibEjecPtr = crearNodo("BloqEjec", FibPtr, crearNodo("=", crearHoja("@bx"), crearHoja("@cx")));
+        FibEjecPtr = crearNodo("BLOQ_EJEC", FibPtr, crearNodo("=", crearHoja("@bx"), crearHoja("@cx")));
         FibPtr = FibEjecPtr;
-        FibEjecPtr = crearNodo("BloqEjec",
+        FibEjecPtr = crearNodo("BLOQ_EJEC",
             FibPtr,
             crearNodo("=", crearHoja($3), crearNodo("-", crearHoja($3), crearHoja("1")))
         );
@@ -397,8 +415,8 @@ factor:
         );
 
         // Anidacion final
-        Fptr = crearNodo("BloqEjec", 
-            crearNodo("BloqEjec", FibAsigPtr, FibEjecPtr),
+        Fptr = crearNodo("BLOQ_EJEC", 
+            crearNodo("BLOQ_EJEC", FibAsigPtr, FibEjecPtr),
             crearNodo("=", crearHoja("FIB"), crearHoja("@bx"))
         );
     }
