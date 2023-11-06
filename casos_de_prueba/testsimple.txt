@@ -2,4 +2,4 @@ init {
     a, b, c: Int
 }
 
-b = FIB(a) * 2
+b = a + 1

@@ -377,7 +377,6 @@ factor:
         snprintf(strAux, sizeof($1), "%d", $1);
         strcpy(strAux2, "_");       // strAux2 = "_"
         strcat(strAux2, strAux);    // Ejemplo: "_2" para el dos
-        strcpy(auxTipo, TINT);
         Fptr= crearHoja(strAux2); 
     }
     |FLOAT { 
@@ -385,7 +384,6 @@ factor:
         snprintf(strAux, VALOR_LARGO_MAX + 1, "%.2f", $1);
         strcpy(strAux2, "_");       // strAux2 = "_"
         strcat(strAux2, strAux);    // Ejemplo: "_2.5" para el dos punto cinco
-        strcpy(auxTipo, TFLOAT);
         Fptr= crearHoja(strAux2);
     }
     |PA expresion PC    { printf("\t\t\t\t    R57: Expresion entre parentesis es Factor\n"); Fptr = Eptr; }
@@ -400,10 +398,14 @@ factor:
         }
         printf("\t\t\t\t    R58: FIB(ID) es Factor\n");
 
+        // Creo las variables o ctes a utilizar
+        insertarEnLista(&listaSimbolos, "0", tINT);
+        insertarEnLista(&listaSimbolos, "1", tINT);
+
         // Creo las asignaciones
         FibAsigPtr = crearNodo("BLOQ_EJEC", 
-            crearNodo("=", crearHoja("@ax"), crearHoja("0")),  
-            crearNodo("=", crearHoja("@bx"), crearHoja("1"))
+            crearNodo("=", crearHoja("@ax"), crearHoja("_0")),  
+            crearNodo("=", crearHoja("@bx"), crearHoja("_1"))
         );
 
         // Creo la ejecución del ciclo
@@ -415,13 +417,13 @@ factor:
         FibEjecPtr = crearNodo(
             "BLOQ_EJEC",
             FibPtr,
-            crearNodo("=", crearHoja($3), crearNodo("-", crearHoja($3), crearHoja("1")))
+            crearNodo("=", crearHoja($3), crearNodo("-", crearHoja($3), crearHoja("_1")))
         );
         FibPtr = FibEjecPtr;
 
         // Creo el ciclo
         FibEjecPtr = crearNodo("ciclo", 
-            crearNodo(">", crearHoja($3), crearHoja("1")), //Condicion
+            crearNodo(">", crearHoja($3), crearHoja("_1")), //Condicion
             FibPtr
         );
 
