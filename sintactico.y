@@ -101,7 +101,7 @@ programa_prima:
                         printf("\nNo se puede crear el archivo de codigo assembler.\n");
                         }
                         generarEncabezado(fp, &listaSimbolos, cantAux);
-                        generarAssembler(&compilado, fp, 0, 0, 0, 0);
+                        generarAssembler(&compilado, fp, 0, 0, 0, 0, 0);
                         fclose(fp);
                     }
                     else {
@@ -314,10 +314,12 @@ comparacion:
     expresion { EptrAux = Eptr; } comparador expresion          { 
         printf("\t\t\t\tR35: expresion comparador expresion es Comparacion \n"); 
         CmpPtr = crearNodo(cmpAux, EptrAux, Eptr); 
+        contAux_ = 0;
     }
     |ESTA_CONT PA STRING { strcpy(strAux, $3); } COMA STRING PC { 
         printf("\t\t\t\tR36: estaContenido(String, String) es Comparacion\n");
-        CmpPtr = crearHoja(estaContenido(strAux, yylval.string_val)? "true" : "false" ); 
+        snprintf(strAux, sizeof(int), "%d", estaContenido(strAux, yylval.string_val));
+        CmpPtr = crearNodo("==", crearHoja("1"), crearHoja(strAux)); 
     }
     |NOT comparacion                                            { 
         printf("\t\t\t\tR37: not comparacion es Comparacion\n");
@@ -481,8 +483,15 @@ char* concatenar(char* str1, char* str2, int n) {
     return str1;
 }
 
-int estaContenido(char* str1, char* str2) { 
-    return strstr(str1,str2) != NULL;
+int estaContenido(char* str1, char* str2) {
+    char strAux[VALOR_LARGO_MAX + 2];
+    char strAux2[VALOR_LARGO_MAX + 2];
+
+    
+    return strstr(
+        manipularCadena(strAux, str1),
+        manipularCadena(strAux2, str2)
+        ) != NULL;
 }
 
 char* manipularCadena(char* dest, char* str) {

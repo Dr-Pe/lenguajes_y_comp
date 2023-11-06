@@ -184,7 +184,7 @@ char *obtenerTipo(Lista *lista, char *id)
 
 void generarEncabezado(FILE *fp, Lista *lista, int cantAux)
 {
-    fprintf(fp, ".MODEL LARGE\n.386\n.STACK 200h\n.DATA\n\n");
+    fprintf(fp, "INCLUDE number.asm\n\n.MODEL LARGE\n.386\n.STACK 200h\n.DATA\n\n");
     while (*lista != NULL)
     {
         if (strlen((*lista)->simb.valor) == 0)
@@ -207,7 +207,7 @@ void generarEncabezado(FILE *fp, Lista *lista, int cantAux)
         lista = &(*lista)->sig;
     }
     int i = 0;
-    while (cantAux != 0)
+    while (cantAux > 1)
     {
         fprintf(fp, "@aux%d dd ??\n", i);
         i++;

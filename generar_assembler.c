@@ -1,172 +1,77 @@
 #include "generar_assembler.h"
 
-void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdadero, int contFalso, int contOr)
+void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdaderos, int contFalsos, int contOr, int contCiclos)
 {
-    int numeroAuxiliar;
+    Pila ciclos = crearPila(&ciclos);
     char aux[STRING_LARGO_MAX + 1];
     char auxOperando[VALOR_LARGO_MAX + 1];
-    Pila verdaderos = crearPila(&verdaderos);
-    Pila falsos = crearPila(&falsos);
-    Pila ors = crearPila(&ors);
-    int operadorOr = 0; // Boolean
+    int numeroAuxiliar;
 
     NodoA *nodo = padreMasIzq(parbol);
     while (nodo)
     {
         if (strcmp(nodo->simbolo, "BLOQ_EJEC") == 0)
         {
-            generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
+            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contOr, contCiclos);
+            contAux = 0;
         }
         else if (strcmp(nodo->simbolo, "=") == 0)
         {
-            generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
+            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contOr, contCiclos);
             fprintf(fp, "FLD %s\nFRNDINT\nFSTP %s\n", nodo->der->simbolo, nodo->izq->simbolo);
         }
         else if (strcmp(nodo->simbolo, "+") == 0)
         {
-            generarAssembler(&nodo->izq, fp, contAux, contVerdadero, contFalso, contOr);
-            generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
+            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contOr, contCiclos);
             fprintf(fp, "FLD %s\nFLD %s\nFADD\nFSTP @aux%d\n", nodo->izq->simbolo, nodo->der->simbolo, contAux);
             strcpy(aux, "@aux");
             snprintf(auxOperando, sizeof(contAux), "%d", contAux);
             strcat(aux, auxOperando);
             strcpy(nodo->simbolo, aux);
+            contAux++;
         }
         else if (strcmp(nodo->simbolo, "-") == 0)
         {
-            generarAssembler(&nodo->izq, fp, contAux, contVerdadero, contFalso, contOr);
-            generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
+            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contOr, contCiclos);
             fprintf(fp, "FLD %s\nFLD %s\nFSUB\nFSTP @aux%d\n", nodo->izq->simbolo, nodo->der->simbolo, contAux);
             strcpy(aux, "@aux");
             snprintf(auxOperando, sizeof(contAux), "%d", contAux);
             strcat(aux, auxOperando);
             strcpy(nodo->simbolo, aux);
+            contAux++;
         }
         else if (strcmp(nodo->simbolo, "*") == 0)
         {
-            generarAssembler(&nodo->izq, fp, contAux, contVerdadero, contFalso, contOr);
-            generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
+            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contOr, contCiclos);
             fprintf(fp, "FLD %s\nFLD %s\nFMUL\nFSTP @aux%d\n", nodo->izq->simbolo, nodo->der->simbolo, contAux);
             strcpy(aux, "@aux");
             snprintf(auxOperando, sizeof(contAux), "%d", contAux);
             strcat(aux, auxOperando);
             strcpy(nodo->simbolo, aux);
+            contAux++;
         }
         else if (strcmp(nodo->simbolo, "/") == 0)
         {
-            generarAssembler(&nodo->izq, fp, contAux, contVerdadero, contFalso, contOr);
-            generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
+            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contOr, contCiclos);
             fprintf(fp, "FLD %s\nFLD %s\nFDIV\nFSTP @aux%d\n", nodo->izq->simbolo, nodo->der->simbolo, contAux);
             strcpy(aux, "@aux");
             snprintf(auxOperando, sizeof(contAux), "%d", contAux);
             strcat(aux, auxOperando);
             strcpy(nodo->simbolo, aux);
+            contAux++;
         }
         else if (strcmp(nodo->simbolo, "if") == 0)
         {
-            // Condicion simple
-            if (ES_COMPARADOR(nodo->izq->simbolo) == 1)
-            {
-                generarComparacion(fp, nodo->izq, TAG_FALSO, contFalso);
-                apilar(&falsos, &contFalso, sizeof(contFalso));
-                contFalso++;
-            }
-            // Condicion multiple
-            else if (ES_OP_LOGICO(nodo->izq->simbolo) == 1)
-            {
-                NodoA *opLogico = nodo->izq;
-
-                if (strcmp(nodo->izq->simbolo, "&") == 0)
-                {
-                    // 1era condicion
-                    generarComparacion(fp, opLogico->izq, TAG_FALSO, contFalso);
-                    // 2da condicion
-                    generarComparacion(fp, opLogico->der, TAG_FALSO, contFalso);
-
-                    apilar(&falsos, &contFalso, sizeof(contFalso));
-                    contFalso++;
-                }
-                else if (strcmp(nodo->izq->simbolo, "||") == 0)
-                {
-                    invertirCondicion(opLogico->izq);
-                    // 1era condicion
-                    generarComparacion(fp, opLogico->izq, TAG_FALSO, contFalso);
-                    contFalso++;
-                    // 2da condicion
-                    generarComparacion(fp, opLogico->der->izq, TAG_OR, contOr);
-
-                    // if (existeElse == 1)
-                    // {
-                    //     desapilar(&ifFalso, etiquetaFalso, sizeof(etiquetaFalso));
-                    //     fprintf(fp, "%s\n", etiquetaFalso);
-                    //     existeElse = 0;
-                    // }
-
-                    apilar(&ors, &contOr, sizeof(contOr));
-                    contOr++;
-                    operadorOr = TRUE;
-                }
-            }
-
-            // if con else
-            if (strcmp(nodo->der->simbolo, "CUERPO") == 0)
-            {
-                desapilar(&falsos, &numeroAuxiliar, sizeof(numeroAuxiliar));
-                fprintf(fp, "%s%d\n", TAG_FALSO, numeroAuxiliar);
-
-                if (operadorOr)
-                {
-                    // True
-                    generarAssembler(&nodo->der->izq, fp, contAux, contVerdadero, contFalso, contOr);
-                    contVerdadero++;
-                    apilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
-                    fprintf(fp, "BI %s%d\n", TAG_VERDADERO, contVerdadero);
-                    desapilar(&ors, &contOr, sizeof(contOr));
-                    fprintf(fp, "%s%d\n", TAG_OR, contOr);
-                    // False
-                    generarAssembler(&nodo->der->der, fp, contAux, contVerdadero, contFalso, contOr);
-                    desapilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
-                    fprintf(fp, "%s%d\n", TAG_VERDADERO, contVerdadero);
-
-                    operadorOr = FALSE;
-                }
-                else
-                {
-                    // True
-                    generarAssembler(&nodo->der->izq, fp, contAux, contVerdadero, contFalso, contOr);
-                    contVerdadero++;
-                    apilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
-                    fprintf(fp, "BI %s%d\n", TAG_VERDADERO, contVerdadero);
-                    desapilar(&falsos, &contFalso, sizeof(contFalso));
-                    fprintf(fp, "%s%d\n", TAG_FALSO, contFalso);
-                    // False
-                    generarAssembler(&nodo->der->der, fp, contAux, contVerdadero, contFalso, contOr);
-                    desapilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
-                    fprintf(fp, "%s%d\n", TAG_VERDADERO, contVerdadero);
-                }
-            }
-            // if sin else
-            else
-            {
-                if (operadorOr)
-                {
-                    desapilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
-                    fprintf(fp, "%s%d\n", TAG_VERDADERO, contVerdadero);
-                    generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
-                    desapilar(&ors, &contOr, sizeof(contOr));
-                    fprintf(fp, "%s%d\n", TAG_OR, contOr);
-                    operadorOr = FALSE;
-                }
-                else
-                {
-                    generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalso, contOr);
-                    desapilar(&falsos, &contFalso, sizeof(contFalso));
-                    fprintf(fp, "%s%d\n", TAG_FALSO, contFalso);
-                }
-            }
-
-            apilar(&falsos, &contFalso, sizeof(contFalso));
-            contFalso++;
+            generarIf(fp, nodo, contAux, contVerdaderos, contFalsos, contOr, contCiclos);
+        }
+        else if (strcmp(nodo->simbolo, "ciclo") == 0)
+        {
+            fprintf(fp, "%s%d\n", TAG_CICLO, contCiclos);
+            apilar(&ciclos, &contCiclos, sizeof(contCiclos));
+            contCiclos++;
+            generarIf(fp, nodo, contAux, contVerdaderos, contFalsos, contOr, contCiclos);
+            desapilar(&ciclos, &numeroAuxiliar, sizeof(numeroAuxiliar));
+            fprintf(fp, "BI %s%d\n", TAG_CICLO, numeroAuxiliar);
         }
         else if (strcmp(nodo->simbolo, "write") == 0)
         {
@@ -217,30 +122,142 @@ void generarComparacion(FILE *fp, NodoA *comparador, char *tag, int cont)
     }
 }
 
-void invertirCondicion(NodoA *padre)
+void invertirComparador(NodoA *nodo)
 {
-    if (strcmp(padre->simbolo, "<") == 0)
+    if (strcmp(nodo->simbolo, "<") == 0)
     {
-        strcpy(padre->simbolo, ">=");
+        strcpy(nodo->simbolo, ">=");
     }
-    else if (strcmp(padre->simbolo, ">") == 0)
+    else if (strcmp(nodo->simbolo, ">") == 0)
     {
-        strcpy(padre->simbolo, "<=");
+        strcpy(nodo->simbolo, "<=");
     }
-    else if (strcmp(padre->simbolo, "<=") == 0)
+    else if (strcmp(nodo->simbolo, "<=") == 0)
     {
-        strcpy(padre->simbolo, ">");
+        strcpy(nodo->simbolo, ">");
     }
-    else if (strcmp(padre->simbolo, ">=") == 0)
+    else if (strcmp(nodo->simbolo, ">=") == 0)
     {
-        strcpy(padre->simbolo, "<");
+        strcpy(nodo->simbolo, "<");
     }
-    else if (strcmp(padre->simbolo, "==") == 0)
+    else if (strcmp(nodo->simbolo, "==") == 0)
     {
-        strcpy(padre->simbolo, "!=");
+        strcpy(nodo->simbolo, "!=");
     }
-    else if (strcmp(padre->simbolo, "!=") == 0)
+    else if (strcmp(nodo->simbolo, "!=") == 0)
     {
-        strcpy(padre->simbolo, "==");
+        strcpy(nodo->simbolo, "==");
     }
+}
+
+void generarIf(FILE *fp, NodoA *nodo, int contAux, int contVerdadero, int contFalsos, int contOr, int contCiclos)
+{
+    Pila verdaderos = crearPila(&verdaderos);
+    Pila falsos = crearPila(&falsos);
+    Pila ors = crearPila(&ors);
+    int operadorOr = FALSE; // Boolean
+    int numeroAuxiliar;
+
+    // Condicion simple
+    if (ES_COMPARADOR(nodo->izq->simbolo) == 1)
+    {
+        generarComparacion(fp, nodo->izq, TAG_FALSO, contFalsos);
+        apilar(&falsos, &contFalsos, sizeof(contFalsos));
+        contFalsos++;
+    }
+    // Condicion multiple
+    else if (ES_OP_LOGICO(nodo->izq->simbolo) == 1)
+    {
+        NodoA *opLogico = nodo->izq;
+
+        if (strcmp(nodo->izq->simbolo, "&") == 0)
+        {
+            // 1era condicion
+            generarComparacion(fp, opLogico->izq, TAG_FALSO, contFalsos);
+            // 2da condicion
+            generarComparacion(fp, opLogico->der, TAG_FALSO, contFalsos);
+
+            apilar(&falsos, &contFalsos, sizeof(contFalsos));
+            contFalsos++;
+        }
+        else if (strcmp(nodo->izq->simbolo, "||") == 0)
+        {
+            invertirComparador(opLogico->izq);
+            // 1era condicion
+            generarComparacion(fp, opLogico->izq, TAG_FALSO, contFalsos);
+            contFalsos++;
+            // 2da condicion
+            generarComparacion(fp, opLogico->der->izq, TAG_OR, contOr);
+
+            // if (existeElse == 1)
+            // {
+            //     desapilar(&ifFalso, etiquetaFalso, sizeof(etiquetaFalso));
+            //     fprintf(fp, "%s\n", etiquetaFalso);
+            //     existeElse = 0;
+            // }
+
+            apilar(&ors, &contOr, sizeof(contOr));
+            contOr++;
+            operadorOr = TRUE;
+        }
+    }
+    // if con else
+    if (strcmp(nodo->der->simbolo, "CUERPO") == 0)
+    {
+        desapilar(&falsos, &numeroAuxiliar, sizeof(numeroAuxiliar));
+        fprintf(fp, "%s%d\n", TAG_FALSO, numeroAuxiliar);
+
+        if (operadorOr)
+        {
+            // True
+            generarAssembler(&nodo->der->izq, fp, contAux, contVerdadero, contFalsos, contOr, contCiclos);
+            contVerdadero++;
+            apilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
+            fprintf(fp, "BI %s%d\n", TAG_VERDADERO, contVerdadero);
+            desapilar(&ors, &contOr, sizeof(contOr));
+            fprintf(fp, "%s%d\n", TAG_OR, contOr);
+            // False
+            generarAssembler(&nodo->der->der, fp, contAux, contVerdadero, contFalsos, contOr, contCiclos);
+            desapilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
+            fprintf(fp, "%s%d\n", TAG_VERDADERO, contVerdadero);
+
+            operadorOr = FALSE;
+        }
+        else
+        {
+            // True
+            generarAssembler(&nodo->der->izq, fp, contAux, contVerdadero, contFalsos, contOr, contCiclos);
+            contVerdadero++;
+            apilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
+            fprintf(fp, "BI %s%d\n", TAG_VERDADERO, contVerdadero);
+            desapilar(&falsos, &contFalsos, sizeof(contFalsos));
+            fprintf(fp, "%s%d\n", TAG_FALSO, contFalsos);
+            // False
+            generarAssembler(&nodo->der->der, fp, contAux, contVerdadero, contFalsos, contOr, contCiclos);
+            desapilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
+            fprintf(fp, "%s%d\n", TAG_VERDADERO, contVerdadero);
+        }
+    }
+    // if sin else
+    else
+    {
+        if (operadorOr)
+        {
+            desapilar(&verdaderos, &contVerdadero, sizeof(contVerdadero));
+            fprintf(fp, "%s%d\n", TAG_VERDADERO, contVerdadero);
+            generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalsos, contOr, contCiclos);
+            desapilar(&ors, &contOr, sizeof(contOr));
+            fprintf(fp, "%s%d\n", TAG_OR, contOr);
+            operadorOr = FALSE;
+        }
+        else
+        {
+            generarAssembler(&nodo->der, fp, contAux, contVerdadero, contFalsos, contOr, contCiclos);
+            desapilar(&falsos, &contFalsos, sizeof(contFalsos));
+            fprintf(fp, "%s%d\n", TAG_FALSO, contFalsos);
+        }
+    }
+
+    apilar(&falsos, &contFalsos, sizeof(contFalsos));
+    contFalsos++;
 }
