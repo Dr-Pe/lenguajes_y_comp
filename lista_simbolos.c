@@ -198,7 +198,7 @@ void generarEncabezado(FILE *fp, Lista *lista, int cantAux)
         }
         else if (strcmp((*lista)->simb.tipo_dato, "Float") == 0)
         {
-            fprintf(fp, "%s dd %s\n", (*lista)->simb.nombre, (*lista)->simb.valor); // si es float
+            fprintf(fp, "%s dd %s\n", (*lista)->simb.nombre, (*lista)->simb.valor); // Si es float
         }
         else
         {

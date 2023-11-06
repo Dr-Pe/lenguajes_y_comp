@@ -401,7 +401,7 @@ factor:
         printf("\t\t\t\t    R58: FIB(ID) es Factor\n");
 
         // Creo las asignaciones
-        FibAsigPtr = crearNodo("BloqAsig", 
+        FibAsigPtr = crearNodo("BLOQ_EJEC", 
             crearNodo("=", crearHoja("@ax"), crearHoja("0")),  
             crearNodo("=", crearHoja("@bx"), crearHoja("1"))
         );
@@ -412,7 +412,8 @@ factor:
         FibPtr = FibEjecPtr;
         FibEjecPtr = crearNodo("BLOQ_EJEC", FibPtr, crearNodo("=", crearHoja("@bx"), crearHoja("@cx")));
         FibPtr = FibEjecPtr;
-        FibEjecPtr = crearNodo("BLOQ_EJEC",
+        FibEjecPtr = crearNodo(
+            "BLOQ_EJEC",
             FibPtr,
             crearNodo("=", crearHoja($3), crearNodo("-", crearHoja($3), crearHoja("1")))
         );
@@ -425,9 +426,10 @@ factor:
         );
 
         // Anidacion final
-        Fptr = crearNodo("BLOQ_EJEC", 
+        Fptr = crearNodo(
+            "@bx",
             crearNodo("BLOQ_EJEC", FibAsigPtr, FibEjecPtr),
-            crearNodo("=", crearHoja("FIB"), crearHoja("@bx"))
+            crearHoja("NULL")
         );
     }
     ;

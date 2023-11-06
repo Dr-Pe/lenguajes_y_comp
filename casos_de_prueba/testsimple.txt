@@ -2,6 +2,4 @@ init {
     a, b, c: Int
 }
 
-ciclo ( a > b) {
-    a = b + 1
-}
+b = FIB(a) * 2
