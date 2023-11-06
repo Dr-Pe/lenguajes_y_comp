@@ -1,5 +1,5 @@
 init {
-    entero_min, a,b,c, entero_max: Int *- Multiples variables -*
+    entero_min, a,b,c,f, entero_max: Int *- Multiples variables -*
     float_min: Float
     float_max: Float
     cad_min, cad_test1, cad_test2, cad_test3, cad_test4, cad_test5, cad_test6, cad_test7: String
@@ -134,3 +134,41 @@ ciclo (a > b) {
         write("write < ciclo anidado")
     }
 }
+
+*- SETSWITCH -*
+
+SET SWITCH ( a )
+    CASE 0: b = 1
+    ELSECASE: b = 0
+ENDSETCASE
+
+SET SWITCH ( a )
+    CASE 0: b = 1
+    CASE 5: a = b
+            b = 5*2
+ENDSETCASE
+
+SET SWITCH ( a + b * 21)
+    CASE 10: b = 200
+             a = 100
+    CASE 22: a = a + b
+    CASE 30: b = a
+    ELSECASE: a = 0
+ENDSETCASE
+
+SET SWITCH ( a + b * 2)
+    CASE 10: if(b>a)
+                a=b*2
+             b = 100
+    CASE 22: a = a + b
+    CASE 30: b = a
+    ELSECASE: a = 0
+ENDSETCASE
+
+*- FIB -*
+
+f=FIB(a)
+
+f=2*3+FIB(a)
+
+f=(FIB(a))*3
