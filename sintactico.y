@@ -21,16 +21,23 @@
     Lista listaIds;
     Pila anidaciones;
     Pila condAnidados;
-    int boolCompiladoOK = 1;
+    int boolCompiladoOK = TRUE;
 
     NodoA* CompiladoPtr, *ProgramaPtr, *BloPtr, *ListPtr, *SentPtr, *AsigPtr, *tipoAux,
             *CicPtr, *EvalPtr, *Eptr, *StrPtr, *ConPtr, *CmpPtr, *EptrAux, *BloAux, *Tptr, *Fptr, *CmpAux, *StrPtrAux;
     NodoA* EjePtr, * ConAux, *CasePtr, *ExPtrSwitch, *FibPtr, *FibAsigPtr, *FibEjecPtr;
     
-    char  auxTipo[7], strAux[VALOR_LARGO_MAX + 1], strAux2[VALOR_LARGO_MAX + 2], cmpAux[3], opAux[3];
+    char auxTipo[7];
+    char strAux[VALOR_LARGO_MAX + 1]; 
+    char strAux2[VALOR_LARGO_MAX + 2];
+    char cmpAux[3];
+    char opAux[3];
+    char exprSwAux[5];
+
     int intAux;
     int cantAux = 0;
     int contAux_ = 0;
+    int contAuxFinal = 0;
 %}
 
  
@@ -100,8 +107,8 @@ programa_prima:
                         if (!fp) {
                         printf("\nNo se puede crear el archivo de codigo assembler.\n");
                         }
-                        generarEncabezado(fp, &listaSimbolos, cantAux);
-                        generarAssembler(&compilado, fp, 0, 0, 0, 0, 0);
+                        generarEncabezado(fp, &listaSimbolos, cantAux + contAuxFinal);
+                        generarAssembler(&compilado, fp, contAuxFinal, 0, 0, 0, 0);
                         fclose(fp);
                     }
                     else {
@@ -261,11 +268,17 @@ eval:
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));   // El apilar de blo_ejec no funciona aca por que el else ejecuta otra instancia de bloque_Ejec
         EvalPtr = crearNodo("if", ConAux, crearNodo("CUERPO", BloAux, BloPtr));
     }
-    |SETSWITCH PA expresion PC { ExPtrSwitch = Eptr; } cases ENDSETCASE {
+    |SETSWITCH PA expresion PC { 
+        ExPtrSwitch = Eptr;
+        snprintf(strAux, sizeof(contAuxFinal), "%d", contAuxFinal);
+        strcpy(exprSwAux, "@aux");
+        strcat(exprSwAux, strAux);
+        contAuxFinal++;
+    } cases ENDSETCASE {
         printf("\t\tR29: SET SWITCH (expresion) cases ENDSETCASE es Eval\n");
         EvalPtr = crearNodo(
-            "BLOQ_EJEC", 
-            crearNodo("=", crearHoja("@ax"), ExPtrSwitch),
+            "BLOQ_EJEC",
+            crearNodo("=", crearHoja(exprSwAux), ExPtrSwitch),
             CasePtr
             );
     }
@@ -275,7 +288,7 @@ cases:
     CASE INT DOS_P bloque_ejec {
         printf("\t\t\tR30: CASE INT: bloque_ejec es cases\n");
         snprintf(strAux, sizeof($2), "%d", $2);
-        CasePtr = crearNodo("if", crearNodo("==", crearHoja("@ax"), crearHoja(strAux)), BloPtr);
+        CasePtr = crearNodo("if", crearNodo("==", crearHoja(exprSwAux), crearHoja(strAux)), BloPtr);
     }
     |CASE INT DOS_P bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } cases {
         printf("\t\t\tR31: cases CASE INT: bloque_ejec es cases\n");
@@ -283,7 +296,7 @@ cases:
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
         CasePtr = crearNodo(
             "if",
-            crearNodo("==", crearHoja("@ax"), crearHoja(strAux)),
+            crearNodo("==", crearHoja(exprSwAux), crearHoja(strAux)),
             crearNodo("CUERPO", BloAux, CasePtr));
     }
     |CASE INT DOS_P bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } ELSECASE DOS_P bloque_ejec {
@@ -292,7 +305,7 @@ cases:
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
         CasePtr = crearNodo(
             "if",
-            crearNodo("==", crearHoja("@ax"), crearHoja(strAux)),
+            crearNodo("==", crearHoja(exprSwAux), crearHoja(strAux)),
             crearNodo("CUERPO", BloAux, BloPtr));
     }
     ;
@@ -401,18 +414,19 @@ factor:
         // Creo las variables o ctes a utilizar
         insertarEnLista(&listaSimbolos, "0", tINT);
         insertarEnLista(&listaSimbolos, "1", tINT);
+        contAux_ += 3; // Antes @ax, @bx, @cx
 
         // Creo las asignaciones
         FibAsigPtr = crearNodo("BLOQ_EJEC", 
-            crearNodo("=", crearHoja("@ax"), crearHoja("_0")),  
-            crearNodo("=", crearHoja("@bx"), crearHoja("_1"))
+            crearNodo("=", crearHoja("@aux0"), crearHoja("_0")),  
+            crearNodo("=", crearHoja("@aux1"), crearHoja("_1"))
         );
 
         // Creo la ejecución del ciclo
-        FibPtr = crearNodo("=", crearHoja("@cx"), crearNodo("+", crearHoja("@ax"),  crearHoja("@bx")));
-        FibEjecPtr = crearNodo("BLOQ_EJEC", FibPtr, crearNodo("=", crearHoja("@ax"), crearHoja("@bx")));
+        FibPtr = crearNodo("=", crearHoja("@aux2"), crearNodo("+", crearHoja("@aux0"),  crearHoja("@aux1")));
+        FibEjecPtr = crearNodo("BLOQ_EJEC", FibPtr, crearNodo("=", crearHoja("@aux0"), crearHoja("@aux1")));
         FibPtr = FibEjecPtr;
-        FibEjecPtr = crearNodo("BLOQ_EJEC", FibPtr, crearNodo("=", crearHoja("@bx"), crearHoja("@cx")));
+        FibEjecPtr = crearNodo("BLOQ_EJEC", FibPtr, crearNodo("=", crearHoja("@aux1"), crearHoja("@aux2")));
         FibPtr = FibEjecPtr;
         FibEjecPtr = crearNodo(
             "BLOQ_EJEC",
@@ -429,7 +443,7 @@ factor:
 
         // Anidacion final
         Fptr = crearNodo(
-            "@bx",
+            "@aux1",
             crearNodo("BLOQ_EJEC", FibAsigPtr, FibEjecPtr),
             crearHoja("NULL")
         );
