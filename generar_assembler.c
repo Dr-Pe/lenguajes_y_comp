@@ -261,3 +261,11 @@ void generarIf(FILE *fp, NodoA *nodo, int contAux, int contVerdadero, int contFa
     apilar(&falsos, &contFalsos, sizeof(contFalsos));
     contFalsos++;
 }
+
+void generarFin(FILE* fp){
+    fprintf(fp, "\n");
+	fprintf(fp, "MOV EAX, 4C00H\n");
+	fprintf(fp, "INT 21h\n");
+	fprintf(fp, "END\n");
+    fprintf(fp, ";");
+}

@@ -109,6 +109,7 @@ programa_prima:
                         }
                         generarEncabezado(fp, &listaSimbolos, cantAux + contAuxFinal);
                         generarAssembler(&compilado, fp, contAuxFinal, 0, 0, 0, 0);
+                        generarFin(fp);
                         fclose(fp);
                     }
                     else {
