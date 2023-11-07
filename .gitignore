@@ -69,4 +69,4 @@ compilador
 
 # Archivos temporales
 *.txt
-*.asm
+final.asm
