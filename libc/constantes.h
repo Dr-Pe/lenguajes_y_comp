@@ -16,5 +16,6 @@
 
 #define MIN(a, b) ((a < b) ? a : b)
 
-#define FILENAME_ASM "final.asm"
+#define FILENAME_TS "tabla_simbolos.txt"
 #define FILENAME_DOT "intermedia.dot"
+#define FILENAME_ASM "final.asm"

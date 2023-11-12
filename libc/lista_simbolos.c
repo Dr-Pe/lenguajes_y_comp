@@ -75,7 +75,7 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
 
 void imprimirLista(Lista *lista)
 {
-    FILE *fp = fopen("symbol-table.txt", "w");
+    FILE *fp = fopen(FILENAME_TS, "w");
     if (fp == NULL)
     {
         printf("Error al abrir el archivo\n");
