@@ -2,6 +2,8 @@ init {
     a, b, c: Int
 }
 
+a = FIB(b)
+
 SET SWITCH(a)
 CASE 1:
     b = 1

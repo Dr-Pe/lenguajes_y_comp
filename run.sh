@@ -6,7 +6,7 @@ compilador="lyc-compiler-3.0.0.o"
 flex lexico.l
 bison -dyv sintactico.y
 gcc lex.yy.c y.tab.c lista_simbolos.c arbol.c pila.c generar_assembler.c -o ${compilador}
-./${compilador} "casos_de_prueba/testsimple.txt"
+./${compilador} "casos_de_prueba/test.txt"
 rm lex.yy.c
 rm y.tab.c
 rm y.output

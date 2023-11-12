@@ -68,5 +68,5 @@ compilador
 .vscode
 
 # Archivos temporales
-*.txt
+/*.txt
 final.asm

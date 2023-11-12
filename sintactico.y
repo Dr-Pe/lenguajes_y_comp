@@ -208,11 +208,11 @@ sentencia:
 asignacion:
     ID OP_AS expresion { 
         if(!idDeclarado(&listaSimbolos, $1)){ 
-            printf("\nError, id: *%s* no fue declarado\n", $1);
+            printf("\nError: Id %s no fue declarado.\n", $1);
             return 1;
         };
         if(!esMismoTipo(&listaSimbolos, $1, auxTipo)){ 
-            printf("\nError, datos de diferente tipo.\n");
+            printf("\nError: Datos de diferente tipo al intentar asignar un %s al id %s.\n", auxTipo, $1);
             return 1;
         }
         printf("\t\tR22: ID = Expresion es ASIGNACION\n");
@@ -224,11 +224,11 @@ asignacion:
     }
     |ID OP_AS string  { 
         if(!idDeclarado(&listaSimbolos, $1)){ 
-            printf("\nError, id: *%s* no fue declarado\n", $1);
+            printf("\nError: Id %s no fue declarado.\n", $1);
             return 1;
         }
         if(!esMismoTipo(&listaSimbolos, $1, TSTRING)){ 
-            printf("\nError, datos de diferente tipo.\n");
+            printf("\nError: Datos de diferente tipo al intentar asignar un %s al id %s.\n", auxTipo, $1);
             return 1;
         }
         printf("\t\tR23: ID = String es ASIGNACION\n");
@@ -390,6 +390,7 @@ factor:
         snprintf(strAux, sizeof($1), "%d", $1);
         strcpy(strAux2, "_");       // strAux2 = "_"
         strcat(strAux2, strAux);    // Ejemplo: "_2" para el dos
+        strcpy(auxTipo, "Int");
         Fptr= crearHoja(strAux2); 
     }
     |FLOAT { 
@@ -397,6 +398,7 @@ factor:
         snprintf(strAux, VALOR_LARGO_MAX + 1, "%.2f", $1);
         strcpy(strAux2, "_");       // strAux2 = "_"
         strcat(strAux2, strAux);    // Ejemplo: "_2.5" para el dos punto cinco
+        strcpy(auxTipo, "Float");
         Fptr= crearHoja(strAux2);
     }
     |PA expresion PC    { printf("\t\t\t\t    R57: Expresion entre parentesis es Factor\n"); Fptr = Eptr; }
