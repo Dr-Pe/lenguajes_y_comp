@@ -1,10 +1,10 @@
 %{ 
-    #include "constantes.h"
-    #include "lista_simbolos.h"
+    #include "libc/constantes.h"
+    #include "libc/lista_simbolos.h"
     #include "y.tab.h"
-    #include "arbol.h"
-    #include "pila.h"
-    #include "generar_assembler.h"
+    #include "libc/arbol.h"
+    #include "libc/pila.h"
+    #include "libc/generar_assembler.h"
 
     int yystopparser = 0;
     extern FILE* yyin;

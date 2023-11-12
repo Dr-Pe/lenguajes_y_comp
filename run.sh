@@ -1,12 +1,13 @@
 #!/bin/bash
 
-compilador="lyc-compiler-3.0.0.o"
+compilador="lyc-compiler-2.5.0.o"
+libc="libc/lista_simbolos.c libc/arbol.c libc/pila.c libc/generar_assembler.c"
 
 # Script para Unix
 flex lexico.l
 bison -dyv sintactico.y
-gcc lex.yy.c y.tab.c lista_simbolos.c arbol.c pila.c generar_assembler.c -o ${compilador}
-./${compilador} "casos_de_prueba/test.txt"
+gcc lex.yy.c y.tab.c ${libc} -o ${compilador}
+./${compilador} "casos_de_prueba/test_simple.txt"
 rm lex.yy.c
 rm y.tab.c
 rm y.output

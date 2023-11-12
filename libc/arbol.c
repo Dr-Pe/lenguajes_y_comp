@@ -26,28 +26,27 @@ NodoA *crearHoja(char *simb)
 
 void imprimirArbol(Arbol *pa)
 {
-    FILE *arch = fopen("intermediate-code.txt", "w");
-    if (!arch)
+    FILE *fp = fopen(FILENAME_DOT, "w");
+    if (!fp)
     {
         printf("No se pudo abrir el archivo para escritura\n");
         return;
     }
-    recorrerArbolInOrdenEspejado(pa, 0, arch);
-    fclose(arch);
+    fprintf(fp, "digraph G{\n");
+    recorrerArbolInOrdenEspejado(pa, 0, fp);
+    fprintf(fp, "}\n");
+    fclose(fp);
 }
 
-void recorrerArbolInOrdenEspejado(Arbol *pa, int nivel, FILE *arch)
+void recorrerArbolInOrdenEspejado(Arbol *pa, int nivel, FILE *fp)
 {
     if (!*pa)
         return;
 
-    recorrerArbolInOrdenEspejado(&(*pa)->der, nivel + 1, arch);
+    fprintf(fp, "\"nodo%d\"[ label=\"%s\"];\n", nivel, (*pa)->simbolo);
 
-    for (int i = 0; i < nivel; i++)
-        fprintf(arch, "\t");
-    fprintf(arch, "%s\n", (*pa)->simbolo);
-
-    recorrerArbolInOrdenEspejado(&(*pa)->izq, nivel + 1, arch);
+    recorrerArbolInOrdenEspejado(&(*pa)->der, nivel + 1, fp);
+    recorrerArbolInOrdenEspejado(&(*pa)->izq, nivel + 1, fp);
 }
 
 void vaciarArbol(Arbol *pa)
