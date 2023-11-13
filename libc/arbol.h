@@ -14,12 +14,12 @@ typedef struct _NodoA
     char simbolo[VALOR_LARGO_MAX + 1];
     struct _NodoA *der;
     struct _NodoA *izq;
+    int indice;
 } NodoA;
 
 typedef NodoA *Arbol;
 
 void crearArbol(Arbol *pa);
-
 NodoA *crearNodo(char *simb, NodoA *hIzq, NodoA *hDer);
 NodoA *crearHoja(char *simb);
 void imprimirArbol(Arbol *pa);

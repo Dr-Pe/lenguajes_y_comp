@@ -1,5 +1,8 @@
 #include "arbol.h"
 
+// Contador de Nodos para aplicar indice.
+int cantNodos = 0;
+
 void crearArbol(Arbol *pa)
 {
     *pa = NULL;
@@ -15,6 +18,8 @@ NodoA *crearNodo(char *simb, NodoA *hIzq, NodoA *hDer)
     nuevo->der = hDer;
     nuevo->izq = hIzq;
     strcpy(nuevo->simbolo, simb);
+
+    nuevo->indice = cantNodos++;
 
     return nuevo;
 }
@@ -43,10 +48,22 @@ void recorrerArbolInOrdenEspejado(Arbol *pa, int nivel, FILE *fp)
     if (!*pa)
         return;
 
-    fprintf(fp, "\"nodo%d\"[ label=\"%s\"];\n", nivel, (*pa)->simbolo);
+    // Creamos el nodo.
+    fprintf(fp, "\"%d.%s\" [label=\"%s\"];\n", (*pa)->indice, (*pa)->simbolo,(*pa)->simbolo);
 
-    recorrerArbolInOrdenEspejado(&(*pa)->der, nivel + 1, fp);
+    // Si tiene, relacionamos con el hijo izquierdo.
+    if ((*pa)->izq) {
+        fprintf(fp, "\"%d.%s\" -> \"%d.%s\" [label=\"izq\"];\n", (*pa)->indice, (*pa)->simbolo, (*pa)->izq->indice, (*pa)->izq->simbolo);
+    }
+
+  
+    // Si tiene, relacionamos con el hijo derecho.
+    if ((*pa)->der) {
+        fprintf(fp, "\"%d.%s\" -> \"%d.%s\" [label=\"der\"];\n", (*pa)->indice, (*pa)->simbolo, (*pa)->der->indice, (*pa)->der->simbolo);  
+    }
+
     recorrerArbolInOrdenEspejado(&(*pa)->izq, nivel + 1, fp);
+    recorrerArbolInOrdenEspejado(&(*pa)->der, nivel + 1, fp);
 }
 
 void vaciarArbol(Arbol *pa)
