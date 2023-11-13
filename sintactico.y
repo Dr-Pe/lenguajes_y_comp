@@ -107,9 +107,9 @@ programa_prima:
                         if (!fp) {
                         printf("\nNo se puede crear el archivo de codigo assembler.\n");
                         }
-                        // generarEncabezado(fp, &listaSimbolos, cantAux + contAuxFinal);
-                        // generarAssembler(&compilado, fp, contAuxFinal, 0, 0, 0, 0);
-                        // generarFin(fp);
+                        generarEncabezado(fp, &listaSimbolos, cantAux + contAuxFinal);
+                        generarAssembler(&compilado, fp, contAuxFinal, 0, 0, 0, 0);
+                        generarFin(fp);
                         fclose(fp);
                     }
                     else {
