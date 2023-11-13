@@ -1,11 +1,14 @@
+set compilador="lyc-compiler-2.5.0.o"
+set libc="libc/lista_simbolos.c libc/arbol.c libc/pila.c libc/generar_assembler.c"
+
 flex lexico.l
 bison -dyv sintactico.y
-
-gcc.exe lex.yy.c y.tab.c tab_simb.c arbol.c pila.c -o lyc-compiler-2.0.0.o
-lyc-compiler-2.0.0.o casos_de_prueba/test.txt
+gcc.exe lex.yy.c y.tab.c %libc% -o %compilador%
+./%compilador% casos_de_prueba/test.txt
+dot -Tpng intermedia.dot -o arbol.png
 
 @echo off
-del lyc-compiler-2.0.0.o
+del %compilador%
 del lex.yy.c
 del y.tab.c
 del y.tab.h
