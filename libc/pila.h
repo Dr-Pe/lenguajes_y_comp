@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "constantes.h"
+#include "utilidades.h"
 
 typedef struct _NodoP
 {

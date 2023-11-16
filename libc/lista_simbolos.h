@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "constantes.h"
+#include "utilidades.h"
 
 enum tiposDato
 {

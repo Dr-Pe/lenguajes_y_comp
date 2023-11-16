@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "constantes.h"
+#include "utilidades.h"
 
 #define ES_COMPARADOR(op) (strcmp(op, "<") == 0 || strcmp(op, "<=") == 0 || strcmp(op, ">") == 0 || strcmp(op, ">=") == 0 || strcmp(op, "==") == 0 || strcmp(op, "!=") == 0)
 

@@ -5,7 +5,7 @@ flex lexico.l
 bison -dyv sintactico.y
 gcc.exe lex.yy.c y.tab.c %libc% -o %compilador%
 ./%compilador% casos_de_prueba/test.txt
-dot -Tpng intermedia.dot -o arbol.png
+dot -Tpng intermedia.dot -o arbol.png -Gcharset=latin1
 
 @echo off
 del %compilador%

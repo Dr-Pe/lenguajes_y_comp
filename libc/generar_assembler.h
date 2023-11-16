@@ -1,7 +1,7 @@
 #ifndef _GENERAR_ASSEMBLERH_
 #define _GENERAR_ASSEMBLERH_
 
-#include "constantes.h"
+#include "utilidades.h"
 #include "lista_simbolos.h"
 #include "arbol.h"
 #include "pila.h"

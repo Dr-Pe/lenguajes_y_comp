@@ -209,7 +209,7 @@ int fa_verificarRangoFloat(char* ptr) {
 int fa_verificarRangoStr(char* ptr) {
     long valor = strlen(ptr);
 
-    if ( valor < 2 || valor > STRING_LARGO_MAX + 2) {
+    if ( valor < 2 || valor > VALOR_LARGO_MAX + 2) {
         printf ("[%d] Error, variable String fuera de rango\n", yylineno);
         boolCompiladoOK=0;
         return FALSE;

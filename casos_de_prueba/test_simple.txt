@@ -1,12 +1,7 @@
 init {
-    a, b, c: Int
+    entero_min, a, b: Int
 }
 
-a = FIB(b)
-
-SET SWITCH(a)
-CASE 1:
-    b = 1
-CASE 2:
-    b = 1+1
-ENDSETCASE
+    if ( not a < b ) {
+        write("write not <")
+    }

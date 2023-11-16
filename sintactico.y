@@ -1,5 +1,5 @@
 %{ 
-    #include "libc/constantes.h"
+    #include "libc/utilidades.h"
     #include "libc/lista_simbolos.h"
     #include "y.tab.h"
     #include "libc/arbol.h"
@@ -481,48 +481,4 @@ int main(int argc, char *argv[]) {
 int yyerror() { 
     printf("Error sintáctico\n");
     exit(1);
-}
-
-char* concatenar(char* str1, char* str2, int n) { 
-
-    if(strlen(str1) <= n+2 ||strlen(str2) <= n+2){  //+2 por ""
-        return "ERROR";
-    } 
-
-
-    char aux [strlen(str1) + strlen(str2) + 3]; //si n=0
-    aux[0] = '"';
-
-    strcpy(aux+ 1, str1+n+1); 
-    strcpy(aux + strlen(aux) - 1, str2+n+1);  
-    strcpy(str1, aux);
-
-    if(strlen(str1) >= STRING_LARGO_MAX + 3 ){   //+3 "" \0
-        return "ERROR";
-    }
-   
-    return str1;
-}
-
-int estaContenido(char* str1, char* str2) {
-    char strAux[VALOR_LARGO_MAX + 2];
-    char strAux2[VALOR_LARGO_MAX + 2];
-
-    
-    return strstr(
-        manipularCadena(strAux, str1),
-        manipularCadena(strAux2, str2)
-        ) != NULL;
-}
-
-char* manipularCadena(char* dest, char* str) {
-    char strAux[VALOR_LARGO_MAX + 2];
-    char strAux2[VALOR_LARGO_MAX + 2];
-    
-    strcpy(dest, "_");
-    strncpy(strAux2, str + 1, strlen(str) - 2); // saco los "" del string
-    strAux2[strlen(str) -1 ] = '\0';
-    strcat(dest, strAux2);
-
-    return dest;
 }

@@ -48,19 +48,22 @@ void recorrerArbolInOrdenEspejado(Arbol *pa, int nivel, FILE *fp)
     if (!*pa)
         return;
 
-    // Creamos el nodo.
-    fprintf(fp, "\"%d.%s\" [label=\"%s\"];\n", (*pa)->indice, (*pa)->simbolo, (*pa)->simbolo);
+    char strCpy[VALOR_LARGO_MAX + 4];
 
+    // Creamos el nodo.
+    if ((*pa)->simbolo[0] == '"')
+        fprintf(fp, "\"%d\" [label=\"%s\"];\n", (*pa)->indice, limpiarComillas(strCpy, (*pa)->simbolo));
+    else
+        fprintf(fp, "\"%d\" [label=\"%s\"];\n", (*pa)->indice, (*pa)->simbolo);
     // Si tiene, relacionamos con el hijo izquierdo.
     if ((*pa)->izq)
     {
-        fprintf(fp, "\"%d.%s\" -> \"%d.%s\";\n", (*pa)->indice, (*pa)->simbolo, (*pa)->izq->indice, (*pa)->izq->simbolo);
+        fprintf(fp, "\"%d\" -> \"%d\";\n", (*pa)->indice, (*pa)->izq->indice);
     }
-
     // Si tiene, relacionamos con el hijo derecho.
     if ((*pa)->der)
     {
-        fprintf(fp, "\"%d.%s\" -> \"%d.%s\";\n", (*pa)->indice, (*pa)->simbolo, (*pa)->der->indice, (*pa)->der->simbolo);
+        fprintf(fp, "\"%d\" -> \"%d\";\n", (*pa)->indice, (*pa)->der->indice);
     }
 
     recorrerArbolInOrdenEspejado(&(*pa)->izq, nivel + 1, fp);

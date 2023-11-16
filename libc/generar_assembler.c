@@ -3,7 +3,7 @@
 void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdaderos, int contFalsos, int contOr, int contCiclos)
 {
     Pila ciclos = crearPila(&ciclos);
-    char aux[STRING_LARGO_MAX + 1];
+    char aux[VALOR_LARGO_MAX + 1];
     char auxOperando[VALOR_LARGO_MAX + 1];
     int numeroAuxiliar;
 
@@ -262,10 +262,11 @@ void generarIf(FILE *fp, NodoA *nodo, int contAux, int contVerdadero, int contFa
     contFalsos++;
 }
 
-void generarFin(FILE* fp){
+void generarFin(FILE *fp)
+{
     fprintf(fp, "\n");
-	fprintf(fp, "MOV EAX, 4C00H\n");
-	fprintf(fp, "INT 21h\n");
-	fprintf(fp, "END\n");
+    fprintf(fp, "MOV EAX, 4C00H\n");
+    fprintf(fp, "INT 21h\n");
+    fprintf(fp, "END\n");
     fprintf(fp, ";");
 }
