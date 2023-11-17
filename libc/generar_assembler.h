@@ -12,7 +12,7 @@
 #define TAG_CICLO "ciclo"
 
 #define ES_COMPARADOR(op) (strcmp(op, "<") == 0 || strcmp(op, "<=") == 0 || strcmp(op, ">") == 0 || strcmp(op, ">=") == 0 || strcmp(op, "==") == 0 || strcmp(op, "!=") == 0)
-#define ES_OP_LOGICO(op) (strcmp(op, "&") == 0 || strcmp(op, "||"))
+#define ES_OP_LOGICO(op) (strcmp(op, "&") == 0 || strcmp(op, "||") == 0)
 
 void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdaderos, int contFalsos, int contOr, int conCiclos);
 void generarComparacion(FILE *fp, NodoA *comparador, char *tag, int cont);

@@ -337,11 +337,19 @@ comparacion:
     }
     |NOT comparacion                                            { 
         printf("\t\t\t\tR37: not comparacion es Comparacion\n");
-        CmpPtr = crearNodo("&", crearHoja("false"), CmpPtr); 
+        CmpPtr = crearNodo(
+            "&", 
+            crearNodo("==", crearHoja("0"), crearHoja("1")), 
+            CmpPtr
+        ); 
     }
     |NOT expresion                                              { 
         printf("\t\t\t\tR38: not expresion es Comparacion\n");
-        CmpPtr = crearNodo("&", crearHoja("false"), Eptr); 
+        CmpPtr = crearNodo(
+            "&", 
+            crearNodo("==", crearHoja("0"), crearHoja("1")), 
+            Eptr
+        ); 
     }
     ;
 

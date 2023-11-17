@@ -124,6 +124,8 @@ void generarComparacion(FILE *fp, NodoA *comparador, char *tag, int cont)
 
 void invertirComparador(NodoA *nodo)
 {
+    printf("%s", nodo->simbolo);
+    puts("AAAA");
     if (strcmp(nodo->simbolo, "<") == 0)
     {
         strcpy(nodo->simbolo, ">=");
@@ -166,40 +168,30 @@ void generarIf(FILE *fp, NodoA *nodo, int contAux, int contVerdadero, int contFa
         contFalsos++;
     }
     // Condicion multiple
-    else if (ES_OP_LOGICO(nodo->izq->simbolo) == 1)
+    if (strcmp(nodo->izq->simbolo, "&") == 0)
     {
-        NodoA *opLogico = nodo->izq;
+        // 1era condicion
+        generarComparacion(fp, nodo->izq->izq, TAG_FALSO, contFalsos);
+        // 2da condicion
+        generarComparacion(fp, nodo->izq->der, TAG_FALSO, contFalsos);
 
-        if (strcmp(nodo->izq->simbolo, "&") == 0)
-        {
-            // 1era condicion
-            generarComparacion(fp, opLogico->izq, TAG_FALSO, contFalsos);
-            // 2da condicion
-            generarComparacion(fp, opLogico->der, TAG_FALSO, contFalsos);
+        apilar(&falsos, &contFalsos, sizeof(contFalsos));
+        contFalsos++;
+    }
+    else if (strcmp(nodo->izq->simbolo, "||") == 0)
+    {
+        printf("%s", nodo->izq->izq->simbolo);
+        puts("AAAA");
+        invertirComparador(nodo->izq->izq);
+        // 1era condicion
+        generarComparacion(fp, nodo->izq->izq, TAG_FALSO, contFalsos);
+        contFalsos++;
+        // 2da condicion
+        generarComparacion(fp, nodo->izq->der, TAG_OR, contOr);
 
-            apilar(&falsos, &contFalsos, sizeof(contFalsos));
-            contFalsos++;
-        }
-        else if (strcmp(nodo->izq->simbolo, "||") == 0)
-        {
-            invertirComparador(opLogico->izq);
-            // 1era condicion
-            generarComparacion(fp, opLogico->izq, TAG_FALSO, contFalsos);
-            contFalsos++;
-            // 2da condicion
-            generarComparacion(fp, opLogico->der->izq, TAG_OR, contOr);
-
-            // if (existeElse == 1)
-            // {
-            //     desapilar(&ifFalso, etiquetaFalso, sizeof(etiquetaFalso));
-            //     fprintf(fp, "%s\n", etiquetaFalso);
-            //     existeElse = 0;
-            // }
-
-            apilar(&ors, &contOr, sizeof(contOr));
-            contOr++;
-            operadorOr = TRUE;
-        }
+        apilar(&ors, &contOr, sizeof(contOr));
+        contOr++;
+        operadorOr = TRUE;
     }
     // if con else
     if (strcmp(nodo->der->simbolo, "CUERPO") == 0)
@@ -238,7 +230,6 @@ void generarIf(FILE *fp, NodoA *nodo, int contAux, int contVerdadero, int contFa
             fprintf(fp, "%s%d\n", TAG_VERDADERO, contVerdadero);
         }
     }
-    // if sin else
     else
     {
         if (operadorOr)
@@ -257,7 +248,6 @@ void generarIf(FILE *fp, NodoA *nodo, int contAux, int contVerdadero, int contFa
             fprintf(fp, "%s%d\n", TAG_FALSO, contFalsos);
         }
     }
-
     apilar(&falsos, &contFalsos, sizeof(contFalsos));
     contFalsos++;
 }

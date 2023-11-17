@@ -2,6 +2,6 @@ init {
     entero_min, a, b: Int
 }
 
-    if ( not a < b ) {
+    if (a < b || b == 0) {
         write("write not <")
     }
