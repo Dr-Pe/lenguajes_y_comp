@@ -93,7 +93,7 @@ void generarComparacion(FILE *fp, NodoA *comparador, char *tag, int cont)
 
     fprintf(fp, "FLD %s\n", comparador->izq->simbolo);
     fprintf(fp, "FCOMP %s\n", comparador->der->simbolo);
-    fprintf(fp, "FSTSW @ax\n"); // Los flags del coprocesador en memoria
+    fprintf(fp, "FSTSW AX\n"); // Los flags del coprocesador en memoria
     fprintf(fp, "SAHF\n");      // Guardo los flags que estan en memoria en el registro FLAG del cpu
 
     if (strcmp(simbolo, "<") == 0)
@@ -258,5 +258,4 @@ void generarFin(FILE *fp)
     fprintf(fp, "MOV EAX, 4C00H\n");
     fprintf(fp, "INT 21h\n");
     fprintf(fp, "END\n");
-    fprintf(fp, ";");
 }
