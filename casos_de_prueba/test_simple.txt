@@ -2,6 +2,10 @@ init {
     entero_min, a, b: Int
 }
 
-    if (a < b || b == 0) {
-        write("write not <")
+if (a < b || b == 0) {
+    write("write not <")
+}
+
+if (a < b & b == 0) {
+        write("write not >")
     }

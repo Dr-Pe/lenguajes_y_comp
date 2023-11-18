@@ -90,7 +90,7 @@ NodoA *padreMasIzq(Arbol *pa)
     if (res)
         return res;
 
-    if ((*pa)->izq && (*pa)->der && !ES_COMPARADOR((*pa)->simbolo))
+    if ((*pa)->izq && (*pa)->der && !ES_COMPARADOR((*pa)->simbolo) && !ES_OP_LOGICO((*pa)->simbolo))
         return *pa;
 
     res = padreMasIzq(&(*pa)->der);
