@@ -8,7 +8,7 @@ flex lexico.l
 bison -dyv sintactico.y
 gcc lex.yy.c y.tab.c ${libc} -o ${compilador}
 ./${compilador} "casos_de_prueba/test_simple.txt"
-dot -Tpng intermedia.dot -o arbol.png -Gcharset=latin1
+dot -Tpng intermediate-code.dot -o arbol.png -Gcharset=latin1
 rm lex.yy.c
 rm y.tab.c
 rm y.output

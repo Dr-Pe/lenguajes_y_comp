@@ -15,8 +15,8 @@
 
 #define MIN(a, b) ((a < b) ? a : b)
 
-#define FILENAME_TS "tabla_simbolos.txt"
-#define FILENAME_DOT "intermedia.dot"
+#define FILENAME_TS "symbol-table.txt"
+#define FILENAME_DOT "intermediate-code.dot"
 #define FILENAME_ASM "final.asm"
 
 char *concatenar(char *str1, char *str2, int n);

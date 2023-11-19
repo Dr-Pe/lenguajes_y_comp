@@ -3,9 +3,13 @@ init {
 }
 
 if (a < b || b == 0) {
-    write("write not <")
+    write("or")
 }
 
 if (a < b & b == 0) {
-        write("write not >")
-    }
+    write("and")
+}
+
+if (a < b || b == 0) {
+    write("or")
+}

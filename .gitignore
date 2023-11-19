@@ -68,7 +68,7 @@ compilador
 .vscode
 
 # Archivos temporales
-tabla_simbolos.txt
-intermedia.dot
+symbol-table.txt
+intermediate-code.dot
 final.asm
 *.png
