@@ -14,10 +14,10 @@
 #define ES_COMPARADOR(op) (strcmp(op, "<") == 0 || strcmp(op, "<=") == 0 || strcmp(op, ">") == 0 || strcmp(op, ">=") == 0 || strcmp(op, "==") == 0 || strcmp(op, "!=") == 0)
 #define ES_OP_LOGICO(op) (strcmp(op, "&") == 0 || strcmp(op, "||") == 0)
 
-void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdaderos, int contFalsos, int conCiclos);
+void generarAssembler(Arbol *parbol, FILE *fp, int contAux);
 void generarComparacion(FILE *fp, NodoA *comparador, char *tag, int cont);
 void invertirComparador(NodoA *nodo);
-void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAux, int contVerdaderos, int contFalsos, int contCiclos);
+void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAux);
 void generarFin(FILE *fp);
 
 #endif

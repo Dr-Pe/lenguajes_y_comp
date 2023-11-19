@@ -1,6 +1,10 @@
 #include "generar_assembler.h"
 
-void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdaderos, int contFalsos, int contCiclos)
+int contFalsos = 0;
+int contVerdaderos = 0;
+int contCiclos = 0;
+
+void generarAssembler(Arbol *parbol, FILE *fp, int contAux)
 {
     Pila ciclos = crearPila(&ciclos);
     Pila verdaderos = crearPila(&verdaderos);
@@ -14,17 +18,17 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdaderos, 
     {
         if (strcmp(nodo->simbolo, "BLOQ_EJEC") == 0)
         {
-            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarAssembler(&nodo->der, fp, contAux);
             contAux = 0;
         }
         else if (strcmp(nodo->simbolo, "=") == 0)
         {
-            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarAssembler(&nodo->der, fp, contAux);
             fprintf(fp, "FLD %s\nFRNDINT\nFSTP %s\n", nodo->der->simbolo, nodo->izq->simbolo);
         }
         else if (strcmp(nodo->simbolo, "+") == 0)
         {
-            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarAssembler(&nodo->der, fp, contAux);
             fprintf(fp, "FLD %s\nFLD %s\nFADD\nFSTP @aux%d\n", nodo->izq->simbolo, nodo->der->simbolo, contAux);
             strcpy(aux, "@aux");
             snprintf(auxOperando, sizeof(contAux), "%d", contAux);
@@ -34,7 +38,7 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdaderos, 
         }
         else if (strcmp(nodo->simbolo, "-") == 0)
         {
-            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarAssembler(&nodo->der, fp, contAux);
             fprintf(fp, "FLD %s\nFLD %s\nFSUB\nFSTP @aux%d\n", nodo->izq->simbolo, nodo->der->simbolo, contAux);
             strcpy(aux, "@aux");
             snprintf(auxOperando, sizeof(contAux), "%d", contAux);
@@ -44,7 +48,7 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdaderos, 
         }
         else if (strcmp(nodo->simbolo, "*") == 0)
         {
-            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarAssembler(&nodo->der, fp, contAux);
             fprintf(fp, "FLD %s\nFLD %s\nFMUL\nFSTP @aux%d\n", nodo->izq->simbolo, nodo->der->simbolo, contAux);
             strcpy(aux, "@aux");
             snprintf(auxOperando, sizeof(contAux), "%d", contAux);
@@ -54,7 +58,7 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdaderos, 
         }
         else if (strcmp(nodo->simbolo, "/") == 0)
         {
-            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarAssembler(&nodo->der, fp, contAux);
             fprintf(fp, "FLD %s\nFLD %s\nFDIV\nFSTP @aux%d\n", nodo->izq->simbolo, nodo->der->simbolo, contAux);
             strcpy(aux, "@aux");
             snprintf(auxOperando, sizeof(contAux), "%d", contAux);
@@ -64,14 +68,14 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux, int contVerdaderos, 
         }
         else if (strcmp(nodo->simbolo, "if") == 0)
         {
-            generarIf(fp, nodo, &verdaderos, &falsos, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarIf(fp, nodo, &verdaderos, &falsos, contAux);
         }
         else if (strcmp(nodo->simbolo, "ciclo") == 0)
         {
             fprintf(fp, "%s%d\n", TAG_CICLO, contCiclos);
             apilar(&ciclos, &contCiclos, sizeof(contCiclos));
             contCiclos++;
-            generarIf(fp, nodo, &verdaderos, &falsos, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarIf(fp, nodo, &verdaderos, &falsos, contAux);
             desapilar(&ciclos, &numeroAuxiliar, sizeof(numeroAuxiliar));
             fprintf(fp, "JMP %s%d\n", TAG_CICLO, numeroAuxiliar);
         }
@@ -152,7 +156,7 @@ void invertirComparador(NodoA *nodo)
     }
 }
 
-void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAux, int contVerdaderos, int contFalsos, int contCiclos)
+void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAux)
 {
     int operadorOr = FALSE; // Boolean
     int numeroAuxiliar;
@@ -197,14 +201,14 @@ void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAu
         if (operadorOr)
         {
             // True
-            generarAssembler(&nodo->der->izq, fp, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarAssembler(&nodo->der->izq, fp, contAux);
             apilar(verdaderos, &contVerdaderos, sizeof(contVerdaderos));
             contVerdaderos++;
             fprintf(fp, "JMP %s%d\n", TAG_VERDADERO, contVerdaderos);
             desapilar(falsos, &contFalsos, sizeof(contFalsos));
             fprintf(fp, "%s%d\n", TAG_FALSO, contFalsos);
             // False
-            generarAssembler(&nodo->der->der, fp, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarAssembler(&nodo->der->der, fp, contAux);
             desapilar(verdaderos, &contVerdaderos, sizeof(contVerdaderos));
             fprintf(fp, "%s%d\n", TAG_VERDADERO, contVerdaderos);
             operadorOr = FALSE;
@@ -212,14 +216,14 @@ void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAu
         else
         {
             // True
-            generarAssembler(&nodo->der->izq, fp, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarAssembler(&nodo->der->izq, fp, contAux);
             apilar(verdaderos, &contVerdaderos, sizeof(contVerdaderos));
             contVerdaderos++;
             fprintf(fp, "JMP %s%d\n", TAG_VERDADERO, contVerdaderos);
             desapilar(falsos, &contFalsos, sizeof(contFalsos));
             fprintf(fp, "%s%d\n", TAG_FALSO, contFalsos);
             // False
-            generarAssembler(&nodo->der->der, fp, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarAssembler(&nodo->der->der, fp, contAux);
             desapilar(verdaderos, &contVerdaderos, sizeof(contVerdaderos));
             fprintf(fp, "%s%d\n", TAG_VERDADERO, contVerdaderos);
         }
@@ -230,14 +234,14 @@ void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAu
         {
             desapilar(verdaderos, &contVerdaderos, sizeof(contVerdaderos));
             fprintf(fp, "%s%d\n", TAG_VERDADERO, contVerdaderos);
-            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarAssembler(&nodo->der, fp, contAux);
             desapilar(falsos, &contFalsos, sizeof(contFalsos));
             fprintf(fp, "%s%d\n", TAG_FALSO, contFalsos);
             operadorOr = FALSE;
         }
         else
         {
-            generarAssembler(&nodo->der, fp, contAux, contVerdaderos, contFalsos, contCiclos);
+            generarAssembler(&nodo->der, fp, contAux);
             desapilar(falsos, &contFalsos, sizeof(contFalsos));
             fprintf(fp, "%s%d\n", TAG_FALSO, contFalsos);
         }
