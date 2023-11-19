@@ -2,10 +2,6 @@ init {
     entero_min, a, b: Int
 }
 
-if (a < b || b == 0) {
-    write("or")
-}
+a = 2 + 2
 
-if (a < b & b == 0) {
-    write("and")
-}
+write(a)

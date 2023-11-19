@@ -70,5 +70,5 @@ compilador
 # Archivos temporales
 symbol-table.txt
 intermediate-code.dot
-final.asm
+final.*
 *.png

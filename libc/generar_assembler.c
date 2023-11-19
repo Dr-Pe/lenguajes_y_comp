@@ -253,7 +253,7 @@ void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAu
 void generarFin(FILE *fp)
 {
     fprintf(fp, "\n");
-    fprintf(fp, "MOV EAX, 4C00H\n");
+    fprintf(fp, "MOV AX, 4C00H\n");
     fprintf(fp, "INT 21h\n");
-    fprintf(fp, "END\n");
+    fprintf(fp, "END START\n");
 }

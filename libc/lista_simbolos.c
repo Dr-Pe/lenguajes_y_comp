@@ -184,13 +184,13 @@ char *obtenerTipo(Lista *lista, char *id)
 
 void generarEncabezado(FILE *fp, Lista *lista, int cantAux)
 {
-    fprintf(fp, "INCLUDE number.asm\n\n.MODEL LARGE\n.386\n.STACK 200h\n\n.DATA\n\n");
+    fprintf(fp, "INCLUDE number.asm\nINCLUDE macros.asm\n\n.MODEL LARGE\n.386\n.STACK 200h\n\n.DATA\n");
     while (*lista != NULL)
     {
         if (strlen((*lista)->simb.valor) == 0)
         {
             // Si es ID
-            fprintf(fp, "%s dd ??\n", (*lista)->simb.nombre);
+            fprintf(fp, "%s dd ?\n", (*lista)->simb.nombre);
         }
         else if (strcmp((*lista)->simb.tipo_dato, "Int") == 0)
         {
@@ -215,5 +215,5 @@ void generarEncabezado(FILE *fp, Lista *lista, int cantAux)
     }
 
     fprintf(fp, "\n");
-    fprintf(fp, ".CODE\n\n"); // Inicio de las lineas de codigo.
+    fprintf(fp, ".CODE\n\nSTART:\nmov AX, @DATA\nmov DS, AX\nmov ES, AX\n"); // Inicio de las lineas de codigo.
 }

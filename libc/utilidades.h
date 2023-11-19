@@ -17,7 +17,7 @@
 
 #define FILENAME_TS "symbol-table.txt"
 #define FILENAME_DOT "intermediate-code.dot"
-#define FILENAME_ASM "final.asm"
+#define FILENAME_ASM "assm/final.asm"
 
 char *concatenar(char *str1, char *str2, int n);
 int estaContenido(char *str1, char *str2);
