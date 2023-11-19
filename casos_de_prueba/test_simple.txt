@@ -9,7 +9,3 @@ if (a < b || b == 0) {
 if (a < b & b == 0) {
     write("and")
 }
-
-if (a < b || b == 0) {
-    write("or")
-}
