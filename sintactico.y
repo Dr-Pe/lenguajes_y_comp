@@ -401,10 +401,10 @@ factor:
     |FLOAT { 
         printf("\t\t\t\t    R56: FLOAT es Factor\n"); 
         snprintf(strAux, VALOR_LARGO_MAX + 1, "%.2f", $1);
-        strcpy(strAux2, "_");       // strAux2 = "_"
-        strcat(strAux2, strAux);    // Ejemplo: "_2.5" para el dos punto cinco
+        //strcpy(strAux2, "_");       // strAux2 = "_"
+        //strcat(strAux2, strAux);    // Ejemplo: "_2.5" para el dos punto cinco
         strcpy(auxTipo, "Float");
-        Fptr= crearHoja(strAux2);
+        Fptr= crearHoja(floatANombre(strAux));
     }
     |PA expresion PC    { printf("\t\t\t\t    R57: Expresion entre parentesis es Factor\n"); Fptr = Eptr; }
     |FIB PA ID PC       { 

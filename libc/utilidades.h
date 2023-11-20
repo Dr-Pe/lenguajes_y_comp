@@ -24,4 +24,5 @@
 char *concatenar(char *str1, char *str2, int n);
 int estaContenido(char *str1, char *str2);
 char *cadenaANombre(char *dest, char *str);
+char *floatANombre(char *dest);
 char *limpiarComillas(char *dest, char *ori);

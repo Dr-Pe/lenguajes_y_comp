@@ -30,8 +30,9 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
     }
     else if (tDato == tFLOAT)
     {
-        strcpy(nuevo_simbolo.nombre, "_");
-        strcat(nuevo_simbolo.nombre, nombre);
+        char nnombre[strlen(nombre)];
+        strcpy(nnombre, nombre);
+        strcpy(nuevo_simbolo.nombre, floatANombre(nnombre));
         strcpy(nuevo_simbolo.tipo_dato, TFLOAT);
         strcpy(nuevo_simbolo.valor, nombre);
         nuevo_simbolo.longitud = strlen(nombre);

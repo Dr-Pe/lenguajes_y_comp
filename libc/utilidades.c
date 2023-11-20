@@ -53,6 +53,28 @@ char *cadenaANombre(char *dest, char *str)
     return dest;
 }
 
+char* floatANombre(char *dest)
+{
+    char strAux[VALOR_LARGO_MAX + 2];
+
+    strAux[0] = '_';
+    if(dest[0] == '.'){
+        strAux[1] = '0';
+    }
+    strcat(strAux, dest);
+    strcpy(dest, strAux);
+
+    for (int i = 1; i < strlen(dest); i++)
+    {
+        if (!ES_LETRA(dest[i]) && !ES_DIGITO(dest[i]))
+        {
+            dest[i] = '_';
+        }
+    }
+
+    return dest;
+}
+
 char *limpiarComillas(char *destino, char *origen)
 {
     int len = strlen(origen);
