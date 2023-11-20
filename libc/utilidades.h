@@ -14,6 +14,8 @@
 #define TSTRING "String"
 
 #define MIN(a, b) ((a < b) ? a : b)
+#define ES_LETRA(c) ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
+#define ES_DIGITO(c) (c >= '0' && c <= '9')
 
 #define FILENAME_TS "symbol-table.txt"
 #define FILENAME_DOT "intermediate-code.dot"
@@ -21,5 +23,5 @@
 
 char *concatenar(char *str1, char *str2, int n);
 int estaContenido(char *str1, char *str2);
-char *manipularCadena(char *dest, char *str);
+char *cadenaANombre(char *dest, char *str);
 char *limpiarComillas(char *dest, char *ori);

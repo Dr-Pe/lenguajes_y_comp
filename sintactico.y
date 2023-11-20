@@ -12,10 +12,6 @@
     int yyerror();
     int yylex();
 
-    char* concatenar(char* str1, char* str2, int n);
-    int estaContenido(char* str1, char* str2);
-    char* manipularCadena(char* dest, char* str);
-
     Arbol compilado;
     Lista listaSimbolos;
     Lista listaIds;
@@ -194,7 +190,7 @@ sentencia:
     }
     |WRITE PA STRING PC { 
         printf("\t\tR20: write(string) es Sentencia\n");
-        SentPtr = crearNodo("write", crearHoja(manipularCadena(strAux, $3)), crearHoja("NULL")); 
+        SentPtr = crearNodo("write", crearHoja(cadenaANombre(strAux, $3)), crearHoja("NULL")); 
     }
     |READ PA ID PC      { 
         if(!idDeclarado(&listaSimbolos, $3)){ 
@@ -240,7 +236,7 @@ asignacion:
 string:
     STRING  { 
         printf("\t\t\tR24: string es String\n");
-        StrPtr = crearHoja(manipularCadena(strAux, $1));
+        StrPtr = crearHoja(cadenaANombre(strAux, $1));
         strcpy(auxTipo, TSTRING);
     }
     |CONCAT PA STRING { strcpy(strAux, $3); } COMA STRING { strcpy(strAux2, $6); } COMA INT PC { 

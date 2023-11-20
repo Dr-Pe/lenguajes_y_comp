@@ -30,19 +30,25 @@ int estaContenido(char *str1, char *str2)
     char strAux2[VALOR_LARGO_MAX + 2];
 
     return strstr(
-               manipularCadena(strAux, str1),
-               manipularCadena(strAux2, str2)) != NULL;
+               cadenaANombre(strAux, str1),
+               cadenaANombre(strAux2, str2)) != NULL;
 }
 
-char *manipularCadena(char *dest, char *str)
+char *cadenaANombre(char *dest, char *str)
 {
     char strAux[VALOR_LARGO_MAX + 2];
-    char strAux2[VALOR_LARGO_MAX + 2];
 
     strcpy(dest, "_");
-    strncpy(strAux2, str + 1, strlen(str) - 2); // saco los "" del string
-    strAux2[strlen(str) - 2] = '\0';
-    strcat(dest, strAux2);
+    strcat(dest, limpiarComillas(strAux, str));
+
+    int i;
+    for (i = 0; i < strlen(dest); i++)
+    {
+        if (!ES_LETRA(dest[i]) && !ES_DIGITO(dest[i]))
+        {
+            dest[i] = '_';
+        }
+    }
 
     return dest;
 }
@@ -51,10 +57,6 @@ char *limpiarComillas(char *destino, char *origen)
 {
     int len = strlen(origen);
     strncpy(destino, origen + 1, len - 2);
-    // destino[0] = '\\';
-    // destino[1] = '"';
-    // destino[len - 3] = '\\';
-    // destino[len - 2] = '"';
     destino[len - 2] = '\0';
     return destino;
 }

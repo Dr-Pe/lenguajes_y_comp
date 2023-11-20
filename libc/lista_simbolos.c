@@ -43,13 +43,11 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
             return;
         }
         int longitud = strlen(nombre) - 2; // -1 para sacar\0 -1 para "
-        char nNombre[longitud - 2];
-        strncpy(nNombre, nombre + 1, longitud); // saco los "" del string
-        nNombre[longitud] = '\0';               // strncpy no mete \0
-        strcpy(nuevo_simbolo.nombre, "_");
-        strcat(nuevo_simbolo.nombre, nNombre);
+        char valor[longitud - 2];
+        char nnombre[longitud - 1];
+        strcpy(nuevo_simbolo.nombre, cadenaANombre(nnombre, nombre));
         strcpy(nuevo_simbolo.tipo_dato, TSTRING);
-        strcpy(nuevo_simbolo.valor, nNombre);
+        strcpy(nuevo_simbolo.valor, limpiarComillas(valor, nombre));
         nuevo_simbolo.longitud = longitud;
     }
 
@@ -209,7 +207,7 @@ void generarEncabezado(FILE *fp, Lista *lista, int cantAux)
     int i = 0;
     while (cantAux > 1)
     {
-        fprintf(fp, "@aux%d dd ??\n", i);
+        fprintf(fp, "@aux%d dd ?\n", i);
         i++;
         cantAux--;
     }
