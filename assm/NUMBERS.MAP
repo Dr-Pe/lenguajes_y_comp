@@ -1,0 +1,13 @@
+Error: FTOA defined in module NUMBERS.ASM is duplicated in module FINAL.ASM
+Error: ITOA defined in module NUMBERS.ASM is duplicated in module FINAL.ASM
+Error: ATOI defined in module NUMBERS.ASM is duplicated in module FINAL.ASM
+Error: ATOF defined in module NUMBERS.ASM is duplicated in module FINAL.ASM
+
+ Start  Stop   Length Name               Class
+
+ 00000H 0086EH 0086FH _TEXT              CODE
+ 00870H 0091EH 000AFH _DATA              DATA
+ 00920H 00B1FH 00200H STACK              STACK
+
+Program entry point at 0000:0000
+

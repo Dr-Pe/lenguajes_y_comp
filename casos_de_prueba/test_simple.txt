@@ -4,6 +4,7 @@ init {
 }
 
 a = 2 + 2
+fa = .2
 
 write(fa)
 write("a guarda:")
