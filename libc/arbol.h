@@ -16,6 +16,7 @@ typedef struct _NodoA
     struct _NodoA *der;
     struct _NodoA *izq;
     int indice;
+    char tipo[TIPO_DATO_LARGO_MAX + 1];
 } NodoA;
 
 typedef NodoA *Arbol;
@@ -28,5 +29,6 @@ void recorrerArbolInOrdenEspejado(Arbol *pa, int nivel, FILE *fp);
 void vaciarArbol(Arbol *pa);
 NodoA *padreMasIzq(Arbol *pa);
 void eliminarHijos(NodoA *pa);
+void actualizarTipoNodo(NodoA *pa, char* tipo);
 
 #endif

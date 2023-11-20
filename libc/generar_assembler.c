@@ -81,7 +81,14 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux)
         }
         else if (strcmp(nodo->simbolo, "write") == 0)
         {
-            fprintf(fp, "displayString %s\n", nodo->izq->simbolo);
+            if (strcmp(nodo->izq->tipo, TSTRING) == 0){
+                fprintf(fp, "displayString %s\n", nodo->izq->simbolo);
+            }
+            else
+            {
+                fprintf(fp, "displayFloat %s\n", nodo->izq->simbolo);
+            }
+            
         }
         else if (strcmp(nodo->simbolo, "read") == 0)
         {

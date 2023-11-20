@@ -117,3 +117,7 @@ void eliminarHijos(NodoA *pa)
         pa->der = NULL;
     }
 }
+
+void actualizarTipoNodo(NodoA *pa, char* tipo){
+    strcpy(pa->tipo, tipo);
+}

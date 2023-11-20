@@ -1,8 +1,10 @@
 init {
     entero_min, a, b: Int
+    fa : Float
 }
 
 a = 2 + 2
 
+write(fa)
 write("a guarda:")
 write(a)

@@ -186,11 +186,21 @@ sentencia:
             return 1;
         };
         printf("\t\tR19: write(id) es Sentencia\n");
-        SentPtr = crearNodo("write", crearHoja($3), crearHoja("NULL"));
+
+        // Guardamos el tipo del ID en el nodo.
+        NodoA* tmpID = crearHoja($3);
+        actualizarTipoNodo(tmpID, obtenerTipo(&listaSimbolos, tmpID->simbolo));
+
+        SentPtr = crearNodo("write", tmpID, crearHoja("NULL"));
     }
     |WRITE PA STRING PC { 
         printf("\t\tR20: write(string) es Sentencia\n");
-        SentPtr = crearNodo("write", crearHoja(cadenaANombre(strAux, $3)), crearHoja("NULL")); 
+    
+         // Guardamos el tipo del STRING en el nodo.
+        NodoA* tmpID = crearHoja(cadenaANombre(strAux, $3));
+        actualizarTipoNodo(tmpID, TSTRING);
+
+        SentPtr = crearNodo("write", tmpID, crearHoja("NULL")); 
     }
     |READ PA ID PC      { 
         if(!idDeclarado(&listaSimbolos, $3)){ 
