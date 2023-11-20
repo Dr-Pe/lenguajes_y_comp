@@ -14,6 +14,8 @@
 #define ES_COMPARADOR(op) (strcmp(op, "<") == 0 || strcmp(op, "<=") == 0 || strcmp(op, ">") == 0 || strcmp(op, ">=") == 0 || strcmp(op, "==") == 0 || strcmp(op, "!=") == 0)
 #define ES_OP_LOGICO(op) (strcmp(op, "&") == 0 || strcmp(op, "||") == 0)
 
+extern Lista listaSimbolos;
+
 void generarAssembler(Arbol *parbol, FILE *fp, int contAux);
 void generarComparacion(FILE *fp, NodoA *comparador, char *tag, int cont);
 void invertirComparador(NodoA *nodo);

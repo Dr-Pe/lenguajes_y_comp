@@ -1,5 +1,7 @@
 #include "lista_simbolos.h"
 
+Lista listaSimbolos;
+
 Lista crearLista(Lista *pl)
 {
     *pl = NULL;

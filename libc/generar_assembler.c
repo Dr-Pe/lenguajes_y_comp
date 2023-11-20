@@ -81,7 +81,8 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux)
         }
         else if (strcmp(nodo->simbolo, "write") == 0)
         {
-            if (strcmp(nodo->izq->tipo, TSTRING) == 0){
+            
+            if(esMismoTipo(&listaSimbolos, nodo->izq->simbolo, TSTRING)){
                 fprintf(fp, "displayString %s\n", nodo->izq->simbolo);
             }
             else
