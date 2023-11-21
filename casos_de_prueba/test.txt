@@ -85,8 +85,12 @@ ciclo (a < b) {
 
 *- FIB -*
 
-f=FIB(a)
+f=FIB(a)+5
 
-f=2*3+FIB(a)
+write(f) *- 60 -*
 
-f=(FIB(a))*3
+c = 5
+
+b=(FIB(c))*3
+
+write(b) *- 15 -*

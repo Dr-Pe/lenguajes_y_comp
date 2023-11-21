@@ -6,8 +6,10 @@ init {
 
 a = 10
 
-if (a >= 10){
-    b = 5 + FIB(a)
-}
+b = FIB(a)
 
-write(b)
+if(not a == 10){
+    write(a)
+}else{
+    write(b)
+}

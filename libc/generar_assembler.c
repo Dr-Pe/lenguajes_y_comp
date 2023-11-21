@@ -19,7 +19,7 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux)
         if (strcmp(nodo->simbolo, "BLOQ_EJEC") == 0)
         {
             generarAssembler(&nodo->der, fp, contAux);
-            //contAux = 0;
+            contAux = 0;
         }
         else if (strcmp(nodo->simbolo, "=") == 0)
         {
