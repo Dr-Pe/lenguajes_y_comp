@@ -3,13 +3,10 @@ init {
     c, d, e : Float
 }
 
-a = 2 + 2
-c = .2
-d = 2.
-e = 2.2
+if(estaContenido("a", "abc")) {
+    write("true")
+}
 
-write(c)
-write(d)
-write(e)
-write("a guarda:")
-write(a)
+if(estaContenido("abc", "a")) {
+    write("true tambien")
+}

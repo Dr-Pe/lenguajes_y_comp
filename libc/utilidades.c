@@ -31,7 +31,10 @@ int estaContenido(char *str1, char *str2)
 
     return strstr(
                cadenaANombre(strAux, str1),
-               cadenaANombre(strAux2, str2)) != NULL;
+               cadenaANombre(strAux2, str2)) != NULL ||
+           strstr(
+               cadenaANombre(strAux2, str2),
+               cadenaANombre(strAux, str1)) != NULL;
 }
 
 char *cadenaANombre(char *dest, char *str)
@@ -53,7 +56,7 @@ char *cadenaANombre(char *dest, char *str)
     return dest;
 }
 
-char* floatANombre(char *dest)
+char *floatANombre(char *dest)
 {
     char strAux[VALOR_LARGO_MAX + 2];
 

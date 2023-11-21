@@ -216,5 +216,5 @@ void generarEncabezado(FILE *fp, Lista *lista, int cantAux)
     }
 
     fprintf(fp, "\n");
-    fprintf(fp, ".CODE\n\nSTART:\nmov AX, @DATA\nmov DS, AX\nmov ES, AX\n"); // Inicio de las lineas de codigo.
+    fprintf(fp, ".CODE\n\nSTART:\nmov AX, @DATA\nmov DS, AX\nmov ES, AX\n\n"); // Inicio de las lineas de codigo.
 }

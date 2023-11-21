@@ -95,7 +95,11 @@
 %%
 programa_prima: 
     programa    { 
-                    compilado = ProgramaPtr; 
+                    compilado = ProgramaPtr;
+                    // Creo las variables o ctes a utilizar en (casi) todo programa
+                    insertarEnLista(&listaSimbolos, "0", tINT);
+                    insertarEnLista(&listaSimbolos, "1", tINT);
+                    // Si compiló
                     if(boolCompiladoOK == 1) {
                         printf("R1: COMPILACION EXITOSA\n");
                         imprimirArbol(&compilado);
@@ -176,7 +180,7 @@ sentencia:
             "ciclo", 
             crearNodo("<", crearHoja("_i"), crearHoja(strAux)),
             crearNodo(
-                "BLOQ_EJEC", BloPtr, crearNodo("=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("1")))
+                "BLOQ_EJEC", BloPtr, crearNodo("=", crearHoja("_i"), crearNodo("+", crearHoja("_i"), crearHoja("_1")))
             )
         );
     }
@@ -328,14 +332,14 @@ comparacion:
     }
     |ESTA_CONT PA STRING { strcpy(strAux, $3); } COMA STRING PC { 
         printf("\t\t\t\tR36: estaContenido(String, String) es Comparacion\n");
-        snprintf(strAux, sizeof(int), "%d", estaContenido(strAux, yylval.string_val));
-        CmpPtr = crearNodo("==", crearHoja("1"), crearHoja(strAux)); 
+        snprintf(strAux, sizeof(int), "_%d", estaContenido(strAux, yylval.string_val));
+        CmpPtr = crearNodo("==", crearHoja("_1"), crearHoja(strAux)); 
     }
     |NOT comparacion                                            { 
         printf("\t\t\t\tR37: not comparacion es Comparacion\n");
         CmpPtr = crearNodo(
             "&", 
-            crearNodo("==", crearHoja("0"), crearHoja("1")), 
+            crearNodo("==", crearHoja("_0"), crearHoja("_1")), 
             CmpPtr
         ); 
     }
@@ -343,7 +347,7 @@ comparacion:
         printf("\t\t\t\tR38: not expresion es Comparacion\n");
         CmpPtr = crearNodo(
             "&", 
-            crearNodo("==", crearHoja("0"), crearHoja("1")), 
+            crearNodo("==", crearHoja("_0"), crearHoja("_1")), 
             Eptr
         ); 
     }
@@ -418,9 +422,6 @@ factor:
         }
         printf("\t\t\t\t    R58: FIB(ID) es Factor\n");
 
-        // Creo las variables o ctes a utilizar
-        insertarEnLista(&listaSimbolos, "0", tINT);
-        insertarEnLista(&listaSimbolos, "1", tINT);
         contAux_ += 3; // Antes @ax, @bx, @cx
 
         // Creo las asignaciones
