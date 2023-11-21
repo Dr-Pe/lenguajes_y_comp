@@ -25,13 +25,16 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux)
         {
             generarAssembler(&nodo->der, fp, contAux);
 
-            if (esMismoTipo(&listaSimbolos, nodo->izq->simbolo, TFLOAT)){
-                fprintf(fp, "FLD %s\nFSTP %s\n", nodo->der->simbolo, nodo->izq->simbolo);   
+            if (esMismoTipo(&listaSimbolos, nodo->izq->simbolo, TFLOAT))
+            {
+                fprintf(fp, "FLD %s\nFSTP %s\n", nodo->der->simbolo, nodo->izq->simbolo);
             }
-            else if (esMismoTipo(&listaSimbolos, nodo->izq->simbolo, TINT)){
-                fprintf(fp, "FLD %s\nFRNDINT\nFSTP %s\n", nodo->der->simbolo, nodo->izq->simbolo);   
+            else if (esMismoTipo(&listaSimbolos, nodo->izq->simbolo, TINT))
+            {
+                fprintf(fp, "FLD %s\nFRNDINT\nFSTP %s\n", nodo->der->simbolo, nodo->izq->simbolo);
             }
-            else if (esMismoTipo(&listaSimbolos, nodo->izq->simbolo, TSTRING)){ 
+            else if (esMismoTipo(&listaSimbolos, nodo->izq->simbolo, TSTRING))
+            {
                 fprintf(fp, "mov dx, OFFSET %s\nmov di, OFFSET %s\nSTRCPY\n", nodo->der->simbolo, nodo->izq->simbolo);
             }
         }

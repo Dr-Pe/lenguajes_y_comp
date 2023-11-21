@@ -39,12 +39,12 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
     }
     else if (tDato == tSTRING)
     {
-        char aux[] = "\"\"";
+        // char aux[] = "\"\"";
         // No guarda string vacios
-        if (strcmp(nombre, aux) == 0)
-        {
-            return;
-        }
+        // if (strcmp(nombre, aux) == 0)
+        // {
+        //     return;
+        // }
         int longitud = strlen(nombre) - 2; // -1 para sacar\0 -1 para "
         char valor[longitud - 2];
         char nnombre[longitud - 1];
@@ -191,7 +191,14 @@ void generarEncabezado(FILE *fp, Lista *lista, int cantAux)
         if (strlen((*lista)->simb.valor) == 0)
         {
             // Si es ID
-            fprintf(fp, "%s dd ?\n", (*lista)->simb.nombre);
+            if (strcmp((*lista)->simb.tipo_dato, "String") == 0)
+            {
+                fprintf(fp, "%s db ?\n", (*lista)->simb.nombre);
+            }
+            else
+            {
+                fprintf(fp, "%s dd ?\n", (*lista)->simb.nombre);
+            }
         }
         else if (strcmp((*lista)->simb.tipo_dato, "Int") == 0)
         {

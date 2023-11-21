@@ -288,12 +288,12 @@ eval:
 cases:
     CASE INT DOS_P bloque_ejec {
         printf("\t\t\tR30: CASE INT: bloque_ejec es cases\n");
-        snprintf(strAux, sizeof($2), "%d", $2);
+        snprintf(strAux, sizeof($2), "_%d", $2);
         CasePtr = crearNodo("if", crearNodo("==", crearHoja(exprSwAux), crearHoja(strAux)), BloPtr);
     }
     |CASE INT DOS_P bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } cases {
         printf("\t\t\tR31: cases CASE INT: bloque_ejec es cases\n");
-        snprintf(strAux, sizeof($2), "%d", $2);
+        snprintf(strAux, sizeof($2), "_%d", $2);
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
         CasePtr = crearNodo(
             "if",
@@ -302,7 +302,7 @@ cases:
     }
     |CASE INT DOS_P bloque_ejec { apilar(&anidaciones, &BloPtr, sizeof(BloPtr)); } ELSECASE DOS_P bloque_ejec {
         printf("\t\t\tR32: CASE INT: bloque_ejec ELSECASE bloque_ejec es cases\n");
-        snprintf(strAux, sizeof($2), "%d", $2);
+        snprintf(strAux, sizeof($2), "_%d", $2);
         desapilar(&anidaciones, &BloAux, sizeof(BloAux));
         CasePtr = crearNodo(
             "if",
@@ -375,7 +375,11 @@ expresion:
  
 termino:
     factor                  { printf("\t\t\t\t  R50: Factor es Termino\n"); Tptr = Fptr; }
-    |OP_RES factor          { printf("\t\t\t\t  R51: -Factor es Termino\n"); Tptr = crearNodo("*", crearHoja("-1"), Fptr); }
+    |OP_RES factor          {
+        printf("\t\t\t\t  R51: -Factor es Termino\n");
+        insertarEnLista(&listaSimbolos, "-1", tINT);
+        Tptr = crearNodo("*", crearHoja("-1"), Fptr);
+    }
     |termino OP_MUL factor  { printf("\t\t\t\t  R52: Termino*Factor es Termino\n"); Tptr = crearNodo("*", Tptr, Fptr); }
     |termino OP_DIV factor  { printf("\t\t\t\t  R53: Termino/Factor es Termino\n"); Tptr = crearNodo("/", Tptr, Fptr); }
     ;

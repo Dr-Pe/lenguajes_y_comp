@@ -7,7 +7,7 @@ libc="libc/utilidades.c libc/lista_simbolos.c libc/arbol.c libc/pila.c libc/gene
 flex lexico.l
 bison -dyv sintactico.y
 gcc lex.yy.c y.tab.c ${libc} -o ${compilador}
-./${compilador} "casos_de_prueba/test_simple.txt"
+./${compilador} "casos_de_prueba/test.txt"
 dot -Tpng intermediate-code.dot -o arbol.png -Gcharset=latin1
 rm lex.yy.c
 rm y.tab.c
