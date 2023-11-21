@@ -7,6 +7,12 @@ a = 23123
 b = 1
 
 
-if(not a != b) {
-    write("si es false entra")
+if(a < b) {
+    write("a menor a b")
+    if(b == 1) {
+        write("b es 1")
+    }
+}
+else {
+    write("a mayor o igual a b")
 }

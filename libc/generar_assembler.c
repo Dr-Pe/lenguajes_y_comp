@@ -190,7 +190,6 @@ void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAu
         generarComparacion(fp, nodo->izq->izq, TAG_FALSO, contFalsos);
         // 2da condicion
         generarComparacion(fp, nodo->izq->der, TAG_FALSO, contFalsos);
-
         apilar(falsos, &contFalsos, sizeof(contFalsos));
         contFalsos++;
     }
@@ -217,8 +216,8 @@ void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAu
         {
             // True
             generarAssembler(&nodo->der->izq, fp, contAux);
-            apilar(verdaderos, &contVerdaderos, sizeof(contVerdaderos));
-            contVerdaderos++;
+            // apilar(verdaderos, &contVerdaderos, sizeof(contVerdaderos));
+            // contVerdaderos++;
             fprintf(fp, "JMP %s%d\n", TAG_VERDADERO, contVerdaderos);
             desapilar(falsos, &contFalsos, sizeof(contFalsos));
             fprintf(fp, "%s%d:\n", TAG_FALSO, contFalsos);
@@ -232,8 +231,8 @@ void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAu
         {
             // True
             generarAssembler(&nodo->der->izq, fp, contAux);
-            apilar(verdaderos, &contVerdaderos, sizeof(contVerdaderos));
-            contVerdaderos++;
+            // apilar(verdaderos, &contVerdaderos, sizeof(contVerdaderos));
+            // contVerdaderos++;
             fprintf(fp, "JMP %s%d\n", TAG_VERDADERO, contVerdaderos);
             desapilar(falsos, &contFalsos, sizeof(contFalsos));
             fprintf(fp, "%s%d:\n", TAG_FALSO, contFalsos);
