@@ -4,13 +4,9 @@ init {
 }
 
 a = 23123
-c = 2.3123123
+b = 1
 
 
-if(estaContenido("a", "abc")) {
-    write("true")
-}
-
-if(estaContenido("abc", "a")) {
-    write("true tambien")
+if(not a != b) {
+    write("si es false entra")
 }

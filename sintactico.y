@@ -339,7 +339,7 @@ comparacion:
         printf("\t\t\t\tR37: not comparacion es Comparacion\n");
         CmpPtr = crearNodo(
             "&", 
-            crearNodo("==", crearHoja("_0"), crearHoja("_1")), 
+            crearHoja("not"), 
             CmpPtr
         ); 
     }

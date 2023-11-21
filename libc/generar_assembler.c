@@ -176,8 +176,15 @@ void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAu
         apilar(falsos, &contFalsos, sizeof(contFalsos));
         contFalsos++;
     }
-    // Condicion multiple
-    if (strcmp(nodo->izq->simbolo, "&") == 0)
+    // Condicion multiple (o operador not)
+    if (strcmp(nodo->izq->simbolo, "&") == 0 && strcmp(nodo->izq->izq->simbolo, "not") == 0)
+    {
+        invertirComparador(nodo->izq->der);
+        generarComparacion(fp, nodo->izq->der, TAG_FALSO, contFalsos);
+        apilar(falsos, &contFalsos, sizeof(contFalsos));
+        contFalsos++;
+    }
+    else if (strcmp(nodo->izq->simbolo, "&") == 0)
     {
         // 1era condicion
         generarComparacion(fp, nodo->izq->izq, TAG_FALSO, contFalsos);
