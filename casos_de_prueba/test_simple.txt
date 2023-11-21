@@ -3,16 +3,10 @@ init {
     c, d, e : Float
 }
 
-a = 23123
-b = 1
+a = 1
+b = 10
 
-
-if(a < b) {
-    write("a menor a b")
-    if(b == 1) {
-        write("b es 1")
-    }
-}
-else {
-    write("a mayor o igual a b")
+ciclo(a < b) {
+    write(a)
+    a = a + 1
 }

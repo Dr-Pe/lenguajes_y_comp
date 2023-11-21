@@ -72,12 +72,7 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux)
         }
         else if (strcmp(nodo->simbolo, "ciclo") == 0)
         {
-            fprintf(fp, "%s%d:\n", TAG_CICLO, contCiclos);
-            apilar(&ciclos, &contCiclos, sizeof(contCiclos));
-            contCiclos++;
-            generarIf(fp, nodo, &verdaderos, &falsos, contAux);
-            desapilar(&ciclos, &numeroAuxiliar, sizeof(numeroAuxiliar));
-            fprintf(fp, "JMP %s%d\n", TAG_CICLO, numeroAuxiliar);
+            generarCiclo(fp, nodo, &verdaderos, &falsos, &ciclos, contAux);
         }
         else if (strcmp(nodo->simbolo, "write") == 0)
         {
@@ -86,9 +81,13 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux)
             {
                 fprintf(fp, "displayString %s\nnewLine 1\n", nodo->izq->simbolo);
             }
+            else if (esMismoTipo(&listaSimbolos, nodo->izq->simbolo, TINT))
+            {
+                fprintf(fp, "DisplayFloat %s, 0\nnewLine 1\n", nodo->izq->simbolo);
+            }
             else
             {
-                fprintf(fp, "displayFloat %s\nnewLine 1\n", nodo->izq->simbolo);
+                fprintf(fp, "DisplayFloat %s, 2\nnewLine 1\n", nodo->izq->simbolo);
             }
         }
         else if (strcmp(nodo->simbolo, "read") == 0)
@@ -260,6 +259,68 @@ void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAu
             fprintf(fp, "%s%d:\n", TAG_FALSO, contFalsos);
         }
     }
+    apilar(falsos, &contFalsos, sizeof(contFalsos));
+    contFalsos++;
+}
+
+void generarCiclo(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, Pila *ciclos, int contAux)
+{
+    int operadorOr = FALSE; // Boolean
+    int numeroAuxiliar;
+
+    fprintf(fp, "%s%d:\n", TAG_CICLO, contCiclos);
+    apilar(ciclos, &contCiclos, sizeof(contCiclos));
+    contCiclos++;
+
+    // Condicion simple
+    if (ES_COMPARADOR(nodo->izq->simbolo) == 1)
+    {
+        generarComparacion(fp, nodo->izq, TAG_FALSO, contFalsos);
+        apilar(falsos, &contFalsos, sizeof(contFalsos));
+        contFalsos++;
+    }
+    // Condicion multiple (o operador not)
+    if (strcmp(nodo->izq->simbolo, "&") == 0 && strcmp(nodo->izq->izq->simbolo, "not") == 0)
+    {
+        invertirComparador(nodo->izq->der);
+        generarComparacion(fp, nodo->izq->der, TAG_FALSO, contFalsos);
+        apilar(falsos, &contFalsos, sizeof(contFalsos));
+        contFalsos++;
+    }
+    else if (strcmp(nodo->izq->simbolo, "&") == 0)
+    {
+        // 1era condicion
+        generarComparacion(fp, nodo->izq->izq, TAG_FALSO, contFalsos);
+        // 2da condicion
+        generarComparacion(fp, nodo->izq->der, TAG_FALSO, contFalsos);
+        apilar(falsos, &contFalsos, sizeof(contFalsos));
+        contFalsos++;
+    }
+    else if (strcmp(nodo->izq->simbolo, "||") == 0)
+    {
+        invertirComparador(nodo->izq->izq);
+        // 1era condicion
+        generarComparacion(fp, nodo->izq->izq, TAG_VERDADERO, contVerdaderos);
+        apilar(verdaderos, &contVerdaderos, sizeof(contVerdaderos));
+        contVerdaderos++;
+        // 2da condicion
+        generarComparacion(fp, nodo->izq->der, TAG_FALSO, contFalsos);
+        apilar(falsos, &contFalsos, sizeof(contFalsos));
+        contFalsos++;
+        operadorOr = TRUE;
+    }
+    // if con else
+    if (operadorOr)
+    {
+        desapilar(verdaderos, &contVerdaderos, sizeof(contVerdaderos));
+        fprintf(fp, "%s%d:\n", TAG_VERDADERO, contVerdaderos);
+        operadorOr = FALSE;
+    }
+    generarAssembler(&nodo->der, fp, contAux);
+    desapilar(ciclos, &numeroAuxiliar, sizeof(numeroAuxiliar));
+    fprintf(fp, "JMP %s%d\n", TAG_CICLO, numeroAuxiliar);
+    desapilar(falsos, &contFalsos, sizeof(contFalsos));
+    fprintf(fp, "%s%d:\n", TAG_FALSO, contFalsos);
     apilar(falsos, &contFalsos, sizeof(contFalsos));
     contFalsos++;
 }

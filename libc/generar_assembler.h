@@ -20,6 +20,7 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux);
 void generarComparacion(FILE *fp, NodoA *comparador, char *tag, int cont);
 void invertirComparador(NodoA *nodo);
 void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, int contAux);
+void generarCiclo(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, Pila *ciclos, int contAux);
 void generarFin(FILE *fp);
 
 #endif
