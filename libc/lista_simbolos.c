@@ -74,6 +74,37 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
     *lista = nuevo;
 }
 
+void insertarAuxiliarEnLista(Lista* lista, char* nombre)
+{
+    Simbolo nuevo_simbolo;
+
+    nuevo_simbolo.valor[0] = '\0';
+    nuevo_simbolo.tipo_dato[0] = '\0';
+    nuevo_simbolo.longitud = 0;
+
+    strcpy(nuevo_simbolo.nombre, nombre);
+    strcpy(nuevo_simbolo.tipo_dato, TFLOAT);
+
+    while ((*lista != NULL) && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) > 0)
+    {
+        lista = &(*lista)->sig;
+    }
+
+    if (*lista != NULL && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) == 0)
+    {
+        return;
+    }
+    else if (*lista != NULL && strcmp((*lista)->simb.nombre, nuevo_simbolo.nombre) == 0 && strcmp((*lista)->simb.tipo_dato, nuevo_simbolo.tipo_dato) == 0)
+    {
+        return;
+    }
+
+    NodoL *nuevo = (NodoL *)malloc(sizeof(NodoL));
+    memcpy(&(nuevo->simb), &nuevo_simbolo, sizeof(Simbolo));
+    nuevo->sig = *lista;
+    *lista = nuevo;
+}
+
 void imprimirLista(Lista *lista)
 {
     FILE *fp = fopen(FILENAME_TS, "w");

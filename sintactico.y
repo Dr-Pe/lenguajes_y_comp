@@ -426,19 +426,22 @@ factor:
         }
         printf("\t\t\t\t    R58: FIB(ID) es Factor\n");
 
-        contAux_ += 3; // Antes @ax, @bx, @cx
+        insertarAuxiliarEnLista(&listaSimbolos, "@fib0");
+        insertarAuxiliarEnLista(&listaSimbolos, "@fib1");
+        insertarAuxiliarEnLista(&listaSimbolos, "@fib2");
+        contAux_ += 1;
 
         // Creo las asignaciones
         FibAsigPtr = crearNodo("BLOQ_EJEC", 
-            crearNodo("=", crearHoja("@aux0"), crearHoja("_0")),  
-            crearNodo("=", crearHoja("@aux1"), crearHoja("_1"))
+            crearNodo("=", crearHoja("@fib0"), crearHoja("_0")),  
+            crearNodo("=", crearHoja("@fib1"), crearHoja("_1"))
         );
 
         // Creo la ejecución del ciclo
-        FibPtr = crearNodo("=", crearHoja("@aux2"), crearNodo("+", crearHoja("@aux0"),  crearHoja("@aux1")));
-        FibEjecPtr = crearNodo("BLOQ_EJEC", FibPtr, crearNodo("=", crearHoja("@aux0"), crearHoja("@aux1")));
+        FibPtr = crearNodo("=", crearHoja("@fib2"), crearNodo("+", crearHoja("@fib0"),  crearHoja("@fib1")));
+        FibEjecPtr = crearNodo("BLOQ_EJEC", FibPtr, crearNodo("=", crearHoja("@fib0"), crearHoja("@fib1")));
         FibPtr = FibEjecPtr;
-        FibEjecPtr = crearNodo("BLOQ_EJEC", FibPtr, crearNodo("=", crearHoja("@aux1"), crearHoja("@aux2")));
+        FibEjecPtr = crearNodo("BLOQ_EJEC", FibPtr, crearNodo("=", crearHoja("@fib1"), crearHoja("@fib2")));
         FibPtr = FibEjecPtr;
         FibEjecPtr = crearNodo(
             "BLOQ_EJEC",
@@ -455,7 +458,7 @@ factor:
 
         // Anidacion final
         Fptr = crearNodo(
-            "@aux1",
+            "@fib1",
             crearNodo("BLOQ_EJEC", FibAsigPtr, FibEjecPtr),
             crearHoja("NULL")
         );

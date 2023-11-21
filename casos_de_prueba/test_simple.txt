@@ -4,6 +4,10 @@ init {
     saludo : String
 }
 
-saludo = "hola, mundo"
+a = 10
 
-write(saludo)
+if (a >= 10){
+    b = 5 + FIB(a)
+}
+
+write(b)
