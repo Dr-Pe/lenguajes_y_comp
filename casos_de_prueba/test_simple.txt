@@ -4,4 +4,6 @@ init {
     saludo : String
 }
 
-write("hola, mundo")
+saludo = "hola, mundo"
+
+write(saludo)

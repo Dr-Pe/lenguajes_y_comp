@@ -35,7 +35,7 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux)
             }
             else if (esMismoTipo(&listaSimbolos, nodo->izq->simbolo, TSTRING))
             {
-                fprintf(fp, "mov dx, OFFSET %s\nmov di, OFFSET %s\nSTRCPY\n", nodo->der->simbolo, nodo->izq->simbolo);
+                fprintf(fp, "mov SI, OFFSET %s\nmov DI, OFFSET %s\nSTRCPY\n", nodo->der->simbolo, nodo->izq->simbolo);
             }
             else { //Variables auxiliares
                 fprintf(fp, "FLD %s\nFSTP %s\n", nodo->der->simbolo, nodo->izq->simbolo);
