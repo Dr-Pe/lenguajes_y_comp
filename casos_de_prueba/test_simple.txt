@@ -1,12 +1,17 @@
 init {
     entero_min, a, b: Int
     c, d, e : Float
+    h : String
 }
 
 a = 1
 b = 10
 
+h = "HOLA"
+
 ciclo(a < b) {
     write(a)
     a = a + 1
 }
+
+write(h)

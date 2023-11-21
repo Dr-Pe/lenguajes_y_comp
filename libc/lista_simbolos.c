@@ -31,7 +31,7 @@ void insertarEnLista(Lista *lista, char *nombre, enum tiposDato tDato)
     else if (tDato == tFLOAT)
     {
         char nnombre[strlen(nombre)];
-        snprintf(nnombre, VALOR_LARGO_MAX + 1, "%f", atof(nombre));
+        snprintf(nnombre, VALOR_LARGO_MAX + 1, "%.2f", atof(nombre));
         strcpy(nuevo_simbolo.nombre, floatANombre(nnombre));
         strcpy(nuevo_simbolo.tipo_dato, TFLOAT);
         strcpy(nuevo_simbolo.valor, nombre);
