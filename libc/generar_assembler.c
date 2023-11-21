@@ -37,6 +37,9 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux)
             {
                 fprintf(fp, "mov dx, OFFSET %s\nmov di, OFFSET %s\nSTRCPY\n", nodo->der->simbolo, nodo->izq->simbolo);
             }
+            else { //Variables auxiliares
+                fprintf(fp, "FLD %s\nFSTP %s\n", nodo->der->simbolo, nodo->izq->simbolo);
+            }
         }
         else if (strcmp(nodo->simbolo, "+") == 0)
         {
