@@ -3,6 +3,10 @@ init {
     c, d, e : Float
 }
 
+a = 23123
+c = 2.3123123
+
+
 if(estaContenido("a", "abc")) {
     write("true")
 }

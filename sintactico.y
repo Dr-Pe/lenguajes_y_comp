@@ -396,7 +396,7 @@ factor:
     }
     |INT   { 
         printf("\t\t\t\t    R55: INT es Factor\n"); 
-        snprintf(strAux, sizeof($1), "%d", $1);
+        snprintf(strAux, VALOR_LARGO_MAX + 1, "%d", $1);
         strcpy(strAux2, "_");       // strAux2 = "_"
         strcat(strAux2, strAux);    // Ejemplo: "_2" para el dos
         strcpy(auxTipo, "Int");
@@ -404,7 +404,7 @@ factor:
     }
     |FLOAT { 
         printf("\t\t\t\t    R56: FLOAT es Factor\n"); 
-        snprintf(strAux, VALOR_LARGO_MAX + 1, "%.2f", $1);
+        snprintf(strAux, VALOR_LARGO_MAX + 1, "%f", $1);
         //strcpy(strAux2, "_");       // strAux2 = "_"
         //strcat(strAux2, strAux);    // Ejemplo: "_2.5" para el dos punto cinco
         strcpy(auxTipo, "Float");
