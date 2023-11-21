@@ -24,7 +24,7 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux)
         else if (strcmp(nodo->simbolo, "=") == 0)
         {
             generarAssembler(&nodo->der, fp, contAux);
-            fprintf(fp, "FLD %s\nFRNDINT\nFSTP %s\n", nodo->der->simbolo, nodo->izq->simbolo);
+            fprintf(fp, "FLD %s\nFSTP %s\n", nodo->der->simbolo, nodo->izq->simbolo);
         }
         else if (strcmp(nodo->simbolo, "+") == 0)
         {
