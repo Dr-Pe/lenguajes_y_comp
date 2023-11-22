@@ -109,6 +109,10 @@ void generarAssembler(Arbol *parbol, FILE *fp, int contAux)
         {
             fprintf(fp, "getString %s\n", nodo->izq->simbolo);
         }
+        else if (strcmp(nodo->simbolo, "BLOQ_FIB") == 0)
+        {
+            generarAssembler(&nodo->der, fp, contAux);
+        }
 
         eliminarHijos(nodo);
         nodo = padreMasIzq(parbol);
