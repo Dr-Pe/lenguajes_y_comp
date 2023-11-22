@@ -245,7 +245,11 @@ string:
     }
     |CONCAT PA STRING { strcpy(strAux, $3); } COMA STRING { strcpy(strAux2, $6); } COMA INT PC { 
         printf("\t\t\tR25: concatenarConRecorte(String, String, Int) es String\n"); 
-        StrPtr = crearHoja(concatenar(strAux, strAux2, yylval.int_val));
+       
+        char strAux3[VALOR_LARGO_MAX + 1], strAux4[VALOR_LARGO_MAX + 1];
+        strcpy(strAux3, concatenar(strAux, strAux2, yylval.int_val));
+        insertarEnLista(&listaSimbolos, strAux3, tSTRING);
+        StrPtr = crearHoja(cadenaANombre(strAux4, strAux3));
     }
     ;
 

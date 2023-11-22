@@ -6,7 +6,6 @@ init {
     cad_any: String
     cad_concat1, cad_concat2, cad_concat3 : String
     id_mas_largo_id_mas_id_mas_largo_id_mas_: Int
- 
 }
 
 *-
@@ -24,11 +23,15 @@ float_max = 2147483648.
 cad_min = ""
 cad_max = "0123456789012345678901234567890123456789"
 cad_any = "Cualquier cáracter: @!#'¿?"
+a = 1
+b = 10
+c = 100
 
 *- FUNCIONES -*
 write("hola, mundo")
 
-cad_concat3 = concatenarConRecorte("011", "pe1", 2)
+cad_concat3 = concatenarConRecorte("Hola", "Mundo", 2)
+write(cad_concat3)
 
 if(estaContenido("a", "abc")) {
     write("si esta")
@@ -75,8 +78,6 @@ if(estaContenido("a", "abc")) {
 
 *- CICLO -*
 
-a = 1
-b = 10
 write("ciclo a menor a b")
 ciclo (a < b) {
     write(a)
@@ -89,8 +90,6 @@ f=FIB(a)+5
 
 write(f) *- 60 -*
 
-c = 5
+f=(FIB(b))*3
 
-b=(FIB(c))*3
-
-write(b) *- 15 -*
+write(f) *- 165 -*
