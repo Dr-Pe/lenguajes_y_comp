@@ -6,10 +6,12 @@ init {
 
 a = 10
 
-b = FIB(a)
-
-if(not a == 10){
-    write(a)
+if( a > 100 & a == 10){
+    write("TRUE")
 }else{
-    write(b)
+    write("False")
+}
+
+if(a == 10){
+    write("TRUE")
 }

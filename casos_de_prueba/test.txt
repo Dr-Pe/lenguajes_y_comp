@@ -68,8 +68,21 @@ if(estaContenido("a", "abc")) {
     }
 
     *- Dobles -*
+
     if (a < b & b < c) {
         write("write a < b & b < c")
+    }
+
+    if (a < b) {
+        if(b < c){
+            write("write if a < b & if b < c")
+        }
+    }
+
+    if(a > b){
+        write("IF")
+    }else{
+        write("ELSE")
     }
 
     if (a < b || b < c) {
@@ -84,16 +97,36 @@ ciclo (a < b) {
     a = a + 1
 }
 
-*- FIB -*
+*- FUNCIONES ESPECIALES -*
 
-f=FIB(a)
+    SET SWITCH ( a )
+        CASE 10: a = 10 *- Resultado -*
+        CASE 25: a = b
+                b = 5*2
+    ENDSETCASE
 
-write(f) *- 55 -*
+    write(a)
 
-f=2*3+FIB(b)
+    SET SWITCH ( a + b * 2)
+        CASE 10: b = 200
+                a = 100
+        CASE 22: a = a + b
+        CASE 30: b = a
+        ELSECASE: a = 10 *- Resultado -*
+    ENDSETCASE
 
-write(f) *- 61 -*
+    write(a)
 
-f=(FIB(a))*3
+    *- FIB -*
 
-write(f) *- 165 -*
+    f=FIB(a)
+
+    write(f) *- 55 -*
+
+    f=2*3+FIB(b)
+
+    write(f) *- 61 -*
+
+    f=(FIB(a))*3
+
+    write(f) *- 165 -*
