@@ -280,7 +280,7 @@ void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, Pila* fina
 void generarCiclo(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, Pila *ciclos, int contAux)
 {
     int operadorOr = FALSE; // Boolean
-    int auxCiclo;
+    int auxCiclo, auxFalse;
     
     contCiclos++;
     fprintf(fp, "%s%d:\n", TAG_CICLO, contCiclos);
@@ -342,8 +342,8 @@ void generarCiclo(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, Pila *c
     fprintf(fp, "JMP %s%d\n", TAG_CICLO, auxCiclo);
 
     // Fin de Ciclo
-    desapilar(falsos, &contFalsos, sizeof(contFalsos));
-    fprintf(fp, "%s%d:\n", TAG_FALSO, contFalsos);
+    desapilar(falsos, &auxFalse, sizeof(auxFalse));
+    fprintf(fp, "%s%d:\n", TAG_FALSO, auxFalse);
 }
 
 void generarFin(FILE *fp)

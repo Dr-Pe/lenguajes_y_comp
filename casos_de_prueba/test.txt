@@ -97,12 +97,19 @@ ciclo (a < b) {
     a = a + 1
 }
 
+ciclo (c < 150 & c > 25) {
+    if(c < 80){
+        write(c)
+    }
+    c = c - 25
+}
+
 *- FUNCIONES ESPECIALES -*
 
     SET SWITCH ( a )
         CASE 10: a = 10 *- Resultado -*
         CASE 25: a = b
-                b = 5*2
+                 b = 5*2
     ENDSETCASE
 
     write(a)
