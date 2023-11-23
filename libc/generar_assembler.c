@@ -280,7 +280,7 @@ void generarIf(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, Pila* fina
 void generarCiclo(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, Pila *ciclos, int contAux)
 {
     int operadorOr = FALSE; // Boolean
-    int auxCiclo, auxFalse;
+    int auxCiclo, auxFalse, auxTrue;
     
     contCiclos++;
     fprintf(fp, "%s%d:\n", TAG_CICLO, contCiclos);
@@ -329,8 +329,8 @@ void generarCiclo(FILE *fp, NodoA *nodo, Pila *verdaderos, Pila *falsos, Pila *c
     // Ciclo con ||
     if (operadorOr)
     {
-        desapilar(verdaderos, &contVerdaderos, sizeof(contVerdaderos));
-        fprintf(fp, "%s%d:\n", TAG_VERDADERO, contVerdaderos);
+        desapilar(verdaderos, &auxTrue, sizeof(auxTrue));
+        fprintf(fp, "%s%d:\n", TAG_VERDADERO, auxTrue);
         operadorOr = FALSE;
     }
 

@@ -91,20 +91,22 @@ if(estaContenido("a", "abc")) {
 
 *- CICLO -*
 
-write("ciclo a menor a b")
-ciclo (a < b) {
-    write(a)
-    a = a + 1
-}
-
-ciclo (c < 150 & c > 25) {
-    if(c < 80){
-        write(c)
+    write("ciclo a menor a b")
+    ciclo (a < b) {
+        write(a)
+        a = a + 1
     }
-    c = c - 25
-}
+
+    ciclo (c < 150 & c > 25) {
+        if(c < 80){
+            write(c)
+        }
+        c = c - 25
+    }
 
 *- FUNCIONES ESPECIALES -*
+
+    *- SET SWITCH -*
 
     SET SWITCH ( a )
         CASE 10: a = 10 *- Resultado -*
