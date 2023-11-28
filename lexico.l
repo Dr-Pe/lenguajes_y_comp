@@ -197,7 +197,7 @@ int fa_verificarRangoInt(char* ptr) {
 int fa_verificarRangoFloat(char* ptr) {
     double valor = atof(ptr);
 
-    if ( valor < 0 || valor > 2147483648) {
+    if ( valor < 0 || valor > 2147483648LL) {
         printf ("[%d] Error, variable Float fuera de rango\n", yylineno);
         boolCompiladoOK=0;
         return FALSE;
