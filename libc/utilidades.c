@@ -61,6 +61,7 @@ char *floatANombre(char *dest)
     char strAux[VALOR_LARGO_MAX + 2];
 
     strAux[0] = '_';
+    strAux[1] = '\0';
     strcat(strAux, dest);
     strcpy(dest, strAux);
 
